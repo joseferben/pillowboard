@@ -1,9 +1,9 @@
 (ns dashboard.styles.core)
 
-(def component-style {:padding "1em"
-                      :color "#333333"
+;; debug
+(def component-style {:color "#333333"
                       :background-color "#FFFFFF"
-                      :border "1px solid black"})
+                      :border "0px solid black"})
 
 (def grid-wrapper {:display "grid"
                    :grid-template-columns "repeat(3, 1fr)"
