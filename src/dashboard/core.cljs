@@ -37,7 +37,7 @@
 (defn container []
   "Injects app-state into dashboard, enables re-render"
   [:div.container
-   [grid/main {:width 8 :height 5 :state @app-state}]])
+   [grid/main {:state @app-state}]])
 
 (defn init! []
   (stylefy/init)

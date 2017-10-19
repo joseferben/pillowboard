@@ -1,28 +1,41 @@
 (ns dashboard.grid
   (:require
    [dashboard.styles.core :as styles]
+   [dashboard.charts.core :as charts]
    [stylefy.core :as stylefy :refer [use-style]]))
 
-(defmulti chart (fn [chart] (:type chart)))
+(defmulti chart-type (fn [chart] (:type chart)))
 
-(defmethod chart :line
-  [chart] 
-  [:h2 "Line chart"])
+(defmethod chart-type :line
+  [data] 
+  (let [[x y] (data :pos)]
+  [:div.chart (merge {:key (data :name)}
+                     (use-style (merge styles/component-style)))
+  [charts/line-chart-comp data]]))
 
-(defmethod chart :area
-  [chart] 
-  [:h2 "Area chart"])
+(defmethod chart-type :area
+  [data] 
+  (let [[x y] (data :pos)]
+  [:div.chart (merge {:key (data :name)}
+                     (use-style (merge styles/component-style)))
+  [:h2 "Area chart"]]))
 
-(defmethod chart :scatter
-  [chart] 
-  [:h2 "Scatter chart"])
+(defmethod chart-type :scatter
+  [data] 
+  (let [[x y] (data :pos)]
+  [:div.chart (merge {:key (data :name)}
+                     (use-style (merge styles/component-style)))
+  [:h2 "Scatter chart"]]))
   
+(defn- chart
+  [data]
+  (chart-type data))
+
 (defn- render-charts
-  [widgets]
-  (map chart widgets))
+  [charts]
+  (doall (map chart charts)))
 
 (defn main
-  [{:keys [width height state]}]
-  [:div.grid (use-style styles/grid-style)
-   (render-charts (state :charts))
-   [:h1 "test"]])
+  [{state :state}]
+  [:div.grid (use-style (merge styles/grid-wrapper styles/component-style))
+   (render-charts (state :charts))])
