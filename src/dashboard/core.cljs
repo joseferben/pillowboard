@@ -1,26 +1,28 @@
 (ns dashboard.core
   (:require
-   [dashboard.styles.core :as styles]
-   [reagent.core :as reagent :refer [atom]]
-   [stylefy.core :as stylefy :refer [use-style]]))
+   [dashboard.grid :as grid]
+   [stylefy.core :as stylefy]
+   [reagent.core :as reagent :refer [atom]]))
 
 (enable-console-print!)
 
-(println "This text is printed from src/dashboard/core.cljs. Go ahead and edit it and see reloading in action.")
-
-;; define your app data so that it doesn't get over-written on reload
-
-(defonce app-state (atom {:text "Hello world!"}))
-
-(defn grid
-  [{:keys [width height state]}]
-  [:div.grid (use-style styles/grid-style)
-   [:h1 (:text state)]])
+(defonce app-state (atom {:state
+                             [{:commits {:data
+                                          {:time (vec (range 10))
+                                           :commits [1 2 3 5 8 5 2 12 18 3]}}
+                               :type :line
+                               :pos [0 0]}
+                              {:pull-requests {:data
+                                               {:time (vec (range 10))
+                                                :pull-requests [0 0 1 2 0 2 1 1 2 3]
+                                                :bugs [0 5 3 3 0 2 8 7 5 3]}}
+                               :type :line
+                               :pos [2 2]}]}))
 
 (defn container []
   "Injects app-state into dashboard, enables re-render"
   [:div.container
-   [grid {:width 8 :height 5 :state @app-state}]])
+   [grid/main {:width 8 :height 5 :state @app-state}]])
 
 (defn init! []
   (stylefy/init)
