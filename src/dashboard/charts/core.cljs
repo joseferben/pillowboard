@@ -25,12 +25,18 @@
 (defn- filter-time [keys]
   (filter #(not= :time %) keys))
 
-(defn- dimensions [data]
+(defn- dimension-keys
+  [data]
   (-> data
       (transform)
       (first)
       (keys)
-      (filter-time)
+      (filter-time)))
+
+(defn- dimensions
+  [data]
+  (-> data
+      (dimension-keys)
       (#(map (partial wrapper (data :type)) %))
       (vec)))
 
@@ -58,6 +64,8 @@
           [:> scatter-chart {:width 350 :height 200
                              :margin {:top 0 :right 0
                                       :bottom 0 :left -40}}
+           [:> x-axis {"dataKey" "incidents"}]
+           [:> y-axis {"dataKey" "traffic"}]
            [:> cartesian-grid {"strokeDasharray" "3 3"}]
            [:> scatter {:data (transform data)
                         :name "incidents/traffic"}]
