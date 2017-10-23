@@ -14,35 +14,24 @@
 (def scatter js/Recharts.Scatter)
 (def area-chart js/Recharts.AreaChart)
 (def area js/Recharts.Area)
+(def types {:line line :scatter scatter :area area})
 
 (defn- transform [data]
   (data :data))
 
-(defn- line-wrapper [key]
-  [:> line {:type "monotone" "dataKey" key}])
-
-(defn- area-wrapper [key]
-  [:> area {:type "monotone" "dataKey" key}])
-
+(defn- wrapper [type key]
+  [:> (types type) {:type "monotone" "dataKey" key}])
+  
 (defn- filter-time [keys]
   (filter #(not= :time %) keys))
 
-(defn- lines [data]
+(defn- dimensions [data]
   (-> data
       (transform)
       (first)
       (keys)
       (filter-time)
-      (#(map line-wrapper %))
-      (vec)))
-
-(defn- areas [data]
-  (-> data
-      (transform)
-      (first)
-      (keys)
-      (filter-time)
-      (#(map area-wrapper %))
+      (#(map (partial wrapper (data :type)) %))
       (vec)))
 
 (defn line-chart-comp
@@ -59,20 +48,22 @@
            [:> cartesian-grid {"strokeDasharray" "3 3"}]
            [:> tooltip]
            [:> legend]]
-          (lines data)))])
+          (dimensions data)))])
 
 (defn scatter-chart-comp
   [data]
   [:div
-   [:> scatter-chart {:width 350 :height 200
-                      :margin {:top 0 :right 0
-                               :bottom 0 :left -40}}
-    [:> x-axis {"dataKey" "incidents"}]
-    [:> y-axis {"dataKey" "traffic"}]
-    [:> cartesian-grid {"strokeDasharray" "3 3"}]
-    [:> scatter {:data (transform data) :name "incidents/traffic"}]
-    [:> tooltip]
-    [:> legend]]])
+   (into []
+         (concat
+          [:> scatter-chart {:width 350 :height 200
+                             :margin {:top 0 :right 0
+                                      :bottom 0 :left -40}}
+           [:> cartesian-grid {"strokeDasharray" "3 3"}]
+           [:> scatter {:data (transform data)
+                        :name "incidents/traffic"}]
+           [:> tooltip]
+           [:> legend]]
+          (dimensions data)))])
 
 (defn area-chart-comp
   [data]
@@ -88,6 +79,6 @@
            [:> cartesian-grid {"strokeDasharray" "3 3"}]
            [:> tooltip]
            [:> legend]]
-          (areas data)))])
+          (dimensions data)))])
 
 
