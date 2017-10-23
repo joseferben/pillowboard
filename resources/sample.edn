@@ -1,0 +1,8 @@
+; this is sample data to experiment with the structure of data
+{:content {:data0 {:data [[1 2 3 4] [9 1 2 4]]
+                   :meta {:labels ["time" "commit"]}}
+           :data1 {:data [[0 1 2 1 2] [0 2 4 2 1]]
+                   :meta {:labels ["incidents" "traffic"]}}}
+ :config {:group0 [{:type "Line"
+                    :data :data0
+                    :x "time"}]}}
