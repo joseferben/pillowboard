@@ -25,7 +25,7 @@
   (let [[x y] (data :pos)]
   [:div.chart (merge {:key (data :name)}
                      (use-style (merge styles/component-style)))
-  [:h2 "Scatter chart"]]))
+  [charts/scatter-chart-comp data]]))
   
 (defn- chart
   [data]

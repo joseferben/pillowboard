@@ -10,14 +10,16 @@
 (def cartesian-grid js/Recharts.CartesianGrid)
 (def tooltip js/Recharts.Tooltip)
 (def legend js/Recharts.Legend)
+(def scatter-chart js/Recharts.ScatterChart)
+(def scatter js/Recharts.Scatter)
 
 (defn- transform [data]
   (data :data))
 
-(defn line-wrapper [key]
+(defn- line-wrapper [key]
   [:> line {:type "monotone" "dataKey" key}])
-  
-(defn filter-time [keys]
+
+(defn- filter-time [keys]
   (filter #(not= :time %) keys))
 
 (defn- lines [data]
@@ -29,17 +31,31 @@
       (#(map line-wrapper %))
       (vec)))
 
-(defn- line-chart-comp
+(defn line-chart-comp
   [data]
   [:div
-   (into [] (concat
-    [:> line-chart {:width 350 :height 200 :margin {:top 0 :right 0 :bottom 0 :left -40}
-                   :data (transform data)}
-    [:> x-axis {:data-key :time}]
-    [:> y-axis]
-    [:> cartesian-grid {"strokeDasharray" "3 3"}]
-    [:> tooltip]
-    [:> legend]]
-    (lines data)
-    ))])
+   (into []
+         (concat
+          [:> line-chart {:width 350 :height 200
+                          :margin {:top 0 :right 0
+                                   :bottom 0 :left -40}
+                          :data (transform data)}
+           [:> x-axis {:data-key :time}]
+           [:> y-axis]
+           [:> cartesian-grid {"strokeDasharray" "3 3"}]
+           [:> tooltip]
+           [:> legend]]
+          (lines data)))])
 
+(defn scatter-chart-comp
+  [data]
+  [:div
+   [:> scatter-chart {:width 350 :height 200
+                      :margin {:top 0 :right 0
+                               :bottom 0 :left -40}}
+    [:> x-axis {"dataKey" "incidents"}]
+    [:> y-axis {"dataKey" "traffic"}]
+    [:> cartesian-grid {"strokeDasharray" "3 3"}]
+    [:> scatter {:data (transform data) :name "incidents/traffic"}]
+    [:> tooltip]
+    [:> legend]]])
