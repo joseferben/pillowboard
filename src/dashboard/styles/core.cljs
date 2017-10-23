@@ -6,7 +6,7 @@
                       :border "0px solid black"})
 
 (def grid-wrapper {:display "grid"
-                   :grid-template-columns "repeat(3, 1fr)"
+                   :grid-template-columns "repeat(2, 1fr)"
                    :grid-gap "0.2em"
                    :grid-auto-rows "minmax(100px, auto)"})
 

@@ -18,7 +18,7 @@
   (let [[x y] (data :pos)]
   [:div.chart (merge {:key (data :name)}
                      (use-style (merge styles/component-style)))
-  [:h2 "Area chart"]]))
+  [charts/area-chart-comp data]]))
 
 (defmethod chart-type :scatter
   [data] 
