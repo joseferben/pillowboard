@@ -13,17 +13,13 @@
                            :meta {:labels [:time :pull-requests :bugs]}}}
  :config {:commits [{:type "Line"
                      :data :commits
-                     :x-axis :time
-                     :pos 0}]
+                     :x-axis :time}]
           :sprint [{:type "Area"
-                    :data :sprint
-                    :pos 1}]
+                    :data :sprint}]
           :stability [{:type "Scatter"
                        :data :stability
-                       :x-axis :time
-                       :pos 2}]
+                       :x-axis :time}]
           :pull-requests [{:type "Line"
                            :data :pull-requests
-                           :x-axis :time
-                           :pos 3}]
+                           :x-axis :time}]
           :board {:width 3}}}
