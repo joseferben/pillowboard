@@ -11,7 +11,19 @@
                                   [0 1 0 0 2 2 3 0 2 1]
                                   [0 1 1 2 2 3 2 1 2 4]]
                            :meta {:labels [:time :pull-requests :bugs]}}}
- :config {:commits [{:type "Line"}]
-          :sprint [{:type "Area"}]
-          :stability [{:type "Scatter"}]
-          :pull-requests [{:type "Line"}]}}
+ :config {:commits [{:type "Line"
+                     :data :commits
+                     :x-axis :time
+                     :pos 0}]
+          :sprint [{:type "Area"
+                    :data :sprint
+                    :pos 1}]
+          :stability [{:type "Scatter"
+                       :data :stability
+                       :x-axis :time
+                       :pos 2}]
+          :pull-requests [{:type "Line"
+                           :data :pull-requests
+                           :x-axis :time
+                           :pos 3}]
+          :board {:width 3}}}
