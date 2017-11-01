@@ -3,8 +3,12 @@
    [dashboard.grid :as grid :refer [main]]
    [dashboard.inflater :as inflater]
    [dashboard.transformer :as transformer]
+   [cljs.core.async :as async :refer (<! >! put! chan)]
+   [taoensso.sente  :as sente :refer (cb-success?)] 
    [stylefy.core :as stylefy]
-   [reagent.core :as reagent :refer [atom]]))
+   [reagent.core :as reagent :refer [atom]])
+  (:require-macros
+   [cljs.core.async.macros :as asyncm :refer (go go-loop)]))
 
 (enable-console-print!)
 
@@ -25,6 +29,16 @@
                               :sprint {:type :area}
                               :stability {:type :scatter}
                               :pull-requests {:type :line}}}))
+
+(let [{:keys [chsk ch-recv send-fn state]}
+      (sente/make-channel-socket! "http://localhost:3000/chsk" ; Note the same path as before
+       {:type :auto ; e/o #{:auto :ajax :ws}
+       })]
+  (def chsk       chsk)
+  (def ch-chsk    ch-recv) ; ChannelSocket's receive channel
+  (def chsk-send! send-fn) ; ChannelSocket's send API fn
+  (def chsk-state state)   ; Watchable, read-only atom
+  )
 
 (defn container []
   "Injects app-state into dashboard, enables re-render"
