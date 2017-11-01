@@ -4,6 +4,8 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :min-lein-version "2.7.1"
+  :global-vars {*warn-on-reflection* true
+                *assert* true}
   :dependencies [[org.clojure/clojure "1.9.0-alpha17"]
                  [org.clojure/clojurescript "1.9.946"]
                  [org.clojure/core.async  "0.3.443"]
@@ -12,12 +14,15 @@
                  [compojure "1.5.1"]
                  [reagent "0.7.0"]
                  [com.taoensso/sente "1.11.0"]
+                 [com.taoensso/timbre "4.7.4"]
                  [stylefy "1.0.1"]
-                 [http-kit "2.1.5"]
+                 [http-kit "2.2.0"]
                  [cljsjs/recharts "0.22.4-2"]]
   :plugins [[lein-figwheel "0.5.14"]
             [lein-ring "0.9.7"]
-            [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
+            [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]
+            [cider/cider-nrepl   "0.12.0"]]
+
   :ring {:handler dashboard.core/app}
   :main dashboard.core
   :source-paths ["src/clj"]
