@@ -1,5 +1,10 @@
 (ns dashboard.inflater)
 
+;; TODO
+;; move to backend, write tests, replace default function calls
+;; with default schema, merging and reolver functions called at
+;; the right places
+
 (defn- get-keys [data]
   (filter #(not= % :board) (keys data)))
 
@@ -33,7 +38,7 @@
 (defn inflate [data]
   (-> data
       (get :config)
-      (add-default add-default-data)
-      (add-default (partial add-default-axis data))
+      ;(add-default add-default-data)
+      ;(add-default (partial add-default-axis data))
       (add-default-config)
       (#(assoc data :config %))))
