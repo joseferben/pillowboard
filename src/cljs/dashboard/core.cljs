@@ -40,6 +40,9 @@
   (def chsk-state state)   ; Watchable, read-only atom
   )
 
+(go (prn (<! ch-chsk)))
+;(prn "foo")
+
 (defn container []
   "Injects app-state into dashboard, enables re-render"
   [:div.container
