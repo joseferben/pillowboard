@@ -40,7 +40,7 @@
                            :pretty-print false}}]}
   :profiles {:dev {:dependencies [[binaryage/devtools "0.9.4"]
                                   [org.clojure/tools.nrepl "0.2.12"]
-                                  [figwheel-sidecar "0.5.13"]
+                                  [figwheel-sidecar "0.5.14"]
                                   [com.cemerick/piggieback "0.2.2"]
                                   [javax.servlet/servlet-api "2.5"]
                                   [ring/ring-mock "0.3.0"]]
