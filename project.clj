@@ -7,6 +7,8 @@
   :dependencies [[org.clojure/clojure "1.9.0-alpha17"]
                  [compojure "1.5.1"]
                  [ring/ring-defaults "0.2.1"]
+                 [http-kit "2.2.0"]
+                 [com.taoensso/sente "1.11.0"]
                  [org.clojure/core.async  "0.3.443"]
                  [org.clojure/clojurescript "1.9.946"]
                  [stylefy "1.0.1"]
