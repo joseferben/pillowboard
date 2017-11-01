@@ -5,7 +5,8 @@
             [taoensso.sente :as sente] 
             [taoensso.sente.server-adapters.http-kit :refer (get-sch-adapter)]
             [ring.middleware.resource :refer [wrap-resource]]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
+            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
+            [ring.middleware.reload :as reload]))
 
 (let [{:keys [ch-recv send-fn connected-uids
               ajax-post-fn ajax-get-or-ws-handshake-fn]}
@@ -29,10 +30,12 @@
 
 (def handler
   (-> app-routes
+      (reload/wrap-reload)
       (wrap-resource "public")
       ;; Add necessary Ring middleware:
       ring.middleware.keyword-params/wrap-keyword-params
       ring.middleware.params/wrap-params))
 
 (defn -main [& args]
-  (run-server handler {:port 3000}))
+  (run-server handler {:port 3000})
+  (print "Server started at port 3000"))

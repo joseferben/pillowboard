@@ -8,6 +8,7 @@
                  [org.clojure/clojurescript "1.9.946"]
                  [org.clojure/core.async  "0.3.443"]
                  [ring/ring-defaults "0.2.1"]
+                 [ring/ring-devel "1.6.3"]
                  [compojure "1.5.1"]
                  [reagent "0.7.0"]
                  [com.taoensso/sente "1.11.0"]
