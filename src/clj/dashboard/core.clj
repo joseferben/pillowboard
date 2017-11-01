@@ -72,6 +72,16 @@
                                         ;ring.middleware.params/wrap-params
       ))
 
+(defn test-fast-server>user-pushes
+  "Quickly pushes 100 events to all connected users. Note that this'll be
+  fast+reliable even over Ajax!"
+  []
+  (doseq [uid (:any @connected-uids)]
+    (doseq [i (range 100)]
+      (chsk-send! uid [:fast-push/is-fast (str "hello " i "!!")]))))
+
+(comment (test-fast-server>user-pushes))
+
 (defonce broadcast-enabled?_ (atom true))
 
 (defn start-example-broadcaster!
@@ -95,7 +105,50 @@
       (when @broadcast-enabled?_ (broadcast! i))
       (recur (inc i)))))
 
+(defmulti -event-msg-handler
+  "Multimethod to handle Sente `event-msg`s"
+  :id ; Dispatch on event-id
+  )
+
+(defn event-msg-handler
+  "Wraps `-event-msg-handler` with logging, error catching, etc."
+  [{:as ev-msg :keys [id ?data event]}]
+  (-event-msg-handler ev-msg) ; Handle event-msgs on a single thread
+  ;; (future (-event-msg-handler ev-msg)) ; Handle event-msgs on a thread pool
+  )
+
+(defmethod -event-msg-handler
+  :default ; Default/fallback case (no other matching handler)
+  [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
+  (let [session (:session ring-req)
+        uid     (:uid     session)]
+    (debugf "Unhandled event: %s" event)
+    (when ?reply-fn
+      (?reply-fn {:umatched-event-as-echoed-from-from-server event}))))
+
+(defmethod -event-msg-handler :example/test-rapid-push
+  [ev-msg] (test-fast-server>user-pushes))
+
+(defmethod -event-msg-handler :example/toggle-broadcast
+  [{:as ev-msg :keys [?reply-fn]}]
+  (let [loop-enabled? (swap! broadcast-enabled?_ not)]
+    (?reply-fn loop-enabled?)))
+
+;; TODO Add your (defmethod -event-msg-handler <event-id> [ev-msg] <body>)s here...
+
+;;;; Sente event router (our `event-msg-handler` loop)
+
+(defonce router_ (atom nil))
+(defn  stop-router! [] (when-let [stop-fn @router_] (stop-fn)))
+(defn start-router! []
+  (stop-router!)
+  (reset! router_
+    (sente/start-server-chsk-router!
+      ch-chsk event-msg-handler)))
+
 (defn -main [& args]
+  (start-router!)
   (run-server handler {:port 3000})
   (start-example-broadcaster!)
+  (infof "Web server is running at http://localhost:3000")
   (print "Server started at port 3000"))

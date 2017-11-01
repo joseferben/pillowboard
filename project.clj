@@ -20,8 +20,7 @@
                  [cljsjs/recharts "0.22.4-2"]]
   :plugins [[lein-figwheel "0.5.14"]
             [lein-ring "0.9.7"]
-            [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]
-            [cider/cider-nrepl   "0.12.0"]]
+            [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
 
   :ring {:handler dashboard.core/app}
   :main dashboard.core
