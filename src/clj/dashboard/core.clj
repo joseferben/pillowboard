@@ -1,6 +1,7 @@
 (ns dashboard.core
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
+            [org.httpkit.server :refer [run-server]]
             [taoensso.sente :as sente] 
             [taoensso.sente.server-adapters.http-kit :refer (get-sch-adapter)]
             [ring.middleware.resource :refer [wrap-resource]]
@@ -26,10 +27,12 @@
 ;(def app
 ;  (wrap-defaults app-routes site-defaults))
 
-(use 'ring.middleware.resource)
-(def app
+(def handler
   (-> app-routes
       (wrap-resource "public")
       ;; Add necessary Ring middleware:
       ring.middleware.keyword-params/wrap-keyword-params
       ring.middleware.params/wrap-params))
+
+(defn -main [& args]
+  (run-server handler {:port 3000}))

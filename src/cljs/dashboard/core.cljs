@@ -31,7 +31,7 @@
                               :pull-requests {:type :line}}}))
 
 (let [{:keys [chsk ch-recv send-fn state]}
-      (sente/make-channel-socket! "http://localhost:3000/chsk" ; Note the same path as before
+      (sente/make-channel-socket! "/chsk" ; Note the same path as before
        {:type :auto ; e/o #{:auto :ajax :ws}
        })]
   (def chsk       chsk)
