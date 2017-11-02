@@ -1,4 +1,8 @@
-image: clojure:lein-2.7.0
+image: clojure:lein-2.7.1
+
+cache:
+  paths:
+    - .m2/
 
 before_script:
   - apt-get update -y
