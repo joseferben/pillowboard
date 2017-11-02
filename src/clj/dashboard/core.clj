@@ -68,9 +68,6 @@
   (-> app-routes
       (reload/wrap-reload)
       (wrap-defaults site-defaults)
-      ;; Add necessary Ring middleware:
-      ;ring.middleware.keyword-params/wrap-keyword-params
-                                        ;ring.middleware.params/wrap-params
       ))
 
 (defn make-renderable

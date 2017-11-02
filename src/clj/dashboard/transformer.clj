@@ -24,5 +24,6 @@
   (vec (map (partial key->chart data) (get-keys (data :config)))))
 
 (defn transform
+  "Given data (content & config) returns data that is consumeable by the charts"
   [data]
   {:charts (extract-charts data)})
