@@ -1,25 +1,30 @@
 # dashboard
 
-FIXME: Write a one-line description of your library/project.
-
-## Overview
-
-FIXME: Write a paragraph about the library/project and highlight its goals.
+Zero config dashboard for generic data rendering. Throw all your data at it!
 
 ## Setup
 
-To get an interactive development environment run:
+To run the backend with auto-reload enabled run:
+
+    lein run
+
+To auto run the tests run:
+
+    lein auto test
+
+To get an interactive development environment in the frontend run:
 
     lein figwheel
 
-and open your browser at [localhost:3449](http://localhost:3449/).
-This will auto compile and send all changes to the browser without the
-need to reload. After the compilation process is complete, you will
-get a Browser Connected REPL. An easy way to try it is:
 
-    (js/alert "Am I connected?")
+Alternatively you can use something like Cider for emacs:
 
-and you should see an alert in the browser window.
+    M-x cider-jack-in-clojurescript
+
+
+and open your browser at [localhost:3000](http://localhost:3000/).
+
+You should have two REPLs now, one for CLJS and one for CLJ.
 
 To clean all compiled files:
 
@@ -34,9 +39,7 @@ get live reloading, nor a REPL.
 
 ## License
 
-Copyright © 2014 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at your option) any later version.
+Copyright © 2017 Josef Erben
 
 ## Pretty printing tests
 
