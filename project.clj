@@ -9,6 +9,7 @@
   :dependencies [[org.clojure/clojure "1.9.0-alpha17"]
                  [org.clojure/clojurescript "1.9.946"]
                  [org.clojure/core.async  "0.3.443"]
+                 [org.clojure/spec.alpha "0.1.143"]
                  [ring/ring-defaults "0.2.1"]
                  [ring/ring-devel "1.6.3"]
                  [compojure "1.5.1"]
