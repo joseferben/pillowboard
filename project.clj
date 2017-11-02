@@ -12,6 +12,8 @@
                  [org.clojure/spec.alpha "0.1.143"]
                  [ring/ring-defaults "0.2.1"]
                  [ring/ring-devel "1.6.3"]
+                 [ring/ring-json "0.4.0"]
+                 [ring-cors "0.1.11"]
                  [compojure "1.5.1"]
                  [reagent "0.7.0"]
                  [com.taoensso/sente "1.11.0"]

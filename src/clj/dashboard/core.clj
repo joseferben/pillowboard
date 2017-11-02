@@ -9,8 +9,10 @@
             [taoensso.sente.server-adapters.http-kit :refer (get-sch-adapter)]
             [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]
             [ring.middleware.resource :refer [wrap-resource]]
+            [ring.middleware.json :refer [wrap-json-body]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults api-defaults]]
             [ring.middleware.reload :as reload]
+            [ring.middleware.cors :refer [wrap-cors]]
             ))
 
 (timbre/set-level! :trace) 
@@ -57,18 +59,31 @@
     (when (not= old new)
       (infof "Connected uids change: %s" new))))
 
-(defroutes app-routes
-  ;(GET "/" [] "Hello World")
+(defroutes cors-routes
+  (POST "/dashboard" req (str "you posted: " req)))
+
+(defroutes secure-routes
   (GET  "/chsk" req (ring-ajax-get-or-ws-handshake req))
   (POST "/chsk" req (ring-ajax-post                req))
   (route/resources "/")
   (route/not-found "<h1>Page not found</h1>"))
 
-(def handler
-  (-> app-routes
+(def cors-handlers
+  (-> cors-routes
+      (wrap-cors :access-control-allow-methods [:post])
+      (wrap-json-body)
+      (wrap-defaults api-defaults)))
+
+(def secure-handlers
+  (-> secure-routes
       (reload/wrap-reload)
       (wrap-defaults site-defaults)
       ))
+
+(def all-handlers
+  (routes
+   cors-routes
+   secure-routes))
 
 (defn make-renderable
   [data]
@@ -95,6 +110,6 @@
       (recur (inc i)))))
 
 (defn -main [& args]
-  (run-server handler {:port 3000})
+  (run-server all-handlers {:port 3000})
   (start-example-broadcaster!)
   (infof "Web server is running at http://localhost:3000"))
