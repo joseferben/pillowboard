@@ -1,7 +1,7 @@
 (ns dashboard.core
   (:require
-   [clojure.string  :as str]
    [dashboard.grid :as grid :refer [main]]
+   [clojure.string  :as str]
    [cljs.core.async :as async :refer (<! >! put! chan)]
    [taoensso.timbre :as timbre :refer-macros (tracef debugf infof warnf errorf)]
    [taoensso.encore :as encore :refer-macros (have have?)]

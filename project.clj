@@ -25,10 +25,10 @@
 
   :ring {:handler dashboard.core/app}
   :main dashboard.core
-  :source-paths ["src/clj"]
+  :source-paths ["src/clj" "src/cljc"]
   :cljsbuild {:builds
               [{:id "dev"
-                :source-paths ["src/cljs"]
+                :source-paths ["src/cljs" "src/cljc"]
                 :figwheel {:on-jsload "dashboard.core/on-js-reload"
                            :open-urls ["http://localhost:3449/index.html"]}
 
@@ -39,7 +39,7 @@
                            :source-map-timestamp true
                            :preloads [devtools.preload]}}
                {:id "min"
-                :source-paths ["src/cljs"]
+                :source-paths ["src/cljs" "src/cljc"]
                 :compiler {:output-to "resources/public/js/compiled/app.js"
                            :main dashboard.core
                            :optimizations :advanced
