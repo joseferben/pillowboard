@@ -1,5 +1,7 @@
 (ns dashboard.core
-  (:require [compojure.core :refer :all]
+  (:require [dashboard.inflater :as inflater]
+            [dashboard.transformer :as transformer]
+            [compojure.core :refer :all]
             [compojure.route :as route]
             [clojure.core.async :as async  :refer (<! <!! >! >!! put! chan go go-loop)]
             [org.httpkit.server :refer [run-server]]
@@ -71,6 +73,12 @@
                                         ;ring.middleware.params/wrap-params
       ))
 
+(defn make-renderable
+  [data]
+  (-> data
+      (inflater/inflate)
+      (transformer/transform)))
+
 (defn start-example-broadcaster!
   "As an example of server>user async pushes, setup a loop to broadcast an
   event to all connected users every 10 seconds"
@@ -82,7 +90,7 @@
             (doseq [uid uids]
               (chsk-send! uid
                 [:board/state
-                 {:state app-state}]))))]
+                 {:state (make-renderable app-state)}]))))]
 
     (go-loop [i 0]
       (<! (async/timeout 10000))

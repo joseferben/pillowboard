@@ -2,8 +2,6 @@
   (:require
    [clojure.string  :as str]
    [dashboard.grid :as grid :refer [main]]
-   [clj.dashboard.inflater :as inflater]
-   [clj.dashboard.transformer :as transformer]
    [cljs.core.async :as async :refer (<! >! put! chan)]
    [taoensso.timbre :as timbre :refer-macros (tracef debugf infof warnf errorf)]
    [taoensso.encore :as encore :refer-macros (have have?)]
@@ -43,7 +41,7 @@
   (if (empty? @app-state)
     [:h3 "No data here... (TODO: show here how to post data)"]
     [:div.container
-     [grid/main {:state (inflater/inflate (transformer/transform @app-state))}]])])
+     [grid/main {:state @app-state}]])])
 
 (defn init! []
   (stylefy/init)

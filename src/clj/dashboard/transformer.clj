@@ -1,4 +1,4 @@
-(ns clj.dashboard.transformer)
+(ns dashboard.transformer)
 
 (defn- get-keys [data]
   (filter #(not= % :board) (keys data)))
@@ -15,7 +15,6 @@
 
 (defn- key->chart
   [{:keys [content config]} key]
-  (prn key)
   {:name key
    :data (vec (label-data (get content key)))
    :type (get-in config [key :type])})
