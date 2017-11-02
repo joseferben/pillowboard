@@ -2,8 +2,8 @@
   (:require
    [clojure.string  :as str]
    [dashboard.grid :as grid :refer [main]]
-   [dashboard.inflater :as inflater]
-   [dashboard.transformer :as transformer]
+   [clj.dashboard.inflater :as inflater]
+   [clj.dashboard.transformer :as transformer]
    [cljs.core.async :as async :refer (<! >! put! chan)]
    [taoensso.timbre :as timbre :refer-macros (tracef debugf infof warnf errorf)]
    [taoensso.encore :as encore :refer-macros (have have?)]
@@ -35,7 +35,6 @@
 (go (while true
       (let [{ev-msg :event} (<! ch-chsk)]
         (reset! app-state (get (second (second ev-msg)) :state))
-        ;(prn @app-state)
         )))
 
 (defn container []

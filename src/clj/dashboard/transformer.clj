@@ -1,4 +1,4 @@
-(ns dashboard.transformer)
+(ns clj.dashboard.transformer)
 
 (defn- get-keys [data]
   (filter #(not= % :board) (keys data)))

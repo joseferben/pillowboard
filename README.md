@@ -37,3 +37,7 @@ get live reloading, nor a REPL.
 Copyright © 2014 FIXME
 
 Distributed under the Eclipse Public License either version 1.0 or (at your option) any later version.
+
+## Pretty printing tests
+
+Use [this](https://github.com/venantius/ultra) lein plugin to pretty print tests.
