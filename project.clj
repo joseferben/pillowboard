@@ -17,10 +17,10 @@
                  [com.taoensso/timbre "4.7.4"]
                  [stylefy "1.0.1"]
                  [http-kit "2.2.0"]
-                 [pjstadig/humane-test-output "0.8.3"]
                  [cljsjs/recharts "0.22.4-2"]]
   :plugins [[lein-figwheel "0.5.14"]
             [lein-ring "0.9.7"]
+            [lein-auto "0.1.3"]
             [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
 
   :ring {:handler dashboard.core/app}
