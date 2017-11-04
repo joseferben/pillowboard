@@ -14,6 +14,7 @@
                  [ring/ring-devel "1.6.3"]
                  [ring/ring-json "0.4.0"]
                  [ring-cors "0.1.11"]
+                 [cheshire "5.8.0"]
                  [compojure "1.5.1"]
                  [reagent "0.7.0"]
                  [com.taoensso/sente "1.11.0"]

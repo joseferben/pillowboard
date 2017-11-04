@@ -1,15 +1,18 @@
 (ns dashboard.core
   (:require [dashboard.inflater :as inflater]
             [dashboard.transformer :as transformer]
-            [compojure.core :refer :all]
+            [compojure.core :refer [routes defroutes GET POST wrap-routes]]
             [compojure.route :as route]
-            [clojure.core.async :as async  :refer (<! <!! >! >!! put! chan go go-loop)]
+            [compojure.handler :as handler]
+            [clojure.core.async :as async :refer (<! <!! >! >!! put! chan go go-loop)]
+            [clojure.java.io :as io]
             [org.httpkit.server :refer [run-server]]
             [taoensso.sente :as sente] 
             [taoensso.sente.server-adapters.http-kit :refer (get-sch-adapter)]
             [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]
+            [ring.util.response :refer [response content-type]]
             [ring.middleware.resource :refer [wrap-resource]]
-            [ring.middleware.json :refer [wrap-json-body]]
+            [ring.middleware.json :refer [wrap-json-body wrap-json-response]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults api-defaults]]
             [ring.middleware.reload :as reload]
             [ring.middleware.cors :refer [wrap-cors]]
@@ -59,31 +62,43 @@
     (when (not= old new)
       (infof "Connected uids change: %s" new))))
 
-(defroutes cors-routes
-  (POST "/dashboard" req (str "you posted: " req)))
+(defn take-body
+  [body]
+  ;; map to event and forward to event sourcing, return answer
+  )
 
-(defroutes secure-routes
+(defroutes api-routes
+  (POST "/dashboard" {body :body} (response body)))
+
+(defroutes internal-routes
   (GET  "/chsk" req (ring-ajax-get-or-ws-handshake req))
   (POST "/chsk" req (ring-ajax-post                req))
   (route/resources "/")
   (route/not-found "<h1>Page not found</h1>"))
 
-(def cors-handlers
-  (-> cors-routes
-      (wrap-cors :access-control-allow-methods [:post])
-      (wrap-json-body)
-      (wrap-defaults api-defaults)))
+(defroutes external
+  (GET "/api" [] "Api working!"))
+(defroutes internal
+  (GET "/internal" [] "Internal working!"))
 
-(def secure-handlers
-  (-> secure-routes
-      (reload/wrap-reload)
-      (wrap-defaults site-defaults)
-      ))
-
-(def all-handlers
+(def test-app
   (routes
-   cors-routes
-   secure-routes))
+   (-> api-routes
+       (wrap-routes wrap-json-body)
+       (wrap-routes wrap-json-response)
+       (wrap-routes wrap-defaults api-defaults)
+       (wrap-routes wrap-cors :access-control-allow-methods [:post]))
+   (-> internal
+       (wrap-routes wrap-defaults site-defaults))))
+
+(def app
+  (routes
+   (-> internal-routes
+       (wrap-routes wrap-defaults site-defaults))
+   (-> api-routes
+       (wrap-routes wrap-cors :access-control-allow-methods [:post])
+       (wrap-routes wrap-json-body)
+       (wrap-routes wrap-defaults api-defaults))))
 
 (defn make-renderable
   [data]
@@ -110,6 +125,6 @@
       (recur (inc i)))))
 
 (defn -main [& args]
-  (run-server all-handlers {:port 3000})
+  (run-server test-app {:port 3000})
   (start-example-broadcaster!)
   (infof "Web server is running at http://localhost:3000"))
