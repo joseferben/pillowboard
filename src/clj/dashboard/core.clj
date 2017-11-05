@@ -1,7 +1,7 @@
 (ns dashboard.core
-  (:require [dashboard.inflater :as inflater]
+  (:require [dashboard.event :as event]
+            [dashboard.inflater :as inflater]
             [dashboard.transformer :as transformer]
-            [dashboard.event :as event]
             [compojure.core :refer [routes defroutes GET POST wrap-routes]]
             [compojure.route :as route]
             [compojure.handler :as handler]
@@ -63,9 +63,18 @@
     (when (not= old new)
       (infof "Connected uids change: %s" new))))
 
+(defn broadcast-state
+  [state]
+  (let [uids (:any @connected-uids)]
+    (debugf "Broadcasting server>user: %s uids" (count uids))
+    (doseq [uid uids]
+      (chsk-send! uid
+                  [:board/state
+                   {:state state}]))))
+
 (defn handle-post
   [body]
-  (event/store-post! body chsk-send!)
+  (event/store-post! body broadcast-state)
   ;; map to event and forward to event sourcing, return answer
   (response body))
 
@@ -88,7 +97,7 @@
    (-> internal-routes
        (wrap-defaults site-defaults))))
 
-(defn make-renderable
+(defn- make-renderable
   [data]
   (-> data
       (inflater/inflate)
@@ -114,5 +123,5 @@
 
 (defn -main [& args]
   (run-server app {:port 3000})
-  (start-example-broadcaster!)
+  ;(start-example-broadcaster!)
   (infof "Web server is running at http://localhost:3000"))
