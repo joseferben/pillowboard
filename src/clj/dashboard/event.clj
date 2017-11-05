@@ -1,6 +1,7 @@
 (ns dashboard.event
   (:require [dashboard.inflater :as inflater]
             [dashboard.transformer :as transformer]
+            [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]
             [clojure.spec.alpha :as s]))
 
 (s/def ::time integer?)
@@ -41,7 +42,6 @@
 
 (defn- process-events
   ([events]
-   (prn events)
    (process-events events {}))
   ([to-process processed]
    (if (empty? to-process)
@@ -57,6 +57,7 @@
 (defn- store-event!
   [event]
   (swap! events conj event)
+  (tracef "Received event: %s" event)
   (make-renderable (process-events @events)))
 
 (defn store-post!
