@@ -40,12 +40,16 @@
 
 (defn process-event
   [event state]
+  (prn event)
   (->> state
       (process-content event)
       (process-config event)))
 
 (defn process-events
   ([events]
+   (prn events)
    (process-events events {}))
   ([to-process processed]
-   (process-events (rest events) (process-event (first events) processed))))
+   (if (empty? to-process)
+     processed
+     (process-events (rest to-process) (process-event (first to-process) processed)))))
