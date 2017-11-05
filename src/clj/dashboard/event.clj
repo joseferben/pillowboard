@@ -25,17 +25,18 @@
 
 (defn process-data
   [data [time value]]
-  [[(conj (first data) time)]
-   [(conj (second data) value)]])
+  [(conj (or (first data) []) time)
+   (conj (or (second data) []) value)])
 
 (defn process-content
   [{:keys [time label value]} state]
   (-> state
-      (update-in [:content label :data] process-data [time label value])
-      (update-in [:content label :meta :labels] [:time label])))
+      (update-in [:content label :data] process-data [time value])
+      (assoc-in [:content label :meta :labels] [:time label])))
 
 (defn process-config
-  [event state])
+  [{:keys [time label value]} state]
+  (assoc-in state [:config label :type] :line))
 
 (defn process
   [event state]

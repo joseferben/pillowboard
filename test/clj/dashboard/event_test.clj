@@ -6,5 +6,6 @@
 (testing "event"
   (deftest process-empty  
     (let [event {:time 1 :label :foo :value 42}
-          expected {:content {:foo {:data [[1] [42]] :meta {:labels [:time :foo]}}}}]
+          expected {:content {:foo {:data [[1] [42]] :meta {:labels [:time :foo]}}}
+                    :config {:foo {:type :line}}}]
       (is (= expected (sut/process event {}))))))
