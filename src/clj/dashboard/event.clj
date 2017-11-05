@@ -38,7 +38,7 @@
   [{:keys [time label value]} state]
   (assoc-in state [:config label :type] :line))
 
-(defn process
+(defn process-event
   [event state]
   (->> state
       (process-content event)
@@ -48,4 +48,4 @@
   ([events]
    (process-events events {}))
   ([to-process processed]
-   (process-events (rest events) (process (first events) processed))))
+   (process-events (rest events) (process-event (first events) processed))))
