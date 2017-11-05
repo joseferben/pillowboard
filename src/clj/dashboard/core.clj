@@ -76,29 +76,15 @@
   (route/resources "/")
   (route/not-found "<h1>Page not found</h1>"))
 
-(defroutes external
-  (GET "/api" [] "Api working!"))
-(defroutes internal
-  (GET "/internal" [] "Internal working!"))
-
-(def test-app
+(def app
   (routes
    (-> api-routes
        (wrap-routes wrap-json-body)
        (wrap-routes wrap-json-response)
        (wrap-routes wrap-defaults api-defaults)
        (wrap-routes wrap-cors :access-control-allow-methods [:post]))
-   (-> internal
-       (wrap-routes wrap-defaults site-defaults))))
-
-(def app
-  (routes
    (-> internal-routes
-       (wrap-routes wrap-defaults site-defaults))
-   (-> api-routes
-       (wrap-routes wrap-cors :access-control-allow-methods [:post])
-       (wrap-routes wrap-json-body)
-       (wrap-routes wrap-defaults api-defaults))))
+       (wrap-routes wrap-defaults site-defaults))))
 
 (defn make-renderable
   [data]
@@ -125,6 +111,6 @@
       (recur (inc i)))))
 
 (defn -main [& args]
-  (run-server test-app {:port 3000})
+  (run-server app {:port 3000})
   (start-example-broadcaster!)
   (infof "Web server is running at http://localhost:3000"))
