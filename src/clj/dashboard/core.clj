@@ -1,6 +1,7 @@
 (ns dashboard.core
   (:require [dashboard.inflater :as inflater]
             [dashboard.transformer :as transformer]
+            [dashboard.event :as event]
             [compojure.core :refer [routes defroutes GET POST wrap-routes]]
             [compojure.route :as route]
             [compojure.handler :as handler]
@@ -62,13 +63,14 @@
     (when (not= old new)
       (infof "Connected uids change: %s" new))))
 
-(defn take-body
+(defn handle-post
   [body]
+  (event/store-post! body chsk-send!)
   ;; map to event and forward to event sourcing, return answer
-  )
+  (response body))
 
 (defroutes api-routes
-  (POST "/dashboard" {body :body} (response body)))
+  (POST "/dashboard" {body :body} (handle-post body)))
 
 (defroutes internal-routes
   (GET  "/chsk" req (ring-ajax-get-or-ws-handshake req))
