@@ -84,7 +84,7 @@
        (wrap-routes wrap-defaults api-defaults)
        (wrap-routes wrap-cors :access-control-allow-methods [:post]))
    (-> internal-routes
-       (wrap-routes wrap-defaults site-defaults))))
+       (wrap-defaults site-defaults))))
 
 (defn make-renderable
   [data]
