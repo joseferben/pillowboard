@@ -16,7 +16,7 @@
   [post]
   {:time (System/currentTimeMillis)
    :label (keyword (first (keys post)))
-   :value (first (vals post))}) 
+   :value (read-string (first (vals post)))}) 
 
 (defn- process-data
   [data [time value]]
@@ -35,7 +35,6 @@
 
 (defn- process-event
   [event state]
-  (prn event)
   (->> state
       (process-content event)
       (process-config event)))
@@ -57,7 +56,7 @@
 (defn- store-event!
   [event]
   (swap! events conj event)
-  (tracef "Received event: %s" event)
+  (tracef "Stored event: %s" event)
   (make-renderable (process-events @events)))
 
 (defn store-post!

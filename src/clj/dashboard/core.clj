@@ -15,7 +15,7 @@
             [ring.middleware.resource :refer [wrap-resource]]
             [ring.middleware.json :refer [wrap-json-body wrap-json-response]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults api-defaults]]
-            [ring.middleware.reload :as reload]
+            [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.cors :refer [wrap-cors]]
             ))
 
@@ -71,14 +71,15 @@
   (route/not-found "<h1>Page not found</h1>"))
 
 (def app
-  (routes
-   (-> api-routes
-       (wrap-routes wrap-json-body)
-       (wrap-routes wrap-json-response)
-       (wrap-routes wrap-defaults api-defaults)
-       (wrap-routes wrap-cors :access-control-allow-methods [:post]))
-   (-> internal-routes
-       (wrap-defaults site-defaults))))
+  (wrap-reload
+   (routes
+    (-> api-routes
+        (wrap-routes wrap-json-body)
+        (wrap-routes wrap-json-response)
+        (wrap-routes wrap-defaults api-defaults)
+        (wrap-routes wrap-cors :access-control-allow-methods [:post]))
+    (-> internal-routes
+        (wrap-defaults site-defaults)))))
 
 (defn -main [& args]
   (run-server app {:port 3000})
