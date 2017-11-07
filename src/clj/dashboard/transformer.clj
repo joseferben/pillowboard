@@ -3,7 +3,7 @@
    [clojure.spec.alpha :as s]))
 
 (s/def ::chart-type #{:line :area :scatter})
-(s/def ::chart-data (s/map-of keyword? (s/or :integer integer? :float float?)))
+(s/def ::chart-data (s/map-of keyword? (s/or :integer integer? :float float? :date string?)))
 (s/def ::name keyword?)
 (s/def ::data (s/coll-of ::chart-data ::kind vector?))
 (s/def ::type ::chart-type)

@@ -4,6 +4,8 @@
             [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]
             [clojure.spec.alpha :as s]))
 
+(timbre/set-level! :trace) 
+
 (s/def ::time integer?)
 (s/def ::label keyword?)
 (s/def ::value number?)
@@ -14,7 +16,8 @@
 
 (defn- post->event
   [post]
-  {:time (System/currentTimeMillis)
+  (debugf "Received raw post: %s" post)
+  {:time (or (post :time) (System/currentTimeMillis))
    :label (keyword (first (keys post)))
    :value (read-string (first (vals post)))}) 
 
@@ -23,11 +26,15 @@
   [(conj (or (first data) []) time)
    (conj (or (second data) []) value)])
 
+(defn- epoch->date
+  [millis]
+  (str (java.util.Date. millis)))
+
 (defn- process-content
   [{:keys [time label value]} state]
   (-> state
-      (update-in [:content label :data] process-data [time value])
-      (assoc-in [:content label :meta :labels] [:time label])))
+      (update-in [:content label :data] process-data [(epoch->date time) value])
+      (assoc-in [:content label :meta :labels] [:name label])))
 
 (defn- process-config
   [{:keys [time label value]} state]

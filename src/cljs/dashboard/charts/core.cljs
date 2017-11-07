@@ -49,7 +49,7 @@
                           :margin {:top 0 :right 0
                                    :bottom 0 :left -40}
                           :data (transform data)}
-           [:> x-axis {:data-key :time}]
+           [:> x-axis {"dataKey" :name}]
            [:> y-axis]
            [:> cartesian-grid {"strokeDasharray" "3 3"}]
            [:> tooltip]
@@ -82,7 +82,7 @@
                           :margin {:top 0 :right 0
                                    :bottom 0 :left -40}
                           :data (transform data)}
-           [:> x-axis {:data-key :time}]
+           [:> x-axis {"dataKey" :time}]
            [:> y-axis]
            [:> cartesian-grid {"strokeDasharray" "3 3"}]
            [:> tooltip]

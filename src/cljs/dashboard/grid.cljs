@@ -2,6 +2,7 @@
   (:require
    [dashboard.styles.core :as styles]
    [dashboard.charts.core :as charts]
+   [taoensso.timbre :as timbre :refer-macros (tracef debugf infof warnf errorf)]
    [stylefy.core :as stylefy :refer [use-style]]))
 
 (defmulti chart-type (fn [chart] (:type chart)))
@@ -37,5 +38,6 @@
 
 (defn main
   [{state :state}]
+  (debugf "Rendering state: & %s" state)
   [:div.grid (use-style (merge styles/grid-wrapper styles/component-style))
    (render-charts (state :charts))])
