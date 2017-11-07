@@ -17,7 +17,7 @@
 
 (defonce app-state (atom {}))
 
-(prn "ClojureScript appears to have loaded correctly.")
+(infof "ClojureScript appears to have loaded correctly.")
 
 (let [{:keys [chsk ch-recv send-fn state]}
       (sente/make-channel-socket-client! "/chsk" ; Note the same path as before
@@ -29,6 +29,12 @@
   (def chsk-send! send-fn) ; ChannelSocket's send API fn
   (def chsk-state state)   ; Watchable, read-only atom
   )
+
+(add-watch chsk-state :state
+           (fn [_ _ old new]
+             (infof "State changed from %s to %s" old new)
+             (if (and (:open? new) (not= (:open? old)))
+               (chsk-send! [:board/req-init-state {}] 4000))))
 
 (defn container []
   "Injects app-state into dashboard, enables re-render"
@@ -43,11 +49,25 @@
   (reagent/render-component [container]
                           (. js/document (getElementById "app"))))
 
+(defmulti handle-event 
+  (fn [event]
+    (first event)))
+
+(defmethod handle-event :chsk/handshake
+  [event]
+  (chsk-send! [:board/req-init-state {}] 4000))
+
+(defmethod handle-event :chsk/recv
+  [event]
+  (reset! app-state (get (second (second event)) :state)))
+
+(defmethod handle-event :default
+  [event]
+  (infof "No handler for event found: %s" event))
+
 (init!)
 
 (go (while true
       (let [{ev-msg :event} (<! ch-chsk)]
-        (tracef "Reiceved event: %s" ev-msg)
-        (if (= (first ev-msg) :chsk/handshake)
-          (chsk-send! [:board/req-init-state {}] 4000)
-          (reset! app-state (get (second (second ev-msg)) :state))))))
+        (infof "Reiceved event: %s" ev-msg)
+        (handle-event ev-msg))))
