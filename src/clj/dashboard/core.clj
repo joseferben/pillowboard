@@ -27,6 +27,7 @@
 
       chsk-server
       (sente/make-channel-socket-server!
+       ;; TODO replace custom id with sensible session based id generation
        (get-sch-adapter) {:packer packer :user-id-fn (fn [req] "some-custom-id-42")})
 
       {:keys [ch-recv send-fn connected-uids

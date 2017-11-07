@@ -14,6 +14,10 @@
 ;; atom holding all the state as events
 (def events (atom []))
 
+(defn epoch->date
+  [millis]
+  (str (java.util.Date. millis)))
+
 (defn- post->event
   [post]
   (debugf "Received raw post: %s" post)
@@ -26,15 +30,12 @@
   [(conj (or (first data) []) time)
    (conj (or (second data) []) value)])
 
-(defn- epoch->date
-  [millis]
-  (str (java.util.Date. millis)))
 
 (defn- process-content
   [{:keys [time label value]} state]
   (-> state
       (update-in [:content label :data] process-data [(epoch->date time) value])
-      (assoc-in [:content label :meta :labels] [:name label])))
+      (assoc-in [:content label :meta :labels] [:time label])))
 
 (defn- process-config
   [{:keys [time label value]} state]
