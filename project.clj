@@ -1,6 +1,6 @@
-(defproject dashboard "0.1.0-SNAPSHOT"
-  :description "FIXME: write this!"
-  :url "http://example.com/FIXME"
+(defproject dashboard "0.0.2"
+  :description "Zero config dashboard that makes sense of your data."
+  :url "http://www.200ok.ch"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :min-lein-version "2.7.1"
