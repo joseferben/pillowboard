@@ -10,15 +10,10 @@
                                   [0 1 0 0 2 2 3 0 2 1]
                                   [0 1 1 2 2 3 2 1 2 4]]
                            :meta {:labels [:time :pull-requests :bugs]}}}
- :config {:commits {:type :line 
-                    :data :commits
-                    :x-axis :time}
-          :sprint {:type :area 
-                   :data :sprint}
-          :stability {:type :scatter
-                      :data :stability
-                      :x-axis :incidents}
+ :config {:commits {:type :line}
+          :sprint {:type :area}
+          :stability {:type :scatter}
           :pull-requests {:type :line
-                          :data :pull-requests
-                          :x-axis :time}
+                          :colors ["#f44147" "#41f458"]}
           :board {:width 3}}}
+        

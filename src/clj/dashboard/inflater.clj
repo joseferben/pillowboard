@@ -17,6 +17,7 @@
 (s/def ::dashboard-data (s/keys :req-un [::content ::config]))
 
 (def static-default-config {:board {:width 3}})
+(def default-colors ["#FF5733" "#33CAFF" "#7D33FF"])
   
 (defn- get-keys [data]
   (filter #(not= % :board) (keys data)))
@@ -24,19 +25,6 @@
 (defn- add-default-data
   [item k]
   (assoc item :data (or (item :data) k)))
-
-(defn- extract-x-axis
-  [item data]
-  (let [labels (get-in data [:content (item :data) :meta :labels])]
-  (if (contains? labels :time)
-    :time
-    (first labels))))
-
-(defn- add-default-axis
-  [data item k]
-  (if (= (item :type) :area)
-    item
-    (assoc item :x-axis (or (item :x-axis) (extract-x-axis item data)))))
 
 (defn- add-default
   [config f]
@@ -48,10 +36,43 @@
   [config defaults]
   (merge-with into defaults config))
 
-(defn inflate [data]
+(defn inflate_old [data]
   (-> data
       (get :config)
       (add-default add-default-data)
-      (add-default (partial add-default-axis data))
+      ;; TODO always just take first value as x-axis?
+      ;; Change order to respect x-axis settings
+      ;;(add-default (partial add-default-axis data))
       (add-static-defaults static-default-config)
       (#(assoc data :config %))))
+
+(defn- get-colors
+  [key content]
+  (-> content
+      (get-in [key :data])
+      (count)
+      (dec)
+      (take default-colors)))
+
+(defn- inflate-dashboard-config
+  [config]
+  (add-static-defaults config static-default-config))
+
+(defn- process-config
+  [key to-process content]
+  (update to-process key
+             (fn [old] (merge old {:colors (get-colors key content)}))))
+
+(defn- inflate-chart-configs
+  ([{to-process :config content :content}]
+     (inflate-chart-configs (keys to-process) to-process content))
+  ([keys-to-process processing content]
+   (if (empty? keys-to-process)
+     processing
+     (inflate-chart-configs (rest keys-to-process)
+                            (process-config (first keys-to-process) processing content)
+                            content))))
+
+(defn inflate [data]
+  (-> (update data :config inflate-dashboard-config)
+      (merge (inflate-chart-configs data))))
