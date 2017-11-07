@@ -1,5 +1,5 @@
 (ns dashboard.core
-  (:require [dashboard.event :as event]
+  (:require [dashboard.event :as event :refer [get-state!]]
             [dashboard.inflater :as inflater]
             [dashboard.transformer :as transformer]
             [compojure.core :refer [routes defroutes GET POST wrap-routes]]
@@ -54,6 +54,11 @@
       (chsk-send! uid
                   [:board/state
                    {:state state}]))))
+
+(go (while true
+      (let [{ev-msg :event} (<! ch-chsk)]
+        (prn ev-msg)
+        (broadcast-state (event/get-state!)))))
 
 (defn handle-post
   [body]

@@ -22,8 +22,8 @@
 (defn- wrapper [type key]
   [:> (types type) {:type "monotone" "dataKey" key}])
   
-(defn- filter-time [keys]
-  (filter #(not= :time %) keys))
+(defn- filter-x-axis [keys]
+  (filter #(not= :x-axis %) keys))
 
 (defn- dimension-keys
   [data]
@@ -31,7 +31,7 @@
       (transform)
       (first)
       (keys)
-      (filter-time)))
+      (filter-x-axis)))
 
 (defn- dimensions
   [data]
@@ -50,7 +50,7 @@
                                    :bottom 0 :left -40}
                           :data (transform data)}
            ;; TODO read x-axis from settings
-           [:> x-axis {"dataKey" :time}]
+           [:> x-axis {"dataKey" :x-axis}]
            [:> y-axis]
            [:> cartesian-grid {"strokeDasharray" "3 3"}]
            [:> tooltip]

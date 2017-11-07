@@ -30,12 +30,11 @@
   [(conj (or (first data) []) time)
    (conj (or (second data) []) value)])
 
-
 (defn- process-content
   [{:keys [time label value]} state]
   (-> state
       (update-in [:content label :data] process-data [(epoch->date time) value])
-      (assoc-in [:content label :meta :labels] [:time label])))
+      (assoc-in [:content label :meta :labels] [:x-axis label])))
 
 (defn- process-config
   [{:keys [time label value]} state]
@@ -73,3 +72,7 @@
     (if (s/valid? ::event event)
       (broadcast-state (store-event! event))
       (throw (IllegalArgumentException. (str "Tried to store malformed event: " event))))))
+
+(defn get-state!
+  []
+  (make-renderable (process-events @events)))

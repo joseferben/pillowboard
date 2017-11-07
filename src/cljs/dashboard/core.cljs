@@ -2,7 +2,7 @@
   (:require
    [dashboard.grid :as grid :refer [main]]
    [clojure.string  :as str]
-   [cljs.core.async :as async :refer (<! >! put! chan)]
+   [cljs.core.async :as async :refer (<! >! put! chan timeout)]
    [taoensso.timbre :as timbre :refer-macros (tracef debugf infof warnf errorf)]
    [taoensso.encore :as encore :refer-macros (have have?)]
    [taoensso.sente  :as sente :refer (cb-success?)] 
@@ -30,11 +30,6 @@
   (def chsk-state state)   ; Watchable, read-only atom
   )
 
-(go (while true
-      (let [{ev-msg :event} (<! ch-chsk)]
-        (reset! app-state (get (second (second ev-msg)) :state))
-        )))
-
 (defn container []
   "Injects app-state into dashboard, enables re-render"
   [:div.top-container
@@ -50,8 +45,9 @@
 
 (init!)
 
-(defn on-js-reload []
-  ;; optionally touch your app-state to force rerendering depending on
-  ;; your application
-   ;;(swap! app-state update-in [:__figwheel_counter] inc)
-)
+(go (while true
+      (let [{ev-msg :event} (<! ch-chsk)]
+        (tracef "Reiceved event: %s" ev-msg)
+        (if (= (first ev-msg) :chsk/handshake)
+          (chsk-send! [:board/req-init-state {}] 4000)
+          (reset! app-state (get (second (second ev-msg)) :state))))))
