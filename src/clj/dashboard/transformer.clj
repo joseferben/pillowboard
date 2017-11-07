@@ -26,9 +26,9 @@
 
 (defn- key->chart
   [{:keys [content config]} key]
-  {:name key
-   :data (vec (label-data (get content key)))
-   :type (get-in config [key :type])})
+  (-> {:name key
+       :data (vec (label-data (get content key)))}
+      (merge (dissoc (get config key) :data :name))))
 
 (defn- extract-charts
   [data]
