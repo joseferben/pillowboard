@@ -14,7 +14,6 @@
 (s/def ::chart-entry (s/keys :req-un [::type ::chart-data ::x-axis]))
 (s/def ::config (s/map-of keyword? ::chart-entry))
 
-
 (s/def ::dashboard-data (s/keys :req-un [::content ::config]))
 
 (def static-default-config {:board {:width 3}})

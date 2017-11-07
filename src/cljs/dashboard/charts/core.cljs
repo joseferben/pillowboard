@@ -19,25 +19,22 @@
 (defn- transform [data]
   (data :data))
 
-(defn- wrapper [type key]
-  [:> (types type) {:type "monotone" "dataKey" key}])
+(defn- wrapper [type colors idx key]
+  [:> (types type) {:type "monotone" "dataKey" key "stroke" (nth colors idx)}])
   
-(defn- filter-x-axis [keys]
-  (filter #(not= :x-axis %) keys))
-
 (defn- dimension-keys
   [data]
   (-> data
       (transform)
       (first)
       (keys)
-      (filter-x-axis)))
+      (rest)))
 
 (defn- dimensions
   [data]
   (-> data
       (dimension-keys)
-      (#(map (partial wrapper (data :type)) %))
+      (#(map-indexed (partial wrapper (data :type) (data :colors)) %))
       (vec)))
 
 (defn line-chart-comp

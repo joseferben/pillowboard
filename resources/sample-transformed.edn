@@ -14,18 +14,18 @@
    :type :line}
   {:name :sprint,
    :data
-   [{:accepted 0.1, :in-progress 0.0, :donex 0.0}
-    {:accepted 0.2, :in-progress 0.0, :donex 0.0}
-    {:accepted 0.3, :in-progress 0.0, :donex 0.0}
-    {:accepted 0.5, :in-progress 0.2, :donex 0.0}
-    {:accepted 0.6, :in-progress 0.2, :donex 0.1}
-    {:accepted 0.6, :in-progress 0.3, :donex 0.4}
-    {:accepted 0.6, :in-progress 0.3, :donex 0.3}
-    {:accepted 0.8, :in-progress 0.4, :donex 0.5}
-    {:accepted 0.9, :in-progress 0.5, :donex 0.6}
-    {:accepted 1.0, :in-progress 0.9, :donex 0.9}
-    {:accepted 1.0, :in-progress 0.9, :donex 1.0}
-    {:accepted 1.0, :in-progress 1.0, :donex 1.0}],
+   [{:accepted 0.1, :in-progress 0.0, :done 0.0}
+    {:accepted 0.2, :in-progress 0.0, :done 0.0}
+    {:accepted 0.3, :in-progress 0.0, :done 0.0}
+    {:accepted 0.5, :in-progress 0.2, :done 0.0}
+    {:accepted 0.6, :in-progress 0.2, :done 0.1}
+    {:accepted 0.6, :in-progress 0.3, :done 0.4}
+    {:accepted 0.6, :in-progress 0.3, :done 0.3}
+    {:accepted 0.8, :in-progress 0.4, :done 0.5}
+    {:accepted 0.9, :in-progress 0.5, :done 0.6}
+    {:accepted 1.0, :in-progress 0.9, :done 0.9}
+    {:accepted 1.0, :in-progress 0.9, :done 1.0}
+    {:accepted 1.0, :in-progress 1.0, :done 1.0}],
    :type :area}
   {:name :stability,
    :data
@@ -53,4 +53,5 @@
     {:time 7, :pull-requests 0, :bugs 1}
     {:time 8, :pull-requests 2, :bugs 2}
     {:time 9, :pull-requests 1, :bugs 4}],
-   :type :line}]}
+   :type :line
+   :colors ["#f44147" "#41f458"]}]}
