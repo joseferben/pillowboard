@@ -14,4 +14,4 @@
   (deftest inflate
     (let [actual (sut/inflate (edn/read-string (slurp "resources/sample.edn")))
           expected (edn/read-string (slurp "resources/sample-inflated.edn"))]
-    (is (= actual expected)))))
+    (is (= expected actual)))))

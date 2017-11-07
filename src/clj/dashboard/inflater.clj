@@ -56,7 +56,7 @@
 
 (defn- inflate-dashboard-config
   [config]
-  (add-static-defaults config static-default-config))
+  (merge config static-default-config))
 
 (defn- process-config
   [key to-process content]
@@ -74,5 +74,5 @@
                             content))))
 
 (defn inflate [data]
-  (-> (update data :config inflate-dashboard-config)
-      (merge (inflate-chart-configs data))))
+  (->> (update data :config inflate-dashboard-config)
+      (#(merge-with into % {:config (inflate-chart-configs data)}))))
