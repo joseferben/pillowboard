@@ -9,7 +9,8 @@
 (s/def ::time integer?)
 (s/def ::label keyword?)
 (s/def ::value number?)
-(s/def ::event (s/keys :req-un [::time ::label ::value]))
+(s/def ::type #{:time-point})
+(s/def ::event (s/keys :req-un [::type ::time ::label ::value]))
 
 ;; atom holding all the state as events
 (def events (atom []))
