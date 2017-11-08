@@ -3,7 +3,7 @@
             [clojure.edn :as edn]
             [clojure.test :refer [deftest testing is]]))
 
-(testing "event"
+(comment (testing "event"
   (deftest fold-event-empty-state  
     (let [fun #'dashboard.event/fold-event
           event {:time 1 :label :foo :value 42}
@@ -33,4 +33,4 @@
                               :foo {:data [[(to-date 1) (to-date 2)] [42 24]] :meta {:labels [:x-axis :foo]}}}
                     :config {:bar {:type :line}
                              :foo {:type :line}}}]
-      (is (= expected (fun events))))))
+      (is (= expected (fun events)))))))
