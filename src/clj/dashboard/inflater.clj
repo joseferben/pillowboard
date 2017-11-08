@@ -47,3 +47,8 @@
 
 (defn inflate [data]
   (update data :config (partial inflate-config (data :content))))
+
+;; TODO hook in to create config for dashboard types
+(defn- process-config
+  [{:keys [time label value]} state]
+  (assoc-in state [:config label :type] :line))

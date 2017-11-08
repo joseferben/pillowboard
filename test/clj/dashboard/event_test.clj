@@ -4,15 +4,15 @@
             [clojure.test :refer [deftest testing is]]))
 
 (testing "event"
-  (deftest process-event-empty-state  
-    (let [fun #'dashboard.event/process-event
+  (deftest fold-event-empty-state  
+    (let [fun #'dashboard.event/fold-event
           event {:time 1 :label :foo :value 42}
           expected {:content {:foo {:data [[(to-date 1)] [42]] :meta {:labels [:x-axis :foo]}}}
                     :config {:foo {:type :line}}}]
       (is (= expected (fun event {})))))
 
-  (deftest process-event-on-state 
-    (let [fun #'dashboard.event/process-event
+  (deftest fold-event-on-state 
+    (let [fun #'dashboard.event/fold-event
           event {:time 1 :label :foo :value 42}
           expected {:content {:what {:data [[(to-date 1)] [2]] :meta {:labels [:x-axis :ever]}}
                               :foo {:data [[(to-date 1)] [42]] :meta {:labels [:x-axis :foo]}}}
@@ -24,8 +24,8 @@
                                     :meta {:labels [:x-axis :ever]}}}
                    :config {:what {:type :line}}})))))
 
-  (deftest process-events
-    (let [fun #'dashboard.event/process-events
+  (deftest fold-events
+    (let [fun #'dashboard.event/fold-events
           events [{:time 1 :label :foo :value 42}
                   {:time 2 :label :bar :value 7}
                   {:time 2 :label :foo :value 24}]

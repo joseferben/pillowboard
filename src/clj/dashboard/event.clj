@@ -21,7 +21,8 @@
 (defn- post->event
   [post]
   (debugf "Received raw post: %s" post)
-  {:time (or (post :time) (System/currentTimeMillis))
+  {:type :time-point
+   :time (or (post :time) (System/currentTimeMillis))
    :label (keyword (first (keys post)))
    :value (read-string (first (vals post)))}) 
 
@@ -30,29 +31,41 @@
   [(conj (or (first data) []) time)
    (conj (or (second data) []) value)])
 
-(defn- process-content
-  [{:keys [time label value]} state]
-  (-> state
-      (update-in [:content label :data] process-data [(epoch->date time) value])
-      (assoc-in [:content label :meta :labels] [:x-axis label])))
+(defn- get-data-key
+  ([label folded]
+   (get-data-key label folded 0))
+   ([label folded counter]
+  (let [data (get-in folded [:content label :data])]
+        (if (or (nil? data) (< (count data) 3))
+          label
+          (get-data-key (keyword (str label counter)) folded (inc counter))))))
 
-(defn- process-config
-  [{:keys [time label value]} state]
-  (assoc-in state [:config label :type] :line))
+(defn- conj-meta-data [old time label value]
+  )
 
-(defn- process-event
-  [event state]
-  (->> state
-      (process-content event)
-      (process-config event)))
+(defn- conj-time-data [old-data time label value]
+  (merge-with into {}
+              ))
+  
+(defmulti fold-event (fn [event _] (event :type)))
 
-(defn- process-events
+(defmethod fold-event :time-point [{:keys [time label value]} folded]
+  (let [data-key (get-data-key label folded)]
+    (merge-with into
+    (update-in folded [:content data-key :data] conj-time-data {:time time :value value})
+    (update-in folded [:content data-key :meta] conj-meta-data time label value))))
+
+  ;;(-> folded
+  ;;    (update-in [:content label :data] process-data [(epoch->date time) value])
+  ;;    (assoc-in [:content label :meta :labels] [:x-axis label])))
+
+(defn- fold-events
   ([events]
-   (process-events events {}))
+   (fold-events events {}))
   ([to-process processed]
    (if (empty? to-process)
      processed
-     (process-events (rest to-process) (process-event (first to-process) processed)))))
+     (fold-events (rest to-process) (fold-event (first to-process) processed)))))
 
 (defn- make-renderable
   [data]
@@ -64,7 +77,7 @@
   [event]
   (swap! events conj event)
   (tracef "Stored event: %s" event)
-  (make-renderable (process-events @events)))
+  (make-renderable (fold-events @events)))
 
 (defn store-post!
   [post broadcast-state]
@@ -75,4 +88,4 @@
 
 (defn get-state!
   []
-  (make-renderable (process-events @events)))
+  (make-renderable (fold-events @events)))
