@@ -19,60 +19,31 @@
 (def static-default-config {:board {:width 3}})
 (def default-colors ["#FF5733" "#33CAFF" "#7D33FF"])
   
-(defn- get-keys [data]
-  (filter #(not= % :board) (keys data)))
-
-(defn- add-default-data
-  [item k]
-  (assoc item :data (or (item :data) k)))
-
-(defn- add-default
-  [config f]
-  (reduce (fn [acc k] (assoc acc k (f (get config k) k)))
-          {}
-          (get-keys config)))
-
-(defn- add-static-defaults
-  [config defaults]
-  (merge-with into defaults config))
-
-(defn inflate_old [data]
-  (-> data
-      (get :config)
-      (add-default add-default-data)
-      ;; TODO always just take first value as x-axis?
-      ;; Change order to respect x-axis settings
-      ;;(add-default (partial add-default-axis data))
-      (add-static-defaults static-default-config)
-      (#(assoc data :config %))))
-
 (defn- get-colors
   [key content]
   (-> content
       (get-in [key :data])
-      (count)
-      (dec)
-      (take default-colors)))
+      count
+      dec
+      (take default-colors)
+      vec))
 
-(defn- inflate-dashboard-config
-  [config]
-  (merge config static-default-config))
+(defn- extract-config
+  "Extracting config from chart data"
+  [key content]
+  {:colors (get-colors key content)})
 
-(defn- process-config
-  [key to-process content]
-  (update to-process key
-             (fn [old] (merge old {:colors (get-colors key content)}))))
+(defn- derive-config [content acc key]
+  (merge acc {key (extract-config key content)}))
 
-(defn- inflate-chart-configs
-  ([{to-process :config content :content}]
-     (inflate-chart-configs (keys to-process) to-process content))
-  ([keys-to-process processing content]
-   (if (empty? keys-to-process)
-     processing
-     (inflate-chart-configs (rest keys-to-process)
-                            (process-config (first keys-to-process) processing content)
-                            content))))
+(defn- extract-configs [content]
+  (reduce (partial derive-config content) {} (keys content)))
+
+(defn- inflate-config [content config]
+  (merge-with into
+              config
+              (extract-configs content)
+              static-default-config))
 
 (defn inflate [data]
-  (->> (update data :config inflate-dashboard-config)
-      (#(merge-with into % {:config (inflate-chart-configs data)}))))
+  (update data :config (partial inflate-config (data :content))))
