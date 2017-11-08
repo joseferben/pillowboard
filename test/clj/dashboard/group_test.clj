@@ -9,7 +9,7 @@
           expected (edn/read-string (slurp "resources/grouped.edn"))]
      (is (= expected actual))))
   (deftest merge
-   (let [actual (sut/merge (edn/read-string (slurp "resources/grouped.edn")))
+   (let [actual (sut/join-data (edn/read-string (slurp "resources/grouped.edn")))
           expected (edn/read-string (slurp "resources/merged.edn"))]
       (is (= expected actual)))))
 
