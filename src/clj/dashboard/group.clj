@@ -1,5 +1,8 @@
 (ns dashboard.group)
 
 (defn group
-  [folded]
-  )
+  [folded])
+
+(defn merge
+  [grouped])
+
