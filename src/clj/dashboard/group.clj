@@ -1,63 +1,42 @@
 (ns dashboard.group)
 
-(def max-dimensions-per-graph 3)
+;; invariants that must hold true
+(def max-metrics-per-group 3)
 
-(defn- determine-chart-type
-  [_]
-  ;; TODO add logic to determine dynamically
-  :line)
+(defn- has-space-left? [_ group]
+  (< (group :count) max-metrics-per-group))
 
-(defn- determine-data-type [values]
+(defn- same-category? [metric group]
+  (= (metric :category) (group :category)))
+
+(defn- determine-sub-category [values]
   (cond
     (and (<= 0 (apply min values)) (>= 1 (apply max values))) :ratio
     :else :absolute))
-  
-(defn- is-compatible?
-  "Add additional compatibility checks here"
-  [dimension group]
-  (let [dimension-points (get-in dimension [:data 1])
-        group-points (get-in group [:data 1])]
-    (= (determine-data-type dimension-points)
-       (determine-data-type group-points))))
 
-(defn- create-id-if-nil [grouped id]
-  (if-not (nil? id)
-    id
-    (->> grouped
-         count
-         (str "group")
-         keyword)))
+(defn- same-sub-category? [metric group]
+  (-> metric
+      :data
+      second
+      determine-sub-category
+      (= (group :sub-category))))
 
-(defn- group-id [grouped dimension]
-  (->> grouped
-       (filter (fn [[_ v]] (> max-dimensions-per-graph (count v))))
-       (filter (fn [[_ v]] (is-compatible? (first v) dimension)))
-       keys
-       first
-       (create-id-if-nil grouped)))
+(def invariants [has-space-left? same-category? same-sub-category?])
 
-(defn- group-dimension
-  [grouped dimension]
-  (let [id (group-id grouped dimension)]
-    (merge-with into grouped {id [dimension]})))
+(defn- is-compatible? [metric group]
+  (every? (map #(apply % metric group) invariants)))
 
-(defn group
-  [folded]
-  (reduce group-dimension {} folded))
+(defn- create-group [metric]
+  {:category (metric :category)
+   :sub-category (determine-sub-category (second (metric :data)))
+   :count 1})
 
-(defn- tupelize
-  [dimension]
-  (let [data (dimension :data)
-        label (dimension :label)]
-    (apply mapv vector
-           (conj data
-                 (take (count (first data)) (repeat (dimension :label)))))))
+(defn- add-metric [metric grouped]
+  )
 
-(defn- join-group
-  [grouped key]
-  (map tupelize (get grouped key)))
-
-(defn join-data
-  [grouped]
-  (map (partial join-group grouped) (keys grouped)))
-
+(defn group [folded]
+  (loop [grouped []
+         to-group folded]
+    (if (empty? to-group)
+      grouped
+      (recur (add-metric (first to-group) grouped) (rest to-group)))))
