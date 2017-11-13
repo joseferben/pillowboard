@@ -19,54 +19,68 @@
   [millis]
   (str (java.util.Date. millis)))
 
-(defn- post->event
-  [post]
-  (debugf "Received raw post: %s" post)
-  {:type :time-point
-   :time (or (post :time) (System/currentTimeMillis))
-   :label (keyword (first (keys post)))
-   :value (read-string (first (vals post)))}) 
+(defn- conj-metrics [metrics [time value]]
+  (update metrics :data
+          (fn [old]
+            [(conj (first old) time)
+             (conj (second old) value)])))
 
-(defn- process-data
-  [data [time value]]
-  [(conj (or (first data) []) time)
-   (conj (or (second data) []) value)])
+(defn- get-idx [state name]
+  (loop [idx 0
+         state state]
+    (cond
+      (empty? state) -1
+      (= name ((first state) :name)) idx
+      :else (recur (inc idx) (rest state)))))
 
-(defn- get-data-key
-  ([label folded]
-   (get-data-key label folded 0))
-   ([label folded counter]
-  (let [data (get-in folded [:content label :data])]
-        (if (or (nil? data) (< (count data) 3))
-          label
-          (get-data-key (keyword (str label counter)) folded (inc counter))))))
+(defprotocol Event
+  (fold-event [x state]))
 
-(defn- conj-meta-data [old time label value]
-  )
+(defrecord TimeSeriesEvent [name time value]
+  Event
+  (fold-event [x state]
+    (let [idx (get-idx state name)]
+      (if (= idx -1)
+        (conj state {:category :timeseries
+                     :name name
+                     :data [[time] [value]]})
+        (update state idx conj-metrics [time value])))))
 
-(defn- conj-time-data [old-data time label value]
-  (merge-with into {}
-              ))
-  
-(defmulti fold-event (fn [event _] (event :type)))
+(defrecord GaugeEvent [name value]
+  Event
+  (fold-event [x state]
+    (let [idx (get-idx state name)]
+      (if (= idx -1)
+        (conj state {:category :gauge
+                     :name name
+                     :data value})
+        (assoc-in state [idx :data] value)))))
 
-(defmethod fold-event :time-point [{:keys [time label value]} folded]
-  (let [data-key (get-data-key label folded)]
-    (merge-with into
-    (update-in folded [:content data-key :data] conj-time-data {:time time :value value})
-    (update-in folded [:content data-key :meta] conj-meta-data time label value))))
+(defn- extract-name [post]
+  (first (filter #(= % :type) (keys post))))
 
-  ;;(-> folded
-  ;;    (update-in [:content label :data] process-data [(epoch->date time) value])
-  ;;    (assoc-in [:content label :meta :labels] [:x-axis label])))
+(defmulti post->event (fn [post] (post :type)))
+
+(defmethod post->event :gauge [post]
+  (debugf "Received raw post of type gauge: %s" post)
+  (let [name (extract-name post)
+        value (read-string (get post name))]
+    (GaugeEvent. name value)))
+
+(defmethod post->event :default [post]
+  (debugf "Received raw post of type timeseries: %s" post)
+  (let [name (extract-name post)
+        value (read-string (get post name))
+        time (or (post :time) (System/currentTimeMillis))]
+    (TimeSeriesEvent. name time value)))
 
 (defn- fold-events
-  ([events]
-   (fold-events events {}))
-  ([to-process processed]
-   (if (empty? to-process)
-     processed
-     (fold-events (rest to-process) (fold-event (first to-process) processed)))))
+  [events]
+  (loop [to-process events
+         processed []]
+    (if (empty? to-process)
+      processed
+      (recur (rest to-process) (fold-event (first to-process) processed)))))
 
 (defn- make-renderable
   [data]
@@ -83,9 +97,7 @@
 (defn store-post!
   [post broadcast-state]
   (let [event (post->event post)]
-    (if (s/valid? ::event event)
-      (broadcast-state (store-event! event))
-      (throw (IllegalArgumentException. (str "Tried to store malformed event: " event))))))
+      (broadcast-state (store-event! event))))
 
 (defn get-state!
   []

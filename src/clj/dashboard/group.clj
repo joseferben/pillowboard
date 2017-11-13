@@ -7,10 +7,6 @@
   ;; TODO add logic to determine dynamically
   :line)
 
-(defn- debug [val]
-  (prn val)
-  val)
-
 (defn- determine-data-type [values]
   (cond
     (and (<= 0 (apply min values)) (>= 1 (apply max values))) :ratio
@@ -49,6 +45,19 @@
   [folded]
   (reduce group-dimension {} folded))
 
+(defn- tupelize
+  [dimension]
+  (let [data (dimension :data)
+        label (dimension :label)]
+    (apply mapv vector
+           (conj data
+                 (take (count (first data)) (repeat (dimension :label)))))))
+
+(defn- join-group
+  [grouped key]
+  (map tupelize (get grouped key)))
+
 (defn join-data
-  [grouped])
+  [grouped]
+  (map (partial join-group grouped) (keys grouped)))
 
