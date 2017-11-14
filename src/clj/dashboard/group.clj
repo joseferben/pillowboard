@@ -33,9 +33,9 @@
    :metrics [(dissoc metric :category)]})
 
 (defn- conj-to-group [idx metric grouped]
-  (prn idx)
   (if (= -1 idx)
     (conj grouped (create-group metric))
+    ;; implement update pre- and after hooks
     (-> grouped
         (update-in [idx :metrics] conj (dissoc metric :category))
         (update-in [idx :count] inc))))
@@ -55,3 +55,7 @@
     (if (empty? to-group)
       grouped
       (recur (add-to-grouped (first to-group) grouped) (rest to-group)))))
+
+(defn process [grouped]
+  ;; implement left join with aron
+  )

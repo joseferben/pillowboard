@@ -24,7 +24,7 @@
                  [cljsjs/recharts "0.22.4-2"]]
   :plugins [[lein-figwheel "0.5.14"]
             [lein-ring "0.9.7"]
-            [lein-auto "0.1.3"]
+            [com.jakemccrary/lein-test-refresh "0.21.1"]
             [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
 
   :ring {:handler dashboard.core/app}
