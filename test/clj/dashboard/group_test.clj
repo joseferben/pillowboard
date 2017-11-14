@@ -5,11 +5,11 @@
 
 (testing "grouping data"
   (comment (deftest group
-   (let [actual (sut/group (edn/read-string (slurp "resources/folded.edn")))
-          expected (edn/read-string (slurp "resources/grouped.edn"))]
+   (let [actual (sut/group (edn/read-string (slurp "resources/02-folded.edn")))
+          expected (edn/read-string (slurp "resources/03-grouped.edn"))]
      (is (= expected actual)))))
   (deftest merge
-   (let [actual (sut/join-data (edn/read-string (slurp "resources/grouped.edn")))
-          expected (edn/read-string (slurp "resources/merged.edn"))]
+   (let [actual (sut/group (edn/read-string (slurp "resources/02-folded.edn")))
+          expected (edn/read-string (slurp "resources/03-grouped.edn"))]
       (is (= expected actual)))))
 

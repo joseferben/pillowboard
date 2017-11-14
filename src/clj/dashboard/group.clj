@@ -24,19 +24,34 @@
 (def invariants [has-space-left? same-category? same-sub-category?])
 
 (defn- is-compatible? [metric group]
-  (every? (map #(apply % metric group) invariants)))
+  (every? true? (map #(% metric group) invariants)))
 
 (defn- create-group [metric]
   {:category (metric :category)
    :sub-category (determine-sub-category (second (metric :data)))
-   :count 1})
+   :count 1
+   :metrics [(dissoc metric :category)]})
 
-(defn- add-metric [metric grouped]
-  )
+(defn- conj-to-group [idx metric grouped]
+  (prn idx)
+  (if (= -1 idx)
+    (conj grouped (create-group metric))
+    (-> grouped
+        (update-in [idx :metrics] conj (dissoc metric :category))
+        (update-in [idx :count] inc))))
+
+(defn- add-to-grouped 
+  ([metric grouped]
+   (add-to-grouped metric grouped grouped 0))
+  ([metric original to-check idx]
+   (cond
+     (empty? to-check) (conj-to-group -1 metric original)
+     (is-compatible? metric (first to-check)) (conj-to-group idx metric original)
+     :else (recur metric original (rest to-check) (inc idx)))))
 
 (defn group [folded]
   (loop [grouped []
          to-group folded]
     (if (empty? to-group)
       grouped
-      (recur (add-metric (first to-group) grouped) (rest to-group)))))
+      (recur (add-to-grouped (first to-group) grouped) (rest to-group)))))

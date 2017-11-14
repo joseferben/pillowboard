@@ -7,7 +7,6 @@
 
 (defn- determine-target-idx
   [to-check label]
-  (prn to-check)
   (loop [to-check to-check
          label label
          idx 0]
