@@ -17,11 +17,12 @@
          metrics->matrix
          (map (fn [row] (zipmap names row))))))
 
-(defn- transform-chart [chart]
+(defn- transform-chart [idx chart]
   (-> chart
       (assoc :data (transform-metrics chart))
       (assoc :meta (transform-meta chart))
+      (assoc :key idx)
       (dissoc :metrics)))
 
 (defn transform [configured]
-  (update configured :charts (fn [charts] (map transform-chart charts))))
+  (update configured :charts (fn [charts] (map-indexed transform-chart charts))))

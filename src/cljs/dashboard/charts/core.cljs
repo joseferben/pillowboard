@@ -14,7 +14,7 @@
 (def scatter js/Recharts.Scatter)
 (def area-chart js/Recharts.AreaChart)
 (def area js/Recharts.Area)
-(def types {:line line :scatter scatter :area area})
+(def types {:linechart line :scatterchart scatter :areachart area})
 
 (defn- transform [data]
   (data :data))
@@ -25,20 +25,24 @@
 (defn- dimension-keys
   [data]
   (-> data
-      (transform)
+      :data
       (first)
       (keys)
       (rest)))
 
+(defn- get-colors [data]
+  (->> data
+      :meta
+      (map :color)))
+
 (defn- dimensions
   [data]
   (-> data
-      (dimension-keys)
-      (#(map-indexed (partial wrapper (data :type) (data :colors)) %))
+      dimension-keys
+      (#(map-indexed (partial wrapper (data :chart-type) (get-colors data)) %))
       (vec)))
 
-(defn line-chart-comp
-  [data]
+(defn line-chart-comp [data]
   [:div
    (into []
          (concat

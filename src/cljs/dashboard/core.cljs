@@ -42,7 +42,7 @@
   (if (empty? @app-state)
     [:h3 "No data here... (TODO: show here how to post data)"]
     [:div.container
-     [grid/main {:state @app-state}]])])
+     [grid/main @app-state]])])
 
 (defn init! []
   (stylefy/init)

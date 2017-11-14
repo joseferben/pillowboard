@@ -53,12 +53,11 @@
     (doseq [uid uids]
       (chsk-send! uid
                   [:board/state
-                   {:state (clojure.edn/read-string (slurp "resources/sample-transformed.edn"))}]))))
+                   {:state state}]))))
 
 (go (while true
       (let [{ev-msg :event} (<! ch-chsk)]
-        (prn ev-msg)
-        (broadcast-state (event/get-state!)))))
+        (broadcast-state (clojure.edn/read-string (slurp "resources/06-transformed.edn"))))))
 
 (defn handle-post
   [body]

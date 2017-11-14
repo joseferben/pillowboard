@@ -1,5 +1,6 @@
 {:charts
  [{:chart-type :linechart
+   :key 0
    :data [{"time" 0 "commit" 0 "merge-requests" 0 "bug" 0}
           {"time" 1 "commit" 1 "merge-requests" 1 "bug" 1}
           {"time" 2 "commit" 1 "merge-requests" 1 "bug" 0}
@@ -19,6 +20,7 @@
            {:name "bug"
             :color "#7D33FF"}]}
   {:chart-type :linechart
+   :key 1
    :data [{"time" 0 "branches" 1}
           {"time" 2 "branches" 1}
           {"time" 3 "branches" 0}
@@ -31,6 +33,7 @@
           {:name "branches"
            :color "#FF5733"}]}
   {:chart-type :areachart
+   :key 2
    :data [{"time" 1 "tickets-done" 0}
           {"time" 3 "tickets-done" 0.1}
           {"time" 4 "tickets-done" 0.2}
