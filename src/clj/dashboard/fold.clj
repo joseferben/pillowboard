@@ -1,7 +1,9 @@
 (ns dashboard.fold
   (:require [dashboard.event :as event]))
 
-(defn- extract-label [metric]
+(defn- extract-label
+  "Extracts label from set of tupels."
+  [metric]
   (->> metric
       :data
       first
@@ -10,6 +12,7 @@
       first))
 
 (defn- determine-target-idx
+  "Returns the index of the metric given a `label` and the folded state `to-check`."
   [to-check label]
   (loop [to-check to-check
          label label
@@ -29,6 +32,8 @@
       (update-in folded [target-idx :data] conj {"time" time label value}))))
 
 (defn fold-events
+  "Given a vector of `events` it returns the accumulated state
+  by folding all events on top of each other."
   ([events]
    (fold-events events []))
   ([to-fold folded]

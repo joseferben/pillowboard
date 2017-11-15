@@ -16,20 +16,32 @@
       configured
       (recur (inc idx) (rest to-configure) (conj configured (configure-metric (first to-configure) idx))))))
 
-(defn- assign-chart-type [chart]
+(defn- derive-meta [{metrics :metrics}]
+  (->> metrics
+      first
+      keys
+      (map-indexed (fn [idx item] {item {:color (nth default-colors idx)}}))
+      set))
+
+(defn- assign-chart-type
+  "Assigns a chart-type reading meta data of a `chart` like category or sub-category."
+  [chart]
   (let [{:keys [category sub-category]} chart]
     (assoc chart :chart-type (get-in chart-types [category sub-category]))))
 
-(defn- configure-chart [chart]
+(defn- configure-chart
+  "Returns a configured chart given a grouped metric as `chart`."
+  [chart]
   (-> chart
-      (update :metrics configure-metrics)
+      (assoc :meta (derive-meta chart))
       assign-chart-type
       (dissoc :count :category :sub-category)))
 
 (defn- configure-board [charts]
-
   {:charts (vec (map configure-chart charts))
    :config default-board-config})
 
-(defn configure [merged]
+(defn configure
+  "Configures whole board."
+  [merged]
   (configure-board merged))
