@@ -1,9 +1,13 @@
 (ns dashboard.fold
   (:require [dashboard.event :as event]))
 
-(defn- conj-data-points 
-  [time-new value-new[time value]]
-  [(conj time time-new) (conj value value-new)])
+(defn- extract-label [metric]
+  (->> metric
+      :data
+      first
+      keys
+      (filter #(not= % "time"))
+      first))
 
 (defn- determine-target-idx
   [to-check label]
@@ -12,7 +16,7 @@
          idx 0]
     (cond
       (empty? to-check) -1
-      (= ((first to-check) :label) label) idx
+      (= (extract-label (first to-check)) label) idx
       :default (recur (rest to-check) label (inc idx)))))
           
 (defmulti fold-event (fn [event _] (event :type)))
@@ -20,10 +24,9 @@
 (defmethod fold-event :time-point [{:keys [time label value]} folded]
   (let [target-idx (determine-target-idx folded label)]
     (if (= -1 target-idx)
-      (conj folded {:category :temporal
-                    :label label
-                    :data [[time] [value]]})
-      (update-in folded [target-idx :data] (partial conj-data-points time value)))))
+      (conj folded {:category :timeseries
+                    :data #{{"time" time label value}}})
+      (update-in folded [target-idx :data] conj {"time" time label value}))))
 
 (defn fold-events
   ([events]

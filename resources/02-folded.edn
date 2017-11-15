@@ -1,15 +1,51 @@
 [{:category :timeseries
-  :name "commit"
-  :data [[0 1 2 3 4 5 6 7 8 9] [0 1 1 2 0 2 3 1 4 2]]}
+  :data #{{"time" 0 "commit" 0}
+          {"time" 1 "commit" 1}
+          {"time" 2 "commit" 1}
+          {"time" 3 "commit" 2}
+          {"time" 4 "commit" 0}
+          {"time" 5 "commit" 2}
+          {"time" 6 "commit" 3}
+          {"time" 7 "commit" 1}
+          {"time" 8 "commit" 4}
+          {"time" 9 "commit" 2}}}
  {:category :timeseries
-  :name "merge-requests"
-  :data [[0 1 2 3 4 5 6 7 8 9] [0 1 1 2 2 3 2 1 2 4]]}
+  :data #{{"time" 0 "merge-requests" 0}
+          {"time" 1 "merge-requests" 1}
+          {"time" 2 "merge-requests" 1}
+          {"time" 3 "merge-requests" 2}
+          {"time" 4 "merge-requests" 2}
+          {"time" 5 "merge-requests" 3}
+          {"time" 6 "merge-requests" 2}
+          {"time" 7 "merge-requests" 1}
+          {"time" 8 "merge-requests" 2}
+          {"time" 9 "merge-requests" 4}}}
  {:category :timeseries
-  :name "bug"
-  :data [[0 1 2 3 4 5 6 8 12] [0 1 0 8 12 38 24 9 3 1]]}
+  :data #{{"time" 0 "bug" 0}
+          {"time" 1 "bug" 1}
+          {"time" 2 "bug" 0}
+          {"time" 3 "bug" 8}
+          {"time" 4 "bug" 12}
+          {"time" 5 "bug" 38}
+          {"time" 6 "bug" 24}
+          {"time" 8 "bug" 9}
+          {"time" 12 "bug" 3}}}
  {:category :timeseries
-  :name "branches"
-  :data [[0 2 3 5 6 7 9] [1 1 0 4 2 4 6]]}
+  :data #{{"time" 0 "branches" 1}
+          {"time" 2 "branches" 1}
+          {"time" 3 "branches" 0}
+          {"time" 5 "branches" 4}
+          {"time" 6 "branches" 2}
+          {"time" 7 "branches" 4}
+          {"time" 9 "branches" 6}}}
  {:category :timeseries
-  :name "tickets-done"
-  :data [[1 3 4 5 6 7 8 9 10 13] [0 0.1 0.2 0.4 0.4 0.5 0.8 0.8 0.9 1]]}]
+  :data #{{"time" 1 "tickets-done" 0}
+          {"time" 3 "tickets-done" 0.1}
+          {"time" 4 "tickets-done" 0.2}
+          {"time" 5 "tickets-done" 0.4}
+          {"time" 6 "tickets-done" 0.4}
+          {"time" 7 "tickets-done" 0.5}
+          {"time" 8 "tickets-done" 0.8}
+          {"time" 9 "tickets-done" 0.8}
+          {"time" 10 "tickets-done" 0.9}
+          {"time" 13 "tickets-done" 1}}}]
