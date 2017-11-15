@@ -3,21 +3,28 @@
 ;; invariants that must hold true
 (def max-metrics-per-group 3)
 
+(defn- extract-label [metric]
+  (->> metric
+      first
+      keys
+      (filter #(not= % "time"))
+      first))
+
 (defn- has-space-left? [_ group]
   (< (group :count) max-metrics-per-group))
 
 (defn- same-category? [metric group]
   (= (metric :category) (group :category)))
 
-(defn- determine-sub-category [values]
-  (cond
-    (and (<= 0 (apply min values)) (>= 1 (apply max values))) :ratio
-    :else :absolute))
+(defn- determine-sub-category [metric]
+  (let [values (map #(get % (extract-label metric)) metric)]
+    (cond
+      (and (<= 0 (apply min values)) (>= 1 (apply max values))) :ratio
+      :else :absolute)))
 
 (defn- same-sub-category? [metric group]
   (-> metric
       :data
-      second
       determine-sub-category
       (= (group :sub-category))))
 
@@ -28,16 +35,16 @@
 
 (defn- create-group [metric]
   {:category (metric :category)
-   :sub-category (determine-sub-category (second (metric :data)))
+   :sub-category (determine-sub-category (metric :data))
    :count 1
-   :metrics [(dissoc metric :category)]})
+   :metrics [(metric :data)]})
 
 (defn- conj-to-group [idx metric grouped]
   (if (= -1 idx)
     (conj grouped (create-group metric))
     ;; implement update pre- and after hooks
     (-> grouped
-        (update-in [idx :metrics] conj (dissoc metric :category))
+        (update-in [idx :metrics] conj (metric :data))
         (update-in [idx :count] inc))))
 
 (defn- add-to-grouped 
