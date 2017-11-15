@@ -10,7 +10,7 @@ To run the backend with auto-reload enabled run:
 
 To auto run the tests run:
 
-    lein auto test
+    lein test-refresh
 
 To get an interactive development environment in the frontend run:
 
@@ -20,7 +20,6 @@ To get an interactive development environment in the frontend run:
 Alternatively you can use something like Cider for emacs:
 
     M-x cider-jack-in-clojurescript
-
 
 and open your browser at [localhost:3000](http://localhost:3000/).
 
