@@ -1,23 +1,10 @@
 (ns dashboard.data.core)
 
-(defn- third
-  "Returns the third element of `col`.
-  Returns nil of it doesn't exist, it doesn't throw an Exception."
-  [col]
-  (if (> (count col) 3)
-    (nth col 2)
-    nil))
-
 (defn- last-value-strategy
   "This is a join-strategy that replaces an unknown value with the last known value."
   [before item all-keys]
   (reduce (fn [acc key]
             (assoc acc key (or (get item key) (get before key) 0))) {} all-keys))
-
-(defn- vectorize [candidate]
-  (if (number? candidate)
-    (vector candidate)
-    candidate))
 
 (defn- merge-doubles [key tuples]
   (reduce (fn [acc item] (if (= (get (last acc) key) (get item key))
