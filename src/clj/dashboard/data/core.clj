@@ -10,51 +10,50 @@
 
 (defn- last-value-strategy
   "This is a join-strategy that replaces an unknown value with the last known value."
-  [before item]
-  (or item before 0))
+  [before item all-keys]
+  (reduce (fn [acc key]
+            (assoc acc key (or (get item key) (get before key) 0))) {} all-keys))
 
 (defn- vectorize [candidate]
   (if (number? candidate)
     (vector candidate)
     candidate))
 
-(defn- full-join-tuples
-  "Joins two tuple vectors `t1` and `t2`.
-   Non-existing values are filled with nil.
-   It it assumed that both vector are sorted by the first values of the tuples."
-  ([t1 t2]
-   (full-join-tuples t1 t2 []))
-  ([t1 t2 joined]
-   (let [t1x (first (first t1))
-         t1y (vectorize (second (first t1)))
-         t2x (first (first t2))
-         t2y (vectorize (second (first t2)))]
-     (cond
-       (and (empty? t1) (empty? t2)) joined
-       (empty? t2) (full-join-tuples (rest t1) t2 (conj joined (concat [t1x] t1y [nil])))
-       (empty? t1) (full-join-tuples t1 (rest t2) (conj joined (concat [t2x] [nil nil] t2y)))
-       (< t1x t2x) (full-join-tuples (rest t1) t2 (conj joined (concat [t1x] t1y [nil])))
-       (> t1x t2x) (full-join-tuples t1 (rest t2) (conj joined (concat [t2x] [nil] t2y)))
-       (= t1x t2x) (full-join-tuples (rest t1) (rest t2) (conj joined (concat [t1x] t1y t2y)))
-       :else (throw (IllegalStateException. (str "full-join t1: " t1 " t2: " t2)))))))
+(defn- merge-doubles [key tuples]
+  (reduce (fn [acc item] (if (= (get (last acc) key) (get item key))
+                           (vec (conj (drop-last acc) (merge (last acc) item)))
+                           (conj acc item)))
+          [] tuples))
+
+(defn- full-join-tuples [t1 t2 key]
+  (->> (clojure.set/union t1 t2)
+       (sort (fn [a b] (compare (get a key) (get b key))))
+       vec
+       (merge-doubles key)
+       (sort (fn [a b] (compare (get a key) (get b key))))
+       vec))
+
+(defn- get-all-keys [vals]
+  (keys (apply merge vals)))
 
 (defn- iterate-values
   "Applies strategy to all elements with value nil"
   [strategy]
   (fn [vals]
-    (:result (reduce (fn [acc val]
-                       (let [new-val (strategy (acc :before) val)]
-                         (assoc (update acc :result conj new-val) :before new-val)))
-                     {:result [] :before nil} vals))))
+    (let [all-keys (get-all-keys vals)]
+      (get (reduce (fn [acc val]
+                         (let [new-val (strategy (acc :before) val all-keys)]
+                           (assoc (update acc :result conj new-val) :before new-val)))
+                       {:result [] :before nil} vals) :result))))
 
 (defn- apply-strategy
   "Applies `strategy` to `joined` data to deal with nil entries."
   [joined strategy]
-  (map (iterate-values strategy) joined))
+  ((iterate-values strategy) joined))
 
 (defn full-join
   "Join two tuple vectors `t1` and `t2` using the default `last-value-strategy` join strategy."
-  ([t1 t2]
-   (apply-strategy (apply mapv vector (full-join-tuples (apply mapv vector t1) (apply mapv vector t2))) last-value-strategy))
-  ([tuples]
-   (reduce (fn [acc v] ) tuples)))
+  ([key t1 t2]
+   (set (apply-strategy (full-join-tuples t1 t2 key) last-value-strategy)))
+  ([key tuples]
+   (reduce (fn [acc item] (full-join key acc item)) tuples)))
