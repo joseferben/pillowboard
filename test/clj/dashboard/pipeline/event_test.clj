@@ -24,5 +24,8 @@
   (deftest post->event
     (let [event  (sut/post->event {"foo" 2})]
       (is (> 50 (Math/abs (- (get event :time) (System/currentTimeMillis)))))
-      (is (= "foo" (get event :name)))
-      )))
+      (is (= "foo" (get event :name)))))
+  (deftest post->event-with-time
+    (let [event  (sut/post->event {"foo" 2 "time" 42})]
+      (is (= 42 (get event :time)))
+      (is (= "foo" (get event :name))))))

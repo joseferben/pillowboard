@@ -69,7 +69,7 @@
   (debugf "Received raw post of type timeseries: %s" post)
   (let [name (extract-name post)
         value (get post name)
-        time (or (post :time) (System/currentTimeMillis))]
+        time (or (post "time") (System/currentTimeMillis))]
     (TimeSeriesEvent. name time value)))
 
 (defn fold-events

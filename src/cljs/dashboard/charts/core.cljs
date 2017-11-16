@@ -17,16 +17,20 @@
 (def area js/Recharts.Area)
 (def types {:linechart line :scatterchart scatter :areachart area})
 
+(def chart-dimensions {:width 600 :height 300
+                       :margin {:top 0 :right 0
+                                :bottom 0 :left 0}})
+
 (defn- transform [data]
   (data :metrics))
 
 (defn- wrapper [type color key]
-  [:> (types type) {:type "monotone" "dataKey" key "stroke" color}])
+  [:> (types type) {:type "monotone" "dataKey" key "stroke" color "fill" color}])
 
 (defn- millis-to-date [millis]
-  (.format (js/moment. millis) "DD.MM. HH:mm:ss"))
+  (.format (js/moment. millis) "HH:mm:ss DD. MMM"))
   
-(defn- dimension-keys
+(defn- metrics-keys
   [data]
   (-> data
       :metrics
@@ -34,36 +38,31 @@
       keys
       rest))
 
-(defn- dimensions
+(defn- metrics
   [data]
   (->> data
-      dimension-keys
+      metrics-keys
       (map (fn [key] (wrapper (data :chart-type) (get-in data [:meta key :color]) key)))))
 
 (defn line-chart-comp [data]
   [:div
    (into []
          (concat
-          [:> line-chart {:width 350 :height 200
-                          :margin {:top 0 :right 0
-                                   :bottom 0 :left -40}
-                          :data (transform data)}
+          [:> line-chart (merge chart-dimensions {:data (transform data)})
            ;; TODO read x-axis from settings
            [:> x-axis {"dataKey" :time :type :number :domain ["dataMin" "dataMax"] :tickFormatter millis-to-date}]
            [:> y-axis]
            [:> cartesian-grid {"strokeDasharray" "3 3"}]
            [:> tooltip]
            [:> legend]]
-          (dimensions data)))])
+          (metrics data)))])
 
 (defn scatter-chart-comp
   [data]
   [:div
    (into []
          (concat
-          [:> scatter-chart {:width 350 :height 200
-                             :margin {:top 0 :right 0
-                                      :bottom 0 :left -40}}
+          [:> scatter-chart chart-dimensions 
            [:> x-axis {"dataKey" "incidents"}]
            [:> y-axis {"dataKey" "traffic"}]
            [:> cartesian-grid {"strokeDasharray" "3 3"}]
@@ -71,22 +70,20 @@
                         :name "incidents/traffic"}]
            [:> tooltip]
            [:> legend]]
-          (dimensions data)))])
+          (metrics data)))])
 
 (defn area-chart-comp
   [data]
   [:div
    (into []
          (concat
-          [:> area-chart {:width 350 :height 200
-                          :margin {:top 0 :right 0
-                                   :bottom 0 :left -40}
-                          :data (transform data)}
+          [:> area-chart (merge chart-dimensions 
+                          {:data (transform data)})
            [:> x-axis {"dataKey" :time :type :number :domain ["dataMin" "dataMax"] :tickFormatter millis-to-date}]
            [:> y-axis]
            [:> cartesian-grid {"strokeDasharray" "3 3"}]
            [:> tooltip]
            [:> legend]]
-          (dimensions data)))])
+          (metrics data)))])
 
 

@@ -1,6 +1,7 @@
 (ns dashboard.core
   (:require
    [dashboard.grid :as grid :refer [main]]
+   [dashboard.components :refer [instructions]]
    [clojure.string  :as str]
    [cljs.core.async :as async :refer (<! >! put! chan timeout)]
    [taoensso.timbre :as timbre :refer-macros (tracef debugf infof warnf errorf)]
@@ -39,8 +40,8 @@
 (defn container []
   "Injects app-state into dashboard, enables re-render"
   [:div.top-container
-  (if (empty? @app-state)
-    [:h3 "No data here... (TODO: show here how to post data)"]
+  (if (or (nil? @app-state) (empty? (@app-state :charts)))
+    [instructions]
     [:div.container
      [grid/main @app-state]])])
 
