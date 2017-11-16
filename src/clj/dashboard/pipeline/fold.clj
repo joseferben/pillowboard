@@ -1,5 +1,5 @@
 (ns dashboard.pipeline.fold
-  (:require [dashboard.event :as event]))
+  (:require [dashboard.pipeline.event :as event]))
 
 (defn- extract-label
   "Extracts label from set of tupels."

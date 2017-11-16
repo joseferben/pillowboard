@@ -1,4 +1,4 @@
-(ns dashboard.event
+(ns dashboard.pipeline.event
   (:require [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]
             [clojure.spec.alpha :as s]))
 
@@ -72,28 +72,10 @@
         time (or (post :time) (System/currentTimeMillis))]
     (TimeSeriesEvent. name time value)))
 
-(defn- fold-events
+(defn fold-events
   [events]
   (loop [to-process events
          processed []]
     (if (empty? to-process)
       processed
       (recur (rest to-process) (fold-event (first to-process) processed)))))
-
-(defn- make-renderable
-  [data])
-
-(defn- store-event!
-  [event]
-  (swap! events conj event)
-  (tracef "Stored event: %s" event)
-  (make-renderable (fold-events @events)))
-
-(defn store-post!
-  [post broadcast-state]
-  (let [event (post->event post)]
-      (broadcast-state (store-event! event))))
-
-(defn get-state!
-  []
-  (make-renderable (fold-events @events)))

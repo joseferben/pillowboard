@@ -27,7 +27,7 @@
             [com.jakemccrary/lein-test-refresh "0.21.1"]
             [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
 
-  :ring {:handler dashboard.core/app}
+  :ring {:handler dashboard.handler/app}
   :main dashboard.core
   :source-paths ["src/clj" "src/cljc"]
   :cljsbuild {:builds
