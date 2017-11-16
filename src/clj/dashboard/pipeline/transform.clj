@@ -1,28 +1,11 @@
 (ns dashboard.pipeline.transform)
 
-(defn- transform-meta [{:keys [metrics]}]
-  (->> metrics
-       (map #(dissoc % :data))
-       vec))
+(defn- sort-metrics [metrics]
+  (sort (fn [a b] (compare (get a "time") (get b "time"))) metrics))
 
-(defn- metrics->matrix [metrics]
-  (->> metrics
-      (map #(get % :data))
-      vec
-      (apply mapv vector)))
-
-(defn- transform-metrics [{:keys [metrics]}]
-  (let [names (map #(get % :name) metrics)]
-    (->> metrics
-         metrics->matrix
-         (map (fn [row] (zipmap names row))))))
-
-(defn- transform-chart [idx chart]
-  (-> chart
-      (assoc :data (transform-metrics chart))
-      (assoc :meta (transform-meta chart))
-      (assoc :key idx)
-      (dissoc :metrics)))
+(defn- sort-charts [charts]
+  (map (fn [chart]
+         (update chart :metrics sort-metrics)) charts))
 
 (defn transform [configured]
-  (update configured :charts (fn [charts] (map-indexed transform-chart charts))))
+  (update configured :charts sort-charts))

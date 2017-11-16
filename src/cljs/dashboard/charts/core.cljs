@@ -1,6 +1,7 @@
 (ns dashboard.charts.core
   (:require
    [cljsjs.recharts]
+   [cljsjs.moment]
    [reagent.core :as reagent]))
 
 (def line-chart js/Recharts.LineChart)
@@ -21,6 +22,9 @@
 
 (defn- wrapper [type color key]
   [:> (types type) {:type "monotone" "dataKey" key "stroke" color}])
+
+(defn- millis-to-date [millis]
+  (.format (js/moment. millis) "DD.MM. HH:mm:ss"))
   
 (defn- dimension-keys
   [data]
@@ -45,7 +49,7 @@
                                    :bottom 0 :left -40}
                           :data (transform data)}
            ;; TODO read x-axis from settings
-           [:> x-axis {"dataKey" :x-axis}]
+           [:> x-axis {"dataKey" :time :type :number :domain ["dataMin" "dataMax"] :tickFormatter millis-to-date}]
            [:> y-axis]
            [:> cartesian-grid {"strokeDasharray" "3 3"}]
            [:> tooltip]
@@ -78,7 +82,7 @@
                           :margin {:top 0 :right 0
                                    :bottom 0 :left -40}
                           :data (transform data)}
-           [:> x-axis {"dataKey" :time}]
+           [:> x-axis {"dataKey" :time :type :number :domain ["dataMin" "dataMax"] :tickFormatter millis-to-date}]
            [:> y-axis]
            [:> cartesian-grid {"strokeDasharray" "3 3"}]
            [:> tooltip]

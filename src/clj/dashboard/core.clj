@@ -2,6 +2,7 @@
   (:require [dashboard.pipeline.event :refer [fold-events post->event]]
             [dashboard.pipeline.group :refer [group process]]
             [dashboard.pipeline.configure :refer [configure]]
+            [dashboard.pipeline.transform :refer [transform]]
             [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]))
 
 (timbre/set-level! :trace) 
@@ -10,7 +11,7 @@
 (def events (atom []))
 
 (defn pipeline [events]
-  ((comp configure process group fold-events) events))
+  ((comp transform configure process group fold-events) events))
 
 (defn fetch-state! []
   (pipeline @events))
