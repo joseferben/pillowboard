@@ -3,7 +3,7 @@
             [clojure.edn :as edn]
             [clojure.test :refer [deftest testing is]]))
 
-(testing "fold"
+(comment (testing "fold"
   (deftest fold
     (let [events [{:type :time-point :time 0 :label "commit" :value 0}
                   {:type :time-point :time 1 :label "commit" :value 2}
@@ -20,4 +20,4 @@
                      :data #{{"time" 1 "merge-request" 1}
                              {"time" 2 "merge-request" 11}}}]
           actual (sut/fold-events events)]
-      (is (= expected actual)))))
+      (is (= expected actual))))))

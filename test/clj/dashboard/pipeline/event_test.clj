@@ -6,14 +6,18 @@
 (testing "event"
   (deftest fold-events
     (let [fun #'dashboard.pipeline.event/fold-events
-          events [(->GaugeEvent "foo" 42)
-                  (->TimeSeriesEvent "bar" 7 2)
-                  (->TimeSeriesEvent "bar" 24 3)
-                  (->GaugeEvent "foo" 2)]
-          expected [{:category :gauge
-                     :name "foo"
-                     :data 2}
+          events [(->TimeSeriesEvent "commit" 0 0)
+                  (->TimeSeriesEvent "commit" 1 2)
+                  (->TimeSeriesEvent "merge-request" 1 1)
+                  (->TimeSeriesEvent "merge-request" 2 11)
+                  (->TimeSeriesEvent "commit" 4 4)
+                  (->TimeSeriesEvent "commit" 5 2)]
+          expected [{:category :timeseries
+                     :data #{{"time" 0 "commit" 0}
+                             {"time" 1 "commit" 2}
+                             {"time" 4 "commit" 4}
+                             {"time" 5 "commit" 2}}}
                     {:category :timeseries
-                     :name "bar"
-                     :data [[7 24] [2 3]]}]]
+                     :data #{{"time" 1 "merge-request" 1}
+                             {"time" 2 "merge-request" 11}}}]]
       (is (= expected (fun events))))))

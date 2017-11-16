@@ -1,5 +1,5 @@
 (ns dashboard.core
-  (:require [dashboard.pipeline.event :as event :refer [fold-events post->event]]
+  (:require [dashboard.pipeline.event :refer [fold-events post->event]]
             [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]))
 
 (def events (atom []))

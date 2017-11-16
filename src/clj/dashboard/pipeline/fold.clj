@@ -1,6 +1,8 @@
 (ns dashboard.pipeline.fold
   (:require [dashboard.pipeline.event :as event]))
 
+;; TODO remove this namespace since it is no longer in use
+
 (defn- extract-label
   "Extracts label from set of tupels."
   [metric]

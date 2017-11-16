@@ -4,15 +4,6 @@
 
 (timbre/set-level! :trace) 
 
-(s/def ::time integer?)
-(s/def ::label keyword?)
-(s/def ::value number?)
-(s/def ::type #{:time-point})
-(s/def ::event (s/keys :req-un [::type ::time ::label ::value]))
-
-;; atom holding all the state as events
-(def events (atom []))
-
 (defn epoch->date
   [millis]
   (str (java.util.Date. millis)))
@@ -23,12 +14,23 @@
             [(conj (first old) time)
              (conj (second old) value)])))
 
+(defn- extract-metric-name
+  "Extracts label from set of tupels."
+  [metric]
+  (->> metric
+      :data
+      first
+      keys
+      (filter #(not= % "time"))
+      first))
+
 (defn- get-idx [state name]
+  (prn (first state))
   (loop [idx 0
          state state]
     (cond
       (empty? state) -1
-      (= name ((first state) :name)) idx
+      (= name (extract-metric-name (first state))) idx
       :else (recur (inc idx) (rest state)))))
 
 (defprotocol Event
@@ -40,9 +42,8 @@
     (let [idx (get-idx state name)]
       (if (= idx -1)
         (conj state {:category :timeseries
-                     :name name
-                     :data [[time] [value]]})
-        (update state idx conj-metrics [time value])))))
+                     :data #{{"time" time name value}}})
+        (update-in state [idx :data] conj {"time" time name value})))))
 
 (defrecord GaugeEvent [name value]
   Event
