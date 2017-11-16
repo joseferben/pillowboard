@@ -86,5 +86,6 @@
         (wrap-defaults site-defaults)))))
 
 (defn -main [& args]
-  (run-server app {:port (or (System/getenv "PORT") 3000)})
-  (infof "Web server is running at http://localhost:3000"))
+  (let [port (Integer/parseInt (get (System/getenv) "PORT" "3000"))]
+    (run-server app {:port port})
+    (infof "Web server is running at port %s" port)))
