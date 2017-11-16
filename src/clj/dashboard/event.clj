@@ -1,7 +1,5 @@
 (ns dashboard.event
-  (:require [dashboard.inflater :as inflater]
-            [dashboard.transformer :as transformer]
-            [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]
+  (:require [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]
             [clojure.spec.alpha :as s]))
 
 (timbre/set-level! :trace) 
@@ -83,10 +81,7 @@
       (recur (rest to-process) (fold-event (first to-process) processed)))))
 
 (defn- make-renderable
-  [data]
-  (-> data
-      (inflater/inflate)
-      (transformer/transform)))
+  [data])
 
 (defn- store-event!
   [event]

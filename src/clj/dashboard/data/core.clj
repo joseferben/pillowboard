@@ -39,7 +39,7 @@
   ((iterate-values strategy) joined))
 
 (defn full-join
-  "Join two tuple vectors `t1` and `t2` using the default `last-value-strategy` join strategy."
+  "Joins two tuples `t1` and `t2` on `key` using the default `last-value-strategy` join strategy."
   ([key t1 t2]
    (set (apply-strategy (full-join-tuples t1 t2 key) last-value-strategy)))
   ([key tuples]

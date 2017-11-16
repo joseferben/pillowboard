@@ -1,4 +1,5 @@
-(ns dashboard.group)
+(ns dashboard.group
+  (:require [dashboard.data.core :refer [full-join]]))
 
 ;; invariants that must hold true
 (def max-metrics-per-group 3)
@@ -64,5 +65,4 @@
       (recur (add-to-grouped (first to-group) grouped) (rest to-group)))))
 
 (defn process [grouped]
-  ;; implement left join with aron
-  )
+  (map #(update % :metrics (partial full-join "time")) grouped))

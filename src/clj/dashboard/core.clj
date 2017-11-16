@@ -1,7 +1,5 @@
 (ns dashboard.core
   (:require [dashboard.event :as event :refer [get-state!]]
-            [dashboard.inflater :as inflater]
-            [dashboard.transformer :as transformer]
             [compojure.core :refer [routes defroutes GET POST wrap-routes]]
             [compojure.route :as route]
             [compojure.handler :as handler]
