@@ -1,5 +1,5 @@
 (ns dashboard.handler
-  (:require [dashboard.core :as core :refer [fetch-state! store-post!]]
+  (:require [dashboard.core :as core :refer [fetch-state! store-post-and-broadcast!]]
             [compojure.core :refer [routes defroutes GET POST wrap-routes]]
             [compojure.route :as route]
             [compojure.handler :as handler]
@@ -59,7 +59,7 @@
 
 (defn handle-post
   [body]
-  (store-post! body broadcast-state)
+  (store-post-and-broadcast! body broadcast-state)
   ;; map to event and forward to event sourcing, return answer
   (response body))
 
