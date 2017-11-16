@@ -25,7 +25,6 @@
       first))
 
 (defn- get-idx [state name]
-  (prn (first state))
   (loop [idx 0
          state state]
     (cond
@@ -56,20 +55,20 @@
         (assoc-in state [idx :data] value)))))
 
 (defn- extract-name [post]
-  (first (filter #(= % :type) (keys post))))
+  (first (filter #(not= % :type) (keys post))))
 
 (defmulti post->event (fn [post] (post :type)))
 
 (defmethod post->event :gauge [post]
   (debugf "Received raw post of type gauge: %s" post)
   (let [name (extract-name post)
-        value (read-string (get post name))]
+        value (get post name)]
     (GaugeEvent. name value)))
 
 (defmethod post->event :default [post]
   (debugf "Received raw post of type timeseries: %s" post)
   (let [name (extract-name post)
-        value (read-string (get post name))
+        value (get post name)
         time (or (post :time) (System/currentTimeMillis))]
     (TimeSeriesEvent. name time value)))
 

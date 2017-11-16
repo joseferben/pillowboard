@@ -28,7 +28,7 @@
             [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
 
   :ring {:handler dashboard.handler/app}
-  :main dashboard.core
+  :main dashboard.handler
   :source-paths ["src/clj" "src/cljc"]
   :cljsbuild {:builds
               [{:id "dev"

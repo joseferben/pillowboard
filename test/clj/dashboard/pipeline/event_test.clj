@@ -20,4 +20,9 @@
                     {:category :timeseries
                      :data #{{"time" 1 "merge-request" 1}
                              {"time" 2 "merge-request" 11}}}]]
-      (is (= expected (fun events))))))
+      (is (= expected (fun events)))))
+  (deftest post->event
+    (let [event  (sut/post->event {"foo" 2})]
+      (is (> 50 (Math/abs (- (get event :time) (System/currentTimeMillis)))))
+      (is (= "foo" (get event :name)))
+      )))

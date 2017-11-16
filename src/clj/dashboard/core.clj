@@ -9,11 +9,11 @@
 ;; TODO simple form of persistence by writing timeseries to files
 (def events (atom []))
 
-(defn pipeline [folded]
-  (comp configure process group))
+(defn pipeline [events]
+  ((comp configure process group fold-events) events))
 
 (defn fetch-state! []
-  (pipeline (fold-events @events)))
+  (pipeline @events))
 
 (defn- store-event!
   [event]
@@ -23,6 +23,7 @@
 
 (defn store-post-and-broadcast!
   [post broadcast-state]
+  (prn post)
   (let [event (post->event post)]
       (broadcast-state (store-event! event))))
 
