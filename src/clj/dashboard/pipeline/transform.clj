@@ -1,4 +1,4 @@
-(ns dashboard.transform)
+(ns dashboard.pipeline.transform)
 
 (defn- transform-meta [{:keys [metrics]}]
   (->> metrics

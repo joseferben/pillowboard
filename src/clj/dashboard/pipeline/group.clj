@@ -1,4 +1,4 @@
-(ns dashboard.group
+(ns dashboard.pipeline.group
   (:require [dashboard.data.core :refer [full-join]]))
 
 ;; invariants that must hold true

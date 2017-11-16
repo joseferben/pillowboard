@@ -1,4 +1,4 @@
-(ns dashboard.configure)
+(ns dashboard.pipeline.configure)
 
 (def default-colors ["#934444" "#FF5733" "#33CAFF" "#7D33FF"])
 (def default-board-config {:width 2})

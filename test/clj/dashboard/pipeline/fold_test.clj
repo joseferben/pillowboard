@@ -1,5 +1,5 @@
-(ns clj.dashboard.fold-test
-  (:require [dashboard.fold :as sut]
+(ns clj.dashboard.pipeline.fold-test
+  (:require [dashboard.pipeline.fold :as sut]
             [clojure.edn :as edn]
             [clojure.test :refer [deftest testing is]]))
 

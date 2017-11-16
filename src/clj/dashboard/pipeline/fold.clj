@@ -1,4 +1,4 @@
-(ns dashboard.fold
+(ns dashboard.pipeline.fold
   (:require [dashboard.event :as event]))
 
 (defn- extract-label

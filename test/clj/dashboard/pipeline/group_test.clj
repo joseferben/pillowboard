@@ -1,5 +1,5 @@
-(ns clj.dashboard.group-test
-  (:require  [dashboard.group :as sut]
+(ns clj.dashboard.pipeline.group-test
+  (:require  [dashboard.pipeline.group :as sut]
             [clojure.edn :as edn]
             [clojure.test :refer [deftest testing is]]))
 
