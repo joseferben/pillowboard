@@ -32,7 +32,9 @@
 
 (defn- dimensions
   [data]
-  (map-indexed (fn [key] (partial wrapper (data :chart-type) (get-in data [:meta key :color]))) (dimension-keys data)))
+  (->> data
+      dimension-keys
+      (map (fn [key] (wrapper (data :chart-type) (get-in data [:meta key :color]) key)))))
 
 (defn line-chart-comp [data]
   [:div
