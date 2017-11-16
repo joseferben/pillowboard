@@ -29,6 +29,7 @@
             [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
 
   :ring {:handler dashboard.handler/app}
+  :uberjar-name "dashboard-standalone.jar"
   :main dashboard.handler
   :source-paths ["src/clj" "src/cljc"]
   :hooks [leiningen.cljsbuild]

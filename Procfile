@@ -1,1 +1,1 @@
-web: java -jar target/dashboard-0.0.2-standalone.jar 
+web: java -jar target/dashboard-standalone.jar 
