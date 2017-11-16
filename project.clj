@@ -31,6 +31,7 @@
   :ring {:handler dashboard.handler/app}
   :main dashboard.handler
   :source-paths ["src/clj" "src/cljc"]
+  :hooks [leiningen.cljsbuild]
   :cljsbuild {:builds
               [{:id "dev"
                 :source-paths ["src/cljs" "src/cljc"]

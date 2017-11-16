@@ -1,4 +1,5 @@
-(ns dashboard.data.core)
+(ns dashboard.data.core
+  (:require [clojure.set :as set]))
 
 (defn- last-value-strategy
   "This is a join-strategy that replaces an unknown value with the last known value."
@@ -13,7 +14,7 @@
           [] tuples))
 
 (defn- full-join-tuples [t1 t2 key]
-  (->> (clojure.set/union t1 t2)
+  (->> (set/union t1 t2)
        (sort (fn [a b] (compare (get a key) (get b key))))
        vec
        (merge-doubles key)

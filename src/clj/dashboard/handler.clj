@@ -15,7 +15,8 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults api-defaults]]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.cors :refer [wrap-cors]]
-            ))
+            )
+  (:gen-class))
 
 (timbre/set-level! :trace) 
 
