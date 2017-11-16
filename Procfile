@@ -1,0 +1,1 @@
+web: java $JVM_OPTS -cp target/dashboard-0.0.2-standalone.jar 
