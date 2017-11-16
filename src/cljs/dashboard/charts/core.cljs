@@ -17,30 +17,22 @@
 (def types {:linechart line :scatterchart scatter :areachart area})
 
 (defn- transform [data]
-  (data :data))
+  (data :metrics))
 
-(defn- wrapper [type colors idx key]
-  [:> (types type) {:type "monotone" "dataKey" key "stroke" (nth colors idx)}])
+(defn- wrapper [type color key]
+  [:> (types type) {:type "monotone" "dataKey" key "stroke" color}])
   
 (defn- dimension-keys
   [data]
   (-> data
-      :data
-      (first)
-      (keys)
-      (rest)))
-
-(defn- get-colors [data]
-  (->> data
-      :meta
-      (map :color)))
+      :metrics
+      first
+      keys
+      rest))
 
 (defn- dimensions
   [data]
-  (-> data
-      dimension-keys
-      (#(map-indexed (partial wrapper (data :chart-type) (get-colors data)) %))
-      (vec)))
+  (map-indexed (fn [key] (partial wrapper (data :chart-type) (get-in data [:meta key :color]))) (dimension-keys data)))
 
 (defn line-chart-comp [data]
   [:div

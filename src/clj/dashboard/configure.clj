@@ -20,8 +20,11 @@
   (->> metrics
       first
       keys
-      (map-indexed (fn [idx item] {item {:color (nth default-colors idx)}}))
-      set))
+      (reduce (fn [acc key] (-> acc
+                                (assoc-in [:result key :color] (first (acc :colors)))
+                                (update :colors rest)))
+              {:colors default-colors :result {}})
+      :result))
 
 (defn- assign-chart-type
   "Assigns a chart-type reading meta data of a `chart` like category or sub-category."
@@ -31,14 +34,15 @@
 
 (defn- configure-chart
   "Returns a configured chart given a grouped metric as `chart`."
-  [chart]
+  [idx chart]
   (-> chart
+      (assoc :key idx)
       (assoc :meta (derive-meta chart))
       assign-chart-type
       (dissoc :count :category :sub-category)))
 
 (defn- configure-board [charts]
-  {:charts (vec (map configure-chart charts))
+  {:charts (vec (map-indexed configure-chart charts))
    :config default-board-config})
 
 (defn configure

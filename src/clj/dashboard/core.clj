@@ -55,7 +55,7 @@
 
 (go (while true
       (let [{ev-msg :event} (<! ch-chsk)]
-        (broadcast-state (clojure.edn/read-string (slurp "resources/06-transformed.edn"))))))
+        (broadcast-state (clojure.edn/read-string (slurp "resources/05-configured.edn"))))))
 
 (defn handle-post
   [body]
