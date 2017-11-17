@@ -24,7 +24,6 @@
 
 (defn store-post-and-broadcast!
   [post broadcast-state]
-  (prn post)
   (let [event (post->event post)]
       (broadcast-state (store-event! event))))
 

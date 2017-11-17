@@ -1,6 +1,7 @@
 (ns dashboard.components
   (:require
    [stylefy.core :as stylefy]
+   [cljs-http.client :as http]
    [reagent.core :as reagent :refer [atom]]))
 
 (defn instructions
@@ -18,5 +19,12 @@
    [:p]
    [:div.usage "The key defines the unique name of the metric. The values must be numbers, the value of the time key must be millis since epoch."]
    [:div.usage "Note: The data is currently not persisted."]])
+
+(defn randomize-button
+  "Randomizes data data of the dashboard."
+  []
+  [:button {:on-click (fn [] (http/post "/api/random" {:json-params {:foo :bar}}))}
+   "Randomize!"])
+
 
 

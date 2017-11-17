@@ -1,6 +1,6 @@
 (ns dashboard.handler
   (:require [dashboard.core :as core :refer [fetch-state! store-post-and-broadcast! generate-state-and-broadcast!]]
-            [compojure.core :refer [routes defroutes GET POST wrap-routes]]
+            [compojure.core :refer [context routes defroutes GET POST wrap-routes]]
             [compojure.route :as route]
             [compojure.handler :as handler]
             [clojure.core.async :as async :refer (<! <!! >! >!! put! chan go go-loop)]
@@ -65,30 +65,37 @@
   (response body))
 
 (defn random-state
-  [_]
+  []
   (generate-state-and-broadcast! broadcast-state))
 
 (defroutes api-routes
   (POST "/dashboard" {body :body} (handle-post body))
-  (GET "/random" {body :body} (random-state body)))
+  (POST "/random" req (random-state)))
 
-(defroutes internal-routes
+(defroutes site-routes
   (GET "/" req (redirect "index.html"))
   (GET  "/chsk" req (ring-ajax-get-or-ws-handshake req))
   (POST "/chsk" req (ring-ajax-post                req))
   (route/resources "/")
   (route/not-found "<h1>Page not found</h1>"))
 
-(def app
+(comment (def app
   (wrap-reload
    (routes
     (-> api-routes
         (wrap-routes wrap-json-body)
         (wrap-routes wrap-json-response)
         (wrap-routes wrap-defaults api-defaults)
-        (wrap-routes wrap-cors :access-control-allow-methods [:post]))
+        ;(wrap-routes wrap-cors :access-control-allow-methods [:post]))
+        )
     (-> internal-routes
-        (wrap-defaults site-defaults)))))
+        (wrap-defaults site-defaults))))))
+
+(def app
+  (wrap-reload
+   (routes
+    (context "/api" [] (wrap-defaults api-routes api-defaults))
+    (wrap-defaults site-routes site-defaults))))
 
 (defn -main [& args]
   (let [port (Integer/parseInt (get (System/getenv) "PORT" "3000"))]

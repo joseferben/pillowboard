@@ -46,28 +46,6 @@
       (= name (extract-metric-name (first state))) idx
       :else (recur (inc idx) (rest state)))))
 
-(comment (defprotocol Event
-  (fold-event [x state]))
-
-(defrecord TimeSeriesEvent [name time value]
-  Event
-  (fold-event [x state]
-    (let [idx (get-idx state name)]
-      (if (= idx -1)
-        (conj state {:category :timeseries
-                     :data #{{"time" time name value}}})
-        (update-in state [idx :data] conj {"time" time name value})))))
-
-(defrecord GaugeEvent [name value]
-  Event
-  (fold-event [x state]
-    (let [idx (get-idx state name)]
-      (if (= idx -1)
-        (conj state {:category :gauge
-                     :name name
-                     :data value})
-        (assoc-in state [idx :data] value))))))
-
 (defmulti fold-event (fn [event state] (event :type)))
 
 (defmethod fold-event :timeseries
@@ -116,4 +94,4 @@
 (defn generate-events
   "Returns a list of generated events using spec."
   []
-  (gen/sample (s/gen ::event) 100))
+  (gen/sample (s/gen ::event) 20))
