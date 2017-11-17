@@ -60,7 +60,7 @@
 
 (go (while true
       (let [{ev-msg :event} (<! ch-chsk)]
-        (broadcast-state (random-state)))))
+        (broadcast-state (fetch-state!)))))
 
 (defn handle-post
   [body]
@@ -86,15 +86,15 @@
         (wrap-routes wrap-json-body)
         (wrap-routes wrap-json-response)
         (wrap-routes wrap-defaults api-defaults)
-        ;(wrap-routes wrap-cors :access-control-allow-methods [:post]))
         )
-    (-> internal-routes
+    (-> site-routes
         (wrap-defaults site-defaults))))))
 
 (def app
   (wrap-reload
    (routes
-    (context "/api" [] (wrap-defaults api-routes api-defaults))
+    (context "/api" [] (wrap-json-body
+                        (wrap-defaults api-routes api-defaults)))
     (wrap-defaults site-routes site-defaults))))
 
 (defn -main [& args]

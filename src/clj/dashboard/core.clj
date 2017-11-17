@@ -20,6 +20,7 @@
   [event]
   (swap! events conj event)
   (tracef "Stored event: %s" event)
+  (prn @events)
   (fetch-state!))
 
 (defn store-post-and-broadcast!

@@ -74,14 +74,14 @@
   (debugf "Received raw post of type gauge: %s" post)
   (let [name (extract-name post)
         value (get post name)]
-    {:type :timeseries :name name :data value}))
+    {:type :timeseries :name name :value value}))
 
 (defmethod post->event :default [post]
   (debugf "Received raw post of type timeseries: %s" post)
   (let [name (extract-name post)
         value (get post name)
         time (or (post "time") (System/currentTimeMillis))]
-    {:type :timeseries :name name :time time :data value}))
+    {:type :timeseries :name name :time time :value value}))
 
 (defn fold-events
   [events]
