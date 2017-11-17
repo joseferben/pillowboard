@@ -1,5 +1,5 @@
 (ns dashboard.core
-  (:require [dashboard.pipeline.event :refer [fold-events post->event]]
+  (:require [dashboard.pipeline.event :refer [fold-events post->event generate-events]]
             [dashboard.pipeline.group :refer [group process]]
             [dashboard.pipeline.configure :refer [configure]]
             [dashboard.pipeline.transform :refer [transform]]
@@ -28,3 +28,6 @@
   (let [event (post->event post)]
       (broadcast-state (store-event! event))))
 
+(defn generate-state-and-broadcast!
+  [broadcast-state]
+  (broadcast-state (pipeline (generate-events))))

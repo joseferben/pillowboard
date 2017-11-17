@@ -1,17 +1,17 @@
 (ns clj.dashboard.pipeline.event-test
-  (:require [dashboard.pipeline.event :as sut :refer [->GaugeEvent ->TimeSeriesEvent epoch->date] :rename {epoch->date to-date}]
+  (:require [dashboard.pipeline.event :as sut :refer [epoch->date] :rename {epoch->date to-date}]
             [clojure.edn :as edn]
             [clojure.test :refer [deftest testing is]]))
 
 (testing "event"
   (deftest fold-events
     (let [fun #'dashboard.pipeline.event/fold-events
-          events [(->TimeSeriesEvent "commit" 0 0)
-                  (->TimeSeriesEvent "commit" 1 2)
-                  (->TimeSeriesEvent "merge-request" 1 1)
-                  (->TimeSeriesEvent "merge-request" 2 11)
-                  (->TimeSeriesEvent "commit" 4 4)
-                  (->TimeSeriesEvent "commit" 5 2)]
+          events [{:type :timeseries :name "commit" :time 0 :value 0}
+                  {:type :timeseries :name "commit" :time 1 :value 2}
+                  {:type :timeseries :name "merge-request" :time 1 :value 1}
+                  {:type :timeseries :name "merge-request" :time 2 :value 11}
+                  {:type :timeseries :name "commit" :time 4 :value 4}
+                  {:type :timeseries :name "commit" :time 5 :value 2}]
           expected [{:category :timeseries
                      :data #{{"time" 0 "commit" 0}
                              {"time" 1 "commit" 2}

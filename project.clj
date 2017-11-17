@@ -1,4 +1,4 @@
-(defproject dashboard "0.0.2"
+(defproject dashboard "0.0.3-SNAPSHOT"
   :description "Zero config dashboard that makes sense of your data."
   :url "http://www.200ok.ch"
   :license {:name "Eclipse Public License"
@@ -10,6 +10,7 @@
                  [org.clojure/clojurescript "1.9.946"]
                  [org.clojure/core.async  "0.3.443"]
                  [org.clojure/spec.alpha "0.1.143"]
+                 [org.clojure/test.check "0.10.0-alpha2"]
                  [ring/ring-defaults "0.2.1"]
                  [ring/ring-devel "1.6.3"]
                  [ring/ring-json "0.4.0"]

@@ -1,5 +1,5 @@
 (ns dashboard.handler
-  (:require [dashboard.core :as core :refer [fetch-state! store-post-and-broadcast!]]
+  (:require [dashboard.core :as core :refer [fetch-state! store-post-and-broadcast! generate-state-and-broadcast!]]
             [compojure.core :refer [routes defroutes GET POST wrap-routes]]
             [compojure.route :as route]
             [compojure.handler :as handler]
@@ -64,8 +64,13 @@
   ;; map to event and forward to event sourcing, return answer
   (response body))
 
+(defn random-state
+  [_]
+  (generate-state-and-broadcast! broadcast-state))
+
 (defroutes api-routes
-  (POST "/dashboard" {body :body} (handle-post body)))
+  (POST "/dashboard" {body :body} (handle-post body))
+  (GET "/random" {body :body} (random-state body)))
 
 (defroutes internal-routes
   (GET "/" req (redirect "index.html"))
