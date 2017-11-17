@@ -20,7 +20,6 @@
   [event]
   (swap! events conj event)
   (tracef "Stored event: %s" event)
-  (prn @events)
   (fetch-state!))
 
 (defn store-post-and-broadcast!
@@ -30,4 +29,6 @@
 
 (defn generate-state-and-broadcast!
   [broadcast-state]
-  (broadcast-state (pipeline (generate-events))))
+  (let [generated-events (generate-events)]
+    (reset! events generated-events)
+    (broadcast-state (pipeline generated-events))))
