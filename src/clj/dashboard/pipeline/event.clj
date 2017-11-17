@@ -8,7 +8,8 @@
 (s/def ::time-value (s/and int? pos?))
 (s/def ::metric-value (s/and int? pos?))
 (s/def ::metric-name #{"commit" "merge-request" "user-registration"
-                       "incident" "error" "alert" "tickets-done"})
+                       "incident" "error" "alert" "tickets-done"
+                       "time-spent" "foo" "bar"})
 (s/def ::metric-type #{:timeseries})
 
 (s/def ::type ::metric-type)
@@ -93,5 +94,5 @@
 
 (defn generate-events
   "Returns a list of generated events using spec."
-  []
-  (gen/sample (s/gen ::event) 10))
+  [n]
+  (gen/sample (s/gen ::event) n))
