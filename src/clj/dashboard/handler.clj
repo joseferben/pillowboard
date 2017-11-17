@@ -54,19 +54,19 @@
                   [:board/state
                    {:state state}]))))
 
+(defn random-state
+  []
+  (generate-state-and-broadcast! broadcast-state))
+
 (go (while true
       (let [{ev-msg :event} (<! ch-chsk)]
-        (broadcast-state (fetch-state!)))))
+        (broadcast-state (random-state)))))
 
 (defn handle-post
   [body]
   (store-post-and-broadcast! body broadcast-state)
   ;; map to event and forward to event sourcing, return answer
   (response body))
-
-(defn random-state
-  []
-  (generate-state-and-broadcast! broadcast-state))
 
 (defroutes api-routes
   (POST "/dashboard" {body :body} (handle-post body))

@@ -5,10 +5,9 @@
                       :background-color "#FFFFFF"
                       :border "0px solid black"})
 
-(def grid-wrapper {:display "grid"
-                   :grid-template-columns "repeat(2, 1fr)"
-                   :grid-gap "0.2em"
-                   :grid-auto-rows "minmax(100px, auto)"})
+(def grid-wrapper {:display "flex"
+                   :flex-direction "row"
+                   :flex-wrap "wrap"})
 
 (defn grid-item-style
   [{:keys [x y width height]}]

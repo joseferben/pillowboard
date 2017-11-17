@@ -94,4 +94,4 @@
 (defn generate-events
   "Returns a list of generated events using spec."
   []
-  (gen/sample (s/gen ::event) 20))
+  (gen/sample (s/gen ::event) 10))
