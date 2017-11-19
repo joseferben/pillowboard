@@ -40,3 +40,6 @@ jobs:
 
       # run tests!
       - run: lein test
+
+      # run linters!
+      - run: lein eastwood
