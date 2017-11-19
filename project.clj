@@ -27,6 +27,7 @@
                  [cljs-http "0.1.44"]]
   :plugins [[lein-figwheel "0.5.14"]
             [lein-ring "0.9.7"]
+            [lein-kibit "0.1.6"]
             [com.jakemccrary/lein-test-refresh "0.21.1"]
             [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
 

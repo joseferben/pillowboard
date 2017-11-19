@@ -80,17 +80,6 @@
   (route/resources "/")
   (route/not-found "<h1>Page not found</h1>"))
 
-(comment (def app
-  (wrap-reload
-   (routes
-    (-> api-routes
-        (wrap-routes wrap-json-body)
-        (wrap-routes wrap-json-response)
-        (wrap-routes wrap-defaults api-defaults)
-        )
-    (-> site-routes
-        (wrap-defaults site-defaults))))))
-
 (def app
   (wrap-reload
    (routes

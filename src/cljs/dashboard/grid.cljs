@@ -7,7 +7,7 @@
 
 (timbre/set-level! :debug)
 
-(defmulti chart-type (fn [chart] (:chart-type chart)))
+(defmulti chart-type :chart-type)
 
 (defmethod chart-type :linechart [data] 
   [:div.chart (merge {:key (data :key)}

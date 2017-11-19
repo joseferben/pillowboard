@@ -46,7 +46,7 @@
 
 (defn line-chart-comp [data]
   [:div
-   (into []
+   (vec
          (concat
           [:> line-chart (merge chart-dimensions {:data (transform data)})
            ;; TODO read x-axis from settings
@@ -60,7 +60,7 @@
 (defn scatter-chart-comp
   [data]
   [:div
-   (into []
+   (vec
          (concat
           [:> scatter-chart chart-dimensions 
            [:> x-axis {"dataKey" "incidents"}]
@@ -75,7 +75,7 @@
 (defn area-chart-comp
   [data]
   [:div
-   (into []
+   (vec
          (concat
           [:> area-chart (merge chart-dimensions 
                           {:data (transform data)})

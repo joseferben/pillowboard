@@ -49,11 +49,9 @@
 (defn init! []
   (stylefy/init)
   (reagent/render-component [container]
-                          (. js/document (getElementById "app"))))
+                          (.getElementById js/document "app")))
 
-(defmulti handle-event 
-  (fn [event]
-    (first event)))
+(defmulti handle-event first)
 
 (defmethod handle-event :chsk/handshake
   [event]
