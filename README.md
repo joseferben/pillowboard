@@ -40,9 +40,13 @@ Get refactoring suggestions by using:
 
 `lein kibit`
 
-Run the linter by using:
+Run the bikeshed linter by using:
 
 `lein bikeshed`
+
+Run the eastwood linter by using:
+
+`lein eastwood`
 
 ## License
 

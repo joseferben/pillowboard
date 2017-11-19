@@ -4,7 +4,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :min-lein-version "2.7.1"
-  :global-vars {*warn-on-reflection* true
+  :global-vars {*warn-on-reflection* false
                 *assert* true}
   :dependencies [[org.clojure/clojure "1.9.0-alpha17"]
                  [org.clojure/clojurescript "1.9.946"]
@@ -29,6 +29,7 @@
             [lein-ring "0.9.7"]
             [lein-kibit "0.1.6"]
             [lein-bikeshed "0.5.0"]
+            [jonase/eastwood "0.2.5"]
             [com.jakemccrary/lein-test-refresh "0.21.1"]
             [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
 
@@ -60,7 +61,7 @@
                                   [com.cemerick/piggieback "0.2.2"]
                                   [javax.servlet/servlet-api "2.5"]
                                   [ring/ring-mock "0.3.0"]]
-                   :source-paths ["src" "dev"]
+                   :source-paths ["src/clj" "src/cljc"]
                    :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
                    :clean-targets ^{:protect false} ["resources/public/js/compiled"
                                                      :target-path]}

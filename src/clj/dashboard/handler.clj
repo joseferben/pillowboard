@@ -59,9 +59,10 @@
   []
   (generate-state-and-broadcast! broadcast-state))
 
-(go (while true
+(go-loop []
       (let [{ev-msg :event} (<! ch-chsk)]
-        (broadcast-state (fetch-state!)))))
+        (broadcast-state (fetch-state!)))
+      (recur))
 
 (defn handle-post
   [body]

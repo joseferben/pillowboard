@@ -11,11 +11,11 @@
       (filter #(not= % "time"))
       first))
 
-(defn- has-space-left? [_ group]
-  (< (group :count) max-metrics-per-group))
+(defn- has-space-left? [_ grp]
+  (< (grp :count) max-metrics-per-group))
 
-(defn- same-category? [metric group]
-  (= (metric :category) (group :category)))
+(defn- same-category? [metric grp]
+  (= (metric :category) (grp :category)))
 
 (defn- determine-sub-category [metric]
   (let [values (map #(get % (extract-label metric)) metric)]
@@ -23,11 +23,11 @@
       (and (<= 0 (apply min values)) (>= 1 (apply max values))) :ratio
       :else :absolute)))
 
-(defn- same-sub-category? [metric group]
+(defn- same-sub-category? [metric grp]
   (-> metric
       :data
       determine-sub-category
-      (= (group :sub-category))))
+      (= (grp :sub-category))))
 
 (def invariants [has-space-left? same-category? same-sub-category?])
 
