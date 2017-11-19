@@ -1,9 +1,7 @@
 (ns dashboard.styles.core)
 
 ;; debug
-(def component-style {:color "#333333"
-                      :background-color "#FFFFFF"
-                      :border "0px solid black"})
+(def component-style {:background-color "transparent"})
 
 (def grid-wrapper {:display "flex"
                    :flex-direction "row"
