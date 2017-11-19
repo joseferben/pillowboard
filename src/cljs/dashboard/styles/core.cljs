@@ -7,6 +7,12 @@
                    :flex-direction "row"
                    :flex-wrap "wrap"})
 
+(def card-style {:background-color "#273646"
+                 :border "none"
+                 :margin "0.3em"})
+
+(def card-content-style {:padding "0.5em"})
+
 (defn grid-item-style
   [{:keys [x y width height]}]
   {:grid-column (str x "/" (+ x width))
