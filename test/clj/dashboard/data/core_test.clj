@@ -20,7 +20,7 @@
                      {"a" 5 "b" 2 "c" 0}
                      {"a" 6 "b" 2 "c" 0}}]
       (is (= expected (sut/full-join "a" [tuple1 tuple2])))))
-(deftest full-join-matching-length
+(deftest full-join-nil-strategy
     (let [tuple1 #{{"a" 1 "b" 2}
                    {"a" 2 "b" 3}
                    {"a" 3 "b" 1}
@@ -31,12 +31,12 @@
                    {"a" 6 "c" 0}}
           expected #{{"a" 1 "b" 2 "c" 2}
                      {"a" 2 "b" 3 "c" 1}
-                     {"a" 3 "b" 1 "c" 1}
-                     {"a" 4 "b" 2 "c" 1}
-                     {"a" 5 "b" 2 "c" 0}
-                     {"a" 6 "b" 2 "c" 0}}]
-      (is (= expected (sut/full-join "a" [tuple1 tuple2])))))
-  (deftest full-join-nil-strategy
+                     {"a" 3 "b" 1 "c" nil}
+                     {"a" 4 "b" 2 "c" nil}
+                     {"a" 5 "b" nil "c" 0}
+                     {"a" 6 "b" nil "c" 0}}]
+      (is (= expected (sut/full-join "a" :nil [tuple1 tuple2])))))
+  (deftest full-join
     (let [tuple1 #{{"a" 1 "b" 2}
                    {"a" 2 "b" 3}
                    {"a" 3 "b" 1}
@@ -44,11 +44,11 @@
           tuple2 #{{"a" 1 "c" 2}
                    {"a" 6 "c" 0}}
           expected #{{"a" 1 "b" 2 "c" 2}
-                     {"a" 2 "b" 3 "c" nil}
-                     {"a" 3 "b" 1 "c" nil}
-                     {"a" 4 "b" 2 "c" nil}
-                     {"a" 6 "b" nil "c" 0}}]
-      (is (= expected (sut/full-join "a" :nil [tuple1 tuple2])))))
+                     {"a" 2 "b" 3 "c" 2}
+                     {"a" 3 "b" 1 "c" 2}
+                     {"a" 4 "b" 2 "c" 2}
+                     {"a" 6 "b" 2 "c" 0}}]
+      (is (= expected (sut/full-join "a" [tuple1 tuple2])))))
   (deftest full-join-three-tuples
     (let [tuple1 #{{"a" 1 "b" 2}
                    {"a" 2 "b" 3}

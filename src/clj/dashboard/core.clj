@@ -29,7 +29,7 @@
 
 (defn generate-state-and-broadcast!
   [broadcast-state]
-  (let [generated-events (generate-events 10)]
+  (let [generated-events (generate-events 15)]
     (reset! events generated-events)
     (broadcast-state (pipeline generated-events))))
 
