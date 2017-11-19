@@ -1,4 +1,5 @@
 (ns dashboard.pipeline.group
+  "Contains functions for grouping and processing metrics."
   (:require [dashboard.data.core :refer [full-join]]))
 
 ;; invariants that must hold true
@@ -64,5 +65,9 @@
       grouped
       (recur (add-to-grouped (first to-group) grouped) (rest to-group)))))
 
-(defn process [grouped]
-  (map #(update % :metrics (partial full-join "time")) grouped))
+(defn process
+  "Processed grouped data by executing a full-join on the time dimension."
+  ([grouped]
+   (process nil grouped))
+  ([strategy grouped]
+   (map #(update % :metrics (partial full-join "time" strategy)) grouped)))

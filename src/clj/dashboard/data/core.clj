@@ -1,6 +1,12 @@
 (ns dashboard.data.core
   (:require [clojure.set :as set]))
 
+(defn- nil-strategy
+  "This is a join-strategy that sets unknown values to :nil."
+  [before item all-keys]
+  (reduce (fn [acc key]
+            (assoc acc key (or (get item key) nil))) {} all-keys))
+
 (defn- last-value-strategy
   "This is a join-strategy that replaces an unknown value with the last known value."
   [before item all-keys]
@@ -39,9 +45,13 @@
   [joined strategy]
   ((iterate-values strategy) joined))
 
+(def strategies {:nil nil-strategy :last last-value-strategy})
+
 (defn full-join
   "Joins two tuples `t1` and `t2` on `key` using the default `last-value-strategy` join strategy."
-  ([k t1 t2]
-   (set (apply-strategy (full-join-tuples t1 t2 k) last-value-strategy)))
   ([k tuples]
-   (reduce (fn [acc item] (full-join k acc item)) tuples)))
+   (full-join k last-value-strategy tuples))
+  ([k strategy tuples]
+   (reduce (fn [acc item] (full-join k strategy acc item)) tuples))
+  ([k strategy t1 t2]
+   (set (apply-strategy (full-join-tuples t1 t2 k) (get strategies strategy last-value-strategy)))))

@@ -11,7 +11,7 @@
 (def events (atom []))
 
 (defn pipeline [events]
-  ((comp transform configure process group fold-events) events))
+  ((comp transform configure (partial process :last) group fold-events) events))
 
 (defn fetch-state! []
   (pipeline @events))
