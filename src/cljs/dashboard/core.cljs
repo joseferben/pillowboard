@@ -6,7 +6,7 @@
    [cljs.core.async :as async :refer (<! >! put! chan timeout)]
    [taoensso.timbre :as timbre :refer-macros (tracef debugf infof warnf errorf)]
    [taoensso.encore :as encore :refer-macros (have have?)]
-   [taoensso.sente  :as sente :refer (cb-success?)] 
+   [taoensso.sente  :as sente :refer (cb-success?)]
    [stylefy.core :as stylefy]
    [reagent.core :as reagent :refer [atom]])
   (:require-macros

@@ -13,4 +13,3 @@
   [{:keys [x y width height]}]
   {:grid-column (str x "/" (+ x width))
    :grid-row (str y "/" (+ y height))})
-

@@ -48,7 +48,7 @@
         (update-in [idx :metrics] conj (metric :data))
         (update-in [idx :count] inc))))
 
-(defn- add-to-grouped 
+(defn- add-to-grouped
   ([metric grouped]
    (add-to-grouped metric grouped grouped 0))
   ([metric original to-check idx]

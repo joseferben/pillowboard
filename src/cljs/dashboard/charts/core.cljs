@@ -29,7 +29,7 @@
 
 (defn- millis-to-date [millis]
   (.format (js/moment. millis) "HH:mm:ss DD. MMM"))
-  
+
 (defn- metrics-keys
   [data]
   (-> data
@@ -62,7 +62,7 @@
   [:div
    (vec
          (concat
-          [:> scatter-chart chart-dimensions 
+          [:> scatter-chart chart-dimensions
            [:> x-axis {"dataKey" "incidents"}]
            [:> y-axis {"dataKey" "traffic"}]
            [:> cartesian-grid {"strokeDasharray" "3 3"}]
@@ -77,7 +77,7 @@
   [:div
    (vec
          (concat
-          [:> area-chart (merge chart-dimensions 
+          [:> area-chart (merge chart-dimensions
                           {:data (transform data)})
            [:> x-axis {"dataKey" :time :type :number :domain ["dataMin" "dataMax"] :tickFormatter millis-to-date}]
            [:> y-axis]
@@ -85,5 +85,3 @@
            [:> tooltip]
            [:> legend]]
           (metrics data)))])
-
-

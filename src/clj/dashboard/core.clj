@@ -5,7 +5,7 @@
             [dashboard.pipeline.transform :refer [transform]]
             [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]))
 
-(timbre/set-level! :trace) 
+(timbre/set-level! :trace)
 
 ;; TODO simple form of persistence by writing timeseries to files
 (def events (atom []))

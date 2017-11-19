@@ -6,7 +6,7 @@
             [clojure.core.async :as async :refer (<! <!! >! >!! put! chan go go-loop)]
             [clojure.java.io :as io]
             [org.httpkit.server :refer [run-server]]
-            [taoensso.sente :as sente] 
+            [taoensso.sente :as sente]
             [taoensso.sente.server-adapters.http-kit :refer (get-sch-adapter)]
             [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]
             [ring.util.response :refer [redirect response content-type]]
@@ -18,7 +18,7 @@
             )
   (:gen-class))
 
-(timbre/set-level! :trace) 
+(timbre/set-level! :trace)
 
 (let [;; Serializtion format, must use same val for client + server:
       packer :edn ; Default packer, a good choice in most cases

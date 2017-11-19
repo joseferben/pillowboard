@@ -25,6 +25,3 @@
   []
   [:button {:on-click (fn [] (http/post "/api/random" {:json-params {:foo :bar}}))}
    "Randomize"])
-
-
-

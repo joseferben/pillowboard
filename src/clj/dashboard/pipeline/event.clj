@@ -3,7 +3,7 @@
             [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen]))
 
-(timbre/set-level! :trace) 
+(timbre/set-level! :trace)
 
 (def event-labels '("commit" "merge-request" "user-registration"
                        "incident" "error" "alert" "tickets-done"
@@ -42,12 +42,12 @@
       (filter #(not= % "time"))
       first))
 
-(defn- get-idx [state name]
+(defn- get-idx [state label]
   (loop [idx 0
          state state]
     (cond
       (empty? state) -1
-      (= name (extract-metric-name (first state))) idx
+      (= label (extract-metric-name (first state))) idx
       :else (recur (inc idx) (rest state)))))
 
 (defmulti fold-event (fn [event state] (event :type)))

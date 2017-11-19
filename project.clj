@@ -28,6 +28,7 @@
   :plugins [[lein-figwheel "0.5.14"]
             [lein-ring "0.9.7"]
             [lein-kibit "0.1.6"]
+            [lein-bikeshed "0.5.0"]
             [com.jakemccrary/lein-test-refresh "0.21.1"]
             [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
 
@@ -35,7 +36,6 @@
   :uberjar-name "dashboard-standalone.jar"
   :main dashboard.handler
   :source-paths ["src/clj" "src/cljc"]
-  :hooks [leiningen.cljsbuild]
   :cljsbuild {:builds
               [{:id "dev"
                 :source-paths ["src/cljs" "src/cljc"]
@@ -63,4 +63,5 @@
                    :source-paths ["src" "dev"]
                    :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
                    :clean-targets ^{:protect false} ["resources/public/js/compiled"
-                                                     :target-path]}})
+                                                     :target-path]}
+             :uberjar {:hooks [leiningen.cljsbuild]}})

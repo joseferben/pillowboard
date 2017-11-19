@@ -7,22 +7,22 @@
   (reduce (fn [acc key]
             (assoc acc key (or (get item key) (get before key) 0))) {} all-keys))
 
-(defn- merge-doubles [key tuples]
-  (reduce (fn [acc item] (if (= (get (last acc) key) (get item key))
+(defn- merge-doubles [k tuples]
+  (reduce (fn [acc item] (if (= (get (last acc) k) (get item k))
                            (vec (conj (drop-last acc) (merge (last acc) item)))
                            (conj acc item)))
           [] tuples))
 
-(defn- full-join-tuples [t1 t2 key]
+(defn- full-join-tuples [t1 t2 k]
   (->> (set/union t1 t2)
-       (sort (fn [a b] (compare (get a key) (get b key))))
+       (sort (fn [a b] (compare (get a k) (get b k))))
        vec
-       (merge-doubles key)
-       (sort (fn [a b] (compare (get a key) (get b key))))
+       (merge-doubles k)
+       (sort (fn [a b] (compare (get a k) (get b k))))
        vec))
 
-(defn- get-all-keys [vals]
-  (keys (apply merge vals)))
+(defn- get-all-keys [vs]
+  (keys (apply merge vs)))
 
 (defn- iterate-values
   "Applies strategy to all elements with value nil"
@@ -41,7 +41,7 @@
 
 (defn full-join
   "Joins two tuples `t1` and `t2` on `key` using the default `last-value-strategy` join strategy."
-  ([key t1 t2]
-   (set (apply-strategy (full-join-tuples t1 t2 key) last-value-strategy)))
-  ([key tuples]
-   (reduce (fn [acc item] (full-join key acc item)) tuples)))
+  ([k t1 t2]
+   (set (apply-strategy (full-join-tuples t1 t2 k) last-value-strategy)))
+  ([k tuples]
+   (reduce (fn [acc item] (full-join k acc item)) tuples)))
