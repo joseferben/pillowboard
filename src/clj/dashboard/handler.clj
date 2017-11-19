@@ -45,6 +45,7 @@
     (when (not= old new)
       (infof "Connected uids change: %s" new))))
 
+;; TODO: Do not broadcast upon every event received
 (defn broadcast-state
   [state]
   (let [uids (:any @connected-uids)]

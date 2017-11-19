@@ -5,6 +5,9 @@
 
 (timbre/set-level! :trace) 
 
+(def event-labels '("commit" "merge-request" "user-registration"
+                       "incident" "error" "alert" "tickets-done"
+                       "time-spent" "foo" "bar"))
 (s/def ::time-value (s/and int? pos?))
 (s/def ::metric-value (s/and int? pos?))
 (s/def ::metric-name #{"commit" "merge-request" "user-registration"
@@ -92,7 +95,27 @@
       processed
       (recur (rest to-process) (fold-event (first to-process) processed)))))
 
+(defn- random-event [label]
+  {:type :timeseries :name label :time (System/currentTimeMillis) :value (rand 5)})
+
+(defn- randomize-value [before]
+  (if (and (<= 0 (before :value)) (>= 1 (before :value)))
+    (assoc before :value (rand 1))
+    (update before :value (rand-nth [+ -]) (rand 30))))
+
+(defn- randomize-event [before]
+  (-> before
+      (update :time + (rand-int 500))
+      randomize-value))
+
+(defn- random-events [n label]
+  (take n (iterate randomize-event (random-event label))))
+
 (defn generate-events
-  "Returns a list of generated events using spec."
-  [n]
-  (gen/sample (s/gen ::event) n))
+  ([n]
+   (generate-events n event-labels '()))
+  ([n labels result]
+   (if (empty? labels)
+     result
+     (generate-events n (rest labels)
+                      (concat result (random-events n (first labels)))))))
