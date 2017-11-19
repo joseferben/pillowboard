@@ -1,5 +1,7 @@
 (ns dashboard.handler
-  (:require [dashboard.core :as core :refer [fetch-state! store-post-and-broadcast! generate-state-and-broadcast!]]
+  (:require [dashboard.core :as core :refer [fetch-state! store-post-and-broadcast!
+                                             generate-state-and-broadcast!
+                                             reset-state-and-broadcast!]]
             [compojure.core :refer [context routes defroutes GET POST wrap-routes]]
             [compojure.route :as route]
             [compojure.handler :as handler]
@@ -46,7 +48,7 @@
       (infof "Connected uids change: %s" new))))
 
 ;; TODO: Do not broadcast upon every event received
-(defn broadcast-state
+(defn- broadcast-state
   [state]
   (let [uids (:any @connected-uids)]
     (debugf "Broadcasting server>user: %s uids" (count uids))
@@ -55,9 +57,13 @@
                   [:board/state
                    {:state state}]))))
 
-(defn random-state
+(defn- random-state
   []
   (generate-state-and-broadcast! broadcast-state))
+
+(defn- reset-state
+  []
+  (reset-state-and-broadcast! broadcast-state))
 
 (go-loop []
       (let [{ev-msg :event} (<! ch-chsk)]
@@ -72,7 +78,8 @@
 
 (defroutes api-routes
   (POST "/dashboard" {body :body} (handle-post body))
-  (POST "/random" req (random-state)))
+  (POST "/random" req (random-state))
+  (POST "/reset" req (reset-state)))
 
 (defroutes site-routes
   (GET "/" req (redirect "index.html"))

@@ -32,3 +32,8 @@
   (let [generated-events (generate-events 10)]
     (reset! events generated-events)
     (broadcast-state (pipeline generated-events))))
+
+(defn reset-state-and-broadcast!
+  [broadcast-state]
+  (reset! events [])
+  (broadcast-state (pipeline @events)))

@@ -20,8 +20,20 @@
    [:div.usage "The key defines the unique name of the metric. The values must be numbers, the value of the time key must be millis since epoch."]
    [:div.usage "Note: The data is currently not persisted."]])
 
-(defn randomize-button
-  "Randomizes data data of the dashboard."
+(defn- randomize-button
+  "Randomizes data of the dashboard."
   []
   [:div.button {:on-click (fn [] (http/post "/api/random" {:json-params {:foo :bar}}))}
    "Randomize"])
+
+(defn- reset-button
+  "Resets data of the dashboard, can be used to show instructions again."
+  []
+  [:div.button {:on-click (fn [] (http/post "/api/reset" {:json-params {:foo :bar}}))}
+   "Reset"])
+
+(defn dev-toolbar
+  []
+  [:div.dev-toolbar
+   [randomize-button]
+   [reset-button]])
