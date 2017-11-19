@@ -1,4 +1,4 @@
-(defproject dashboard "0.0.3"
+(defproject dashboard "0.0.4-SNAPSHOT"
   :description "Zero config dashboard that makes sense of your data."
   :url "http://www.200ok.ch"
   :license {:name "Eclipse Public License"
