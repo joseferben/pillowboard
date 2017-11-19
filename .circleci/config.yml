@@ -41,8 +41,8 @@ jobs:
       # run tests!
       - run: lein test
 
-  deployment:
-    staging:
-      branch: master
-      heroku:
-        appname: zero-dashboard
+deployment:
+  staging:
+    branch: master
+    heroku:
+      appname: zero-dashboard
