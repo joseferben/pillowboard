@@ -60,9 +60,8 @@
 (defmethod handle-event :chsk/recv
   [event]
   (when (= (first (second event)) :board/state)
-    (do
-      (infof "Updating state because of event: %s" event)
-      (reset! app-state (get (second (second event)) :state)))))
+    (infof "Updating state because of event: %s" event)
+    (reset! app-state (get (second (second event)) :state))))
 
 (defmethod handle-event :default
   [event]

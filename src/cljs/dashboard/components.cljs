@@ -8,8 +8,8 @@
   "Displays basic instructions on how to use the board."
   []
   [:div.instructions
-   [:h4 "Usage"]
-   [:div.usage "Get started by POSTing metrics to /dashboard:"]
+   [:h4.title.is-4 "Usage"]
+   [:div.usage "Get started by POSTing metrics to /api/dashboard:"]
    [:p]
    [:code "http POST /api/dashboard commits:=3"]
    [:p]
