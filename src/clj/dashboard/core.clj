@@ -3,6 +3,7 @@
             [dashboard.pipeline.group :refer [group process]]
             [dashboard.pipeline.configure :refer [configure]]
             [dashboard.pipeline.transform :refer [transform]]
+            [dashboard.db :refer [event-all event-insert! event-delete-all!]]
             [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]))
 
 (timbre/set-level! :trace)
@@ -14,18 +15,18 @@
   ((comp transform configure (partial process :last) group fold-events) events))
 
 (defn fetch-state! []
-  (pipeline @events))
+  (pipeline (event-all)))
 
 (defn- store-event!
   [event]
-  (swap! events conj event)
+  (event-insert event)
   (tracef "Stored event: %s" event)
   (fetch-state!))
 
 (defn store-post-and-broadcast!
   [post broadcast-state]
   (let [event (post->event post)]
-      (broadcast-state (store-event! event))))
+    (broadcast-state (store-event! event))))
 
 (defn generate-state-and-broadcast!
   [broadcast-state]
@@ -35,5 +36,5 @@
 
 (defn reset-state-and-broadcast!
   [broadcast-state]
-  (reset! events [])
+  (event-delete-all!)
   (broadcast-state (pipeline @events)))

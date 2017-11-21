@@ -47,6 +47,10 @@ Run the eastwood linter by using:
 
 `lein eastwood`
 
+Run database migrations by using:
+
+`lein migrate`
+
 ## License
 
 Copyright © 2017 Josef Erben
@@ -54,3 +58,30 @@ Copyright © 2017 Josef Erben
 ## Pretty printing tests
 
 Use [this](https://github.com/venantius/ultra) lein plugin to pretty print tests.
+
+
+## data types
+
+### time series
+```clojure
+{:type timeseries
+ :name "foobar"
+ :time 112313
+ :value 42}
+```
+
+### gauge
+```clojure
+{:type gauge
+ :name "foobar"
+ :value 42}
+```
+
+### tuple
+```clojure
+{:type tuple
+ :name1 "foo"
+ :value1 42
+ :name2 "bar"
+ :value2 "24"}
+```
