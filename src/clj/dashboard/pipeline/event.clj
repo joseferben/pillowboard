@@ -87,14 +87,6 @@
         time (or (post "time") (System/currentTimeMillis))]
     {:type :timeseries :name name :time time :value value}))
 
-(defn fold-events
-  [events]
-  (loop [to-process events
-         processed []]
-    (if (empty? to-process)
-      processed
-      (recur (rest to-process) (fold-event (first to-process) processed)))))
-
 (defn- random-event [label]
   {:type :timeseries :name label :time (System/currentTimeMillis) :value (rand 5)})
 
@@ -110,6 +102,14 @@
 
 (defn- random-events [n label]
   (take n (iterate randomize-event (random-event label))))
+
+(defn fold-events
+  [events]
+  (loop [to-process events
+         processed []]
+    (if (empty? to-process)
+      processed
+      (recur (rest to-process) (fold-event (first to-process) processed)))))
 
 (defn generate-events
   ([n]

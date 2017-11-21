@@ -1,10 +1,17 @@
 -- src/resources/sql/events.sql
 -- Events
 
--- :name event-all :? :*
--- :result n
--- :doc Select all events
-select * from event
+-- :name events-timeseries-all :? :*
+-- :doc Select all timeseries events
+select * from event_timeseries
+
+-- :name events-gauge-all :? :*
+-- :doc Select all gauge events
+select * from event_gauge
+
+-- :name events-tuple-all :? :*
+-- :doc Select all tuple events
+select * from event_tuple
 
 -- :name event-timeseries-insert :! :n
 -- :doc Insert a single event

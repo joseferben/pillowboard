@@ -11,7 +11,10 @@
    })
 
 (defn events-all []
-  (events/events-all db))
+  (concat
+   (map #(assoc % :type :timeseries) (events/events-timeseries-all db))
+   (map #(assoc % :type :gauge) (events/events-gauge-all db))
+   (map #(assoc % :type :tuple) (events/events-tuple-all db))))
 
 (defmulti event-insert! :type)
 
@@ -23,9 +26,3 @@
 
 (defmethod event-insert! :tuple [{:keys [name1 value1 name2 value2]}]
   (events/event-tuple-insert db {:name1 name1 :value1 value1 :name2 name2 :value2 value2}))
-
-(defn events-insert! [events]
-  (events/events-insert db {:events events}))
-
-(defn events-delete-all! []
-  (events/events-delete-all db))
