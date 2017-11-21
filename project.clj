@@ -11,10 +11,14 @@
                  [org.clojure/core.async  "0.3.443"]
                  [org.clojure/spec.alpha "0.1.143"]
                  [org.clojure/test.check "0.10.0-alpha2"]
+                 [com.layerware/hugsql "0.4.8"]
+                 [org.postgresql/postgresql "9.2-1002-jdbc4"]
                  [ring/ring-defaults "0.2.1"]
                  [ring/ring-devel "1.6.3"]
                  [ring/ring-json "0.4.0"]
                  [ring-cors "0.1.11"]
+                 [ragtime "0.7.2"]
+                 [com.layerware/hugsql "0.4.8"]
                  [cheshire "5.8.0"]
                  [compojure "1.5.1"]
                  [reagent "0.7.0"]
@@ -34,6 +38,8 @@
             [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
 
   :ring {:handler dashboard.handler/app}
+  :aliases {"migrate"  ["run" "-m" "user/migrate"]
+            "rollback" ["run" "-m" "user/rollback"]}
   :uberjar-name "dashboard-standalone.jar"
   :main dashboard.handler
   :source-paths ["src/clj" "src/cljc"]
@@ -63,6 +69,7 @@
                                   [ring/ring-mock "0.3.0"]]
                    :source-paths ["src/clj" "src/cljc"]
                    :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
+                   :ragtime {:database "jdbc:postgresql://localhost:5432/postgres?user=postgres&password=postgres"}
                    :clean-targets ^{:protect false} ["resources/public/js/compiled"
                                                      :target-path]}
              :uberjar {:hooks [leiningen.cljsbuild]}})
