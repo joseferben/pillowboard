@@ -21,7 +21,7 @@
 (infof "ClojureScript appears to have loaded correctly.")
 
 (let [{:keys [chsk ch-recv send-fn state]}
-      (sente/make-channel-socket-client! "/chsk" ; Note the same path as before
+      (sente/make-channel-socket-client! "./chsk" ; Note the same path as before
        {:type :auto ; e/o #{:auto :ajax :ws}
         :packer :edn
        })]

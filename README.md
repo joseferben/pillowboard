@@ -16,7 +16,6 @@ To get an interactive development environment in the frontend run:
 
 	lein figwheel
 
-
 Alternatively you can use something like Cider for emacs:
 
 	M-x cider-jack-in-clojurescript
