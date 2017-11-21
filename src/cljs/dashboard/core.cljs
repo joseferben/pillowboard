@@ -21,15 +21,14 @@
 (infof "ClojureScript appears to have loaded correctly.")
 
 (let [{:keys [chsk ch-recv send-fn state]}
-      (sente/make-channel-socket-client! "chsk" ; Note the same path as before
-       {:type :auto ; e/o #{:auto :ajax :ws}
+      (sente/make-channel-socket-client! (clojure.string/replace (.-pathname (.-location js/window)) "index.html" "chsk")
+       {:type :auto
         :packer :edn
        })]
   (def chsk       chsk)
-  (def ch-chsk    ch-recv) ; ChannelSocket's receive channel
-  (def chsk-send! send-fn) ; ChannelSocket's send API fn
-  (def chsk-state state)   ; Watchable, read-only atom
-  )
+  (def ch-chsk    ch-recv)
+  (def chsk-send! send-fn)
+  (def chsk-state state))
 
 (add-watch chsk-state :state
            (fn [_ _ old new]
