@@ -26,7 +26,7 @@
   event-type)
 
 (defmethod event-insert! :timeseries [{:keys [name time value]} id]
-  (events/event-timeseries-insert db {:dashbord_id id :name name :time time :value value}))
+  (events/event-timeseries-insert db {:dashboard_id id :name name :time time :value value}))
 
 (defmethod event-insert! :gauge [{:keys [name value]} id]
   (events/event-gauge-insert db {:dashboard_id id :name name :value value}))

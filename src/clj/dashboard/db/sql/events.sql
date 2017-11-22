@@ -11,7 +11,7 @@ select name, value from event_gauge where dashboard_id = :id
 
 -- :name events-tuple-all :? :*
 -- :doc Select all tuple events
-select name, value from event_tuple where dashboard_id = :id
+select name1, value1, name2, value2 from event_tuple where dashboard_id = :id
 
 -- :name event-timeseries-insert :! :n
 -- :doc Insert a single event

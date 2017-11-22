@@ -24,7 +24,7 @@ create table event_timeseries (
        id serial primary key,
        dashboard_id integer references dashboard on delete cascade,
        name varchar(60) not null,
-       time int not null default 0,
+       time bigint not null default 0,
        value real not null default 0.0,
        created_at timestamp not null default current_timestamp
 );

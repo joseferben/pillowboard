@@ -15,11 +15,11 @@
   ((comp transform configure (partial process :last) group fold-events) events))
 
 (defn fetch-state! []
-  (pipeline (events-all)))
+  (pipeline (events-all 1)))
 
 (defn- store-event!
   [event]
-  (event-insert! event)
+  (event-insert! event 1)
   (tracef "Stored event: %s" event)
   (fetch-state!))
 
