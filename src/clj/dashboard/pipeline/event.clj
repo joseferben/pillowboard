@@ -10,12 +10,8 @@
                        "time-spent" "foo" "bar"))
 (s/def ::time-value (s/and int? pos?))
 (s/def ::metric-value (s/and number?))
-(s/def ::metric-name #{"commit" "merge-request" "user-registration"
-                       "incident" "error" "alert" "tickets-done"
-                       "time-spent" "foo" "bar"})
-(s/def ::metric-type #{:timeseries})
+(s/def ::metric-name (s/and string?))
 
-(s/def ::type ::metric-type)
 (s/def ::name ::metric-name)
 (s/def ::time ::time-value)
 (s/def ::value ::metric-value)
@@ -73,10 +69,14 @@
                      :data value})
         (assoc-in state [idx :data] value))))
 
-(defn- extract-name [post]
+(defn- extract-name
+  "Extract the event name of a post."
+  [post]
   (first (filter #(not= % :type) (keys post))))
 
-(defmulti post->event (fn [post] (post :type)))
+(defmulti post->event
+  "Maps a post to an event."
+  (fn [post] (post :type)))
 
 (defmethod post->event :gauge [post]
   (debugf "Received raw post of type gauge: %s" post)
