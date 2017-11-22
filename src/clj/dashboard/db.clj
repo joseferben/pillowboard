@@ -11,10 +11,9 @@
    })
 
 (defn events-all []
-  (concat
-   (map #(assoc % :type :timeseries) (events/events-timeseries-all db))
-   (map #(assoc % :type :gauge) (events/events-gauge-all db))
-   (map #(assoc % :type :tuple) (events/events-tuple-all db))))
+  (concat (events/events-timeseries-all db)
+          (events/events-gauge-all db)
+          (events/events-tuple-all db)))
 
 (defmulti event-insert! :type)
 

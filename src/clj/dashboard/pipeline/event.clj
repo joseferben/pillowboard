@@ -20,7 +20,18 @@
 (s/def ::time ::time-value)
 (s/def ::value ::metric-value)
 
-(s/def ::event (s/keys :req-un [::type ::name ::time ::value]))
+(s/def ::timeseries-event (s/keys :req-un [::name ::time ::value]))
+(s/def ::gauge-event (s/keys :req-un [::name ::value]))
+(s/def ::tuple-event (s/keys :req-un [::name1 ::value1 ::name2 ::value2]))
+
+(defn event-type
+  "Maps event data to an event type by analyzing the map structure."
+  [event]
+  (cond
+    (s/valid? ::timeseries-event event) :timeseries
+    (s/valid? ::gauge-event event) :gauge
+    (s/valid? ::tuple-event event) :tuple
+    :else :invalid))
 
 (defn epoch->date
   [millis]

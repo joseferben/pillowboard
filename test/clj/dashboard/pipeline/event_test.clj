@@ -4,6 +4,14 @@
             [clojure.test :refer [deftest testing is]]))
 
 (testing "event"
+  (deftest event-type-timeseries
+    (is (= :timeseries (sut/event-type {:name "foo" :time 42 :value 2}))))
+  (deftest event-type-gauge
+    (is (= :gauge (sut/event-type {:name "foo" :value 2}))))
+  (deftest event-type-tuple
+    (is (= :tuple (sut/event-type {:name1 "foo" :value1 2 :name2 "foo" :value2 2}))))
+  (deftest event-type-invalid
+    (is (= :invalid (sut/event-type {:name "foo"}))))
   (deftest fold-events
     (let [fun #'dashboard.pipeline.event/fold-events
           events [{:type :timeseries :name "commit" :time 0 :value 0}
