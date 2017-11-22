@@ -78,11 +78,11 @@
 
 (defroutes api-routes
   (GET "/dashboards" [] (response {:dashboard ["some" "dashboards"]}))
-  (POST "/dashboards" [] (respone {:success "You added a dashboard"}))
+  (POST "/dashboards" [] (response {:success "You added a dashboard"}))
   (GET "/users" [] (response {:users ["user a" "user b"]}))
   (POST "/users" [] (response {:success "you have create a user"}))
   (POST "/data/:id" [id] (response {:default "You posted data"}))
-  (POST "/sessions" {body :body} (authorize body)))
+  (POST "/sessions" [] {:success "authorized"}))
 
 (defroutes site-routes
   (GET "/" req (redirect "index.html"))
