@@ -22,7 +22,7 @@
           (events/events-tuple-all db {:id id})))
 
 (defmulti event-insert!
-  "Stores an `event` of any type with the dashboard `id`."
+  "Stores an `event` of any type with dashboard `id`."
   event-type)
 
 (defmethod event-insert! :timeseries [{:keys [name time value]} id]
