@@ -77,9 +77,12 @@
   (response body))
 
 (defroutes api-routes
-  (POST "/dashboard" {body :body} (handle-post body))
-  (POST "/random" req (random-state))
-  (POST "/reset" req (reset-state)))
+  (GET "/dashboards" [] (response {:dashboard ["some" "dashboards"]}))
+  (POST "/dashboards" [] (respone {:success "You added a dashboard"}))
+  (GET "/users" [] (response {:users ["user a" "user b"]}))
+  (POST "/users" [] (response {:success "you have create a user"}))
+  (POST "/data/:id" [id] (response {:default "You posted data"}))
+  (POST "/sessions" {body :body} (authorize body)))
 
 (defroutes site-routes
   (GET "/" req (redirect "index.html"))

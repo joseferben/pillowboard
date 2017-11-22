@@ -39,7 +39,7 @@
 (defn container []
   "Injects app-state into dashboard, enables re-render"
   [:div.top-container
-   [dev-toolbar]
+   ;;[dev-toolbar]
   (if (or (nil? @app-state) (empty? (@app-state :charts)))
     [instructions]
     [:div.container
