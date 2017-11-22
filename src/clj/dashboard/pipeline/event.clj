@@ -9,7 +9,7 @@
                        "incident" "error" "alert" "tickets-done"
                        "time-spent" "foo" "bar"))
 (s/def ::time-value (s/and int? pos?))
-(s/def ::metric-value (s/and int? pos?))
+(s/def ::metric-value (s/and number?))
 (s/def ::metric-name #{"commit" "merge-request" "user-registration"
                        "incident" "error" "alert" "tickets-done"
                        "time-spent" "foo" "bar"})
@@ -25,23 +25,14 @@
 (s/def ::tuple-event (s/keys :req-un [::name1 ::value1 ::name2 ::value2]))
 
 (defn event-type
-  "Maps event data to an event type by analyzing the map structure."
-  [event]
+  "Maps event data to an event type by analyzing the map structure.
+   Supports higher arity calls."
+  [event & _]
   (cond
     (s/valid? ::timeseries-event event) :timeseries
     (s/valid? ::gauge-event event) :gauge
     (s/valid? ::tuple-event event) :tuple
     :else :invalid))
-
-(defn epoch->date
-  [millis]
-  (str (java.util.Date. millis)))
-
-(defn- conj-metrics [metrics [time value]]
-  (update metrics :data
-          (fn [old]
-            [(conj (first old) time)
-             (conj (second old) value)])))
 
 (defn- extract-metric-name
   "Extracts label from set of tupels."
@@ -61,7 +52,9 @@
       (= label (extract-metric-name (first state))) idx
       :else (recur (inc idx) (rest state)))))
 
-(defmulti fold-event (fn [event state] (event :type)))
+(defmulti fold-event
+  "Folds an event on already folded events to make up the initial state."
+  event-type)
 
 (defmethod fold-event :timeseries
   [{:keys [time name value]} state]
@@ -89,17 +82,17 @@
   (debugf "Received raw post of type gauge: %s" post)
   (let [name (extract-name post)
         value (get post name)]
-    {:type :timeseries :name name :value value}))
+    {:name name :value value}))
 
 (defmethod post->event :default [post]
   (debugf "Received raw post of type timeseries: %s" post)
   (let [name (extract-name post)
         value (get post name)
         time (or (post "time") (System/currentTimeMillis))]
-    {:type :timeseries :name name :time time :value value}))
+    {:name name :time time :value value}))
 
 (defn- random-event [label]
-  {:type :timeseries :name label :time (System/currentTimeMillis) :value (rand 5)})
+  {:name label :time (System/currentTimeMillis) :value (rand 5)})
 
 (defn- randomize-value [before]
   (if (and (<= 0 (before :value)) (>= 1 (before :value)))
@@ -115,6 +108,7 @@
   (take n (iterate randomize-event (random-event label))))
 
 (defn fold-events
+  "Returns folded events as initial board state given a seq of events."
   [events]
   (loop [to-process events
          processed []]

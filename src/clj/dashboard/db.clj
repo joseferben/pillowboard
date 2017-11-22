@@ -1,5 +1,6 @@
 (ns dashboard.db
-  (:require [dashboard.db.events :as events]))
+  (:require [dashboard.db.events :as events]
+            [dashboard.pipeline.event :refer [event-type]]))
 
 (def db
   {:classname "org.postgresql.Driver"
@@ -10,12 +11,17 @@
    :sslmode "disable"
    })
 
-(defn events-all []
+(defn events-all
+  "Retrieves a list of all stored events. The list may contain events of
+   different types."
+  []
   (concat (events/events-timeseries-all db)
           (events/events-gauge-all db)
           (events/events-tuple-all db)))
 
-(defmulti event-insert! :type)
+(defmulti event-insert!
+  "Stores an event of any type in the database."
+  event-type)
 
 (defmethod event-insert! :timeseries [{:keys [name time value]}]
   (events/event-timeseries-insert db {:name name :time time :value value}))
