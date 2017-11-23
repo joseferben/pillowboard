@@ -3,6 +3,7 @@
             [reagent.core :as reagent]
             [re-frame.core :refer [dispatch dispatch-sync]]
             [secretary.core :as secretary]
+            [taoensso.timbre :as timbre :refer-macros (tracef debugf infof warnf errorf)]
             [dashboard.events]
             [dashboard.subs]
             [dashboard.views]
@@ -13,6 +14,11 @@
 
 (devtools/install!)
 (enable-console-print!)
+
+(timbre/set-level! :debug)
+
+(infof "ClojureScript appears to have loaded correctly.")
+
 
 (defroute "/" [] (dispatch [:set-showing {:landing nil}]))
 (defroute "/admin/:user-id" [user-id] (dispatch [:set-showing {:admin user-id}]))

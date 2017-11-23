@@ -49,7 +49,7 @@
   :cljsbuild {:builds
               [{:id "dev"
                 :source-paths ["src/cljs" "src/cljc"]
-                :figwheel {:on-jsload "dashboard.core/on-js-reload"
+                :figwheel {:on-jsload "dashboard.core/main"
                            :open-urls ["http://localhost:3449/index.html"]}
 
                 :compiler {:main dashboard.core

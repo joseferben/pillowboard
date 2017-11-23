@@ -59,4 +59,5 @@
 (defn page-container [])
 
 (defn app []
-  (stylefy/init))
+  (stylefy/init)
+  [:h3 "Reframe successfully loaded"])
