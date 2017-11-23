@@ -38,8 +38,7 @@
    [randomize-button]
    [reset-button]])
 
-
-(defn dashboard-container
+(comment (defn dashboard-container
   "Injects app-state into dashboard, enables re-render"
   []
   [:div.top-container
@@ -47,7 +46,17 @@
    (if (or (nil? @app-state) (empty? (@app-state :charts)))
      [instructions]
      [:div.container
-      [grid/main @app-state]])])
+      [grid/main @app-state]])]))
+
+(defn register-form []
+  [:form
+   [:div.field
+    [:label.label "Email"]
+    [:div.input {:type "email" :placeholder "Email input"}]
+    [:span.icon.is-small.is-left
+     [:i.fa.fa-envelope]]]])
+
+(defn page-container [])
 
 (defn app []
   (stylefy/init))

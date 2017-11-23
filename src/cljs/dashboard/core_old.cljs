@@ -1,7 +1,6 @@
 (ns dashboard.core
   (:require
    [dashboard.grid :as grid :refer [main]]
-   [dashboard.components :refer [instructions dev-toolbar]]
    [clojure.string  :as str]
    [cljs.core.async :as async :refer (<! >! put! chan timeout)]
    [taoensso.timbre :as timbre :refer-macros (tracef debugf infof warnf errorf)]
