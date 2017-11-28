@@ -62,9 +62,18 @@
 
 (defmulti page :showing)
 
+(defn dashboard [{:keys [name created]}]
+  [:div
+   [:h4 name]
+   [:span (str "Created at " created)]])
+
+(defn dashboards []
+  [:div (map dashboard @(subscribe [:dashboards]))])
+
 (defn app []
   (stylefy/init)
   [:div
    [:h3 "Reframe successfully loaded"]
    [:span "Current route: " @(subscribe [:showing])]
+   [dashboards]
    [:button {:on-click #(dispatch [:handler-with-http])} "admin"]])

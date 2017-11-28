@@ -20,9 +20,9 @@
   :handler-with-http
   (fn [{:keys [db]} _]
     {:http-xhrio {:method          :get
-                  :uri             "/api/dashboards/0"
+                  :uri             "/api/dashboards/1"
                   :timeout         8000
-                  :response-format (ajax/json-response-format {:keywords? true})
+                  :response-format (ajax.core/json-response-format {:keywords? true})
                   :on-success      [:good-http-result]
                   :on-failure      [:bad-http-result]}}))
 
@@ -31,3 +31,9 @@
  []
  (fn [db [_ response]]
    (assoc db :dashboards response)))
+
+(reg-event-db
+ :bad-http-result
+ []
+ (fn [db [_ response]]
+   (prn "Bad http request: " response)))

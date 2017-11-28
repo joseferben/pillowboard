@@ -24,6 +24,7 @@
                  [reagent "0.7.0"]
                  [re-frame "0.10.3-alpha1"]
                  [day8.re-frame/http-fx "0.1.4"]
+                 [cljs-ajax "0.7.3"]
                  [secretary "1.2.3"]
                  [binaryage/devtools "0.9.4"]
                  [com.taoensso/sente "1.11.0"]

@@ -76,8 +76,8 @@
   ;; map to event and forward to event sourcing, return answer
   (response body))
 
-(def mock-dashboards {"1" [{:created "2017-01-01"} {:created "2017-02-01"}]
-                      "2" [{:created "2016-01-01"} {:created "2017-09-01"}]})
+(def mock-dashboards {"1" [{:name "kpi" :created "2017-01-01"} {:name "project foo" :created "2017-02-01"}]
+                      "2" [{:name "project bar" :created "2016-01-01"}]})
 
 (defroutes api-routes
   (GET "/dashboards/:user-id" [user-id] {:body (get mock-dashboards user-id)})
