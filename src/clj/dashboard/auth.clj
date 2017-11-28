@@ -10,12 +10,12 @@
 
 (defn make-token!
   "Creates an auth token in the database for the given user with `email`
-  and puts it in the database."
+  and puts it in the database. Returns the created token."
   [email]
   (let [token (gen-session-id)
         user-id (:id (db/user-by-email email))]
-    (prn user-id)
-    (db/token-insert! user-id token)))
+    (db/token-insert! user-id token)
+    token))
 
 (defn authenticate-token
   "Validates a token, returning the id of the associated user when valid and nil otherwise"

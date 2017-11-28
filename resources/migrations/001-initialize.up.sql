@@ -16,7 +16,7 @@ create table dashboard (
 
 create table auth_token (
        id varchar(44) primary key,
-       user_id integer references user_account on delete cascade,
+       user_id integer not null references user_account on delete cascade,
        created_at timestamp not null default current_timestamp
 );
 

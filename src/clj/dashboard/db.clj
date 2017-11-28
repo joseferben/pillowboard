@@ -63,7 +63,8 @@
 (defn user-by-email
   "Retrieves a user by email, nil of no user exists."
   [email]
-  (users/user-by-email db {:email email}))
+  (-> (users/user-by-email db {:email email})
+      (dissoc :password)))
 
 (defn user-insert!
   "Stores a user with given `email` and `password`."

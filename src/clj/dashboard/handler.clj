@@ -117,7 +117,7 @@
   (POST "/users" {{:keys [password email]} :body} {:body {:status (add-user email password)}})
   (GET "/users/:user-id/dashboards" [user-id] {:body (get mock-dashboards user-id)})
   (POST "/data/:id" {:keys [body]} {:body {:status (post-data 1 body)}})
-  (POST "/sessions" { {:keys [email password]} :body}
+  (POST "/sessions" {{:keys [email password]} :body}
     (if (db/user-password-matches? email password)
       {:status 201
        :body {:auth-token (make-token! email)}}
