@@ -2,6 +2,8 @@
   (:require
    [stylefy.core :as stylefy]
    [cljs-http.client :as http]
+   [secretary.core :refer [dispatch!]]
+   [re-frame.core :refer [subscribe dispatch]]
    [reagent.core :as reagent :refer [atom]]))
 
 (defn instructions
@@ -60,4 +62,7 @@
 
 (defn app []
   (stylefy/init)
-  [:h3 "Reframe successfully loaded"])
+  [:div
+   [:h3 "Reframe successfully loaded"]
+   [:span "Current route: " @(subscribe [:showing])]
+   [:button {:on-click #(dispatch! "/#/admin/123")} "admin"]])

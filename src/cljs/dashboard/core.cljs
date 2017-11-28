@@ -15,10 +15,11 @@
 (devtools/install!)
 (enable-console-print!)
 
+(secretary/set-config! :prefix "#")
+
 (timbre/set-level! :debug)
 
 (infof "ClojureScript appears to have loaded correctly.")
-
 
 (defroute "/" [] (dispatch [:set-showing {:landing nil}]))
 (defroute "/admin/:user-id" [user-id] (dispatch [:set-showing {:admin user-id}]))

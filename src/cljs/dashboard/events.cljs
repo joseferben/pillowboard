@@ -7,8 +7,8 @@
 (reg-event-db
  :set-showing
  []
- (fn [db [_ new-filter-kw]]
-   (assoc db :showing new-filter-kw)))
+ (fn [db [_ location]]
+   (assoc db :showing location)))
 
 (reg-event-fx
  :initialise-db
