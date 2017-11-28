@@ -76,16 +76,31 @@
   ;; map to event and forward to event sourcing, return answer
   (response body))
 
+(def OK "200")
+
+(defn add-dashboard
+  [user-id board-name]
+  ;; TODO store dashboard in db
+  OK)
+
+(defn add-user
+  ;; TODO
+  [id body])
+
+(defn post-data
+  [user-id body])
+  ;;TODO)
+
 (def mock-dashboards {"1" [{:name "kpi" :created "2017-01-01"} {:name "project foo" :created "2017-02-01"}]
                       "2" [{:name "project bar" :created "2016-01-01"}]})
 
 (defroutes api-routes
   (GET "/dashboards/:user-id" [user-id] {:body (get mock-dashboards user-id)})
-  (POST "/dashboards" [] (response {:success "You added a dashboard"}))
-  (GET "/users" [] (response {:users ["user a" "user b"]}))
-  (POST "/users" [] (response {:success "you have create a user"}))
-  (POST "/data/:id" [id] (response {:default "You posted data"}))
-  (POST "/sessions" [] {:success "authorized"}))
+  (POST "/dashboards" {{:keys [name]} :body} (prn name) {:body {:status (add-dashboard 0 name)}})
+  (GET "/users" [] {:body ["user a" "user b"]})
+  (POST "/users" {:keys [body]} {:body {:status (add-user body)}})
+  (POST "/data/:id" {:keys [body]} {:body {:status (post-data 0 body)}})
+  (POST "/sessions" [] {:body {:success "authorized"}}))
 
 (defroutes site-routes
   (GET "/" [] (content-type (resource-response "index.html" {:root "public"}) "text/html"))
@@ -99,7 +114,7 @@
    (routes
     (context "/api" [] (-> api-routes
                            wrap-json-response
-                           wrap-json-body
+                           (wrap-json-body {:keywords? true})
                            (wrap-defaults api-defaults)))
     (wrap-defaults site-routes site-defaults))))
 
