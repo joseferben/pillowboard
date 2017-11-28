@@ -69,3 +69,10 @@
   "Stores a token for a `user-id`."
   [user-id id]
   (tokens/token-insert db {:id id :user_id user-id}))
+
+(defn user-password-matches?
+  "Check to see if the password given matches the digest of the user's saved password"
+  [email password]
+  (-> (users/user-by-email db {:email email})
+      :password
+      (->> (hashers/check password))))

@@ -116,7 +116,15 @@
   (POST "/users" {{:keys [password email]} :body} {:body {:status (add-user email password)}})
   (GET "/users/:user-id/dashboards" [user-id] {:body (get mock-dashboards user-id)})
   (POST "/data/:id" {:keys [body]} {:body {:status (post-data 1 body)}})
-  (POST "/login" {{:keys [password email]} :body} {:body (login-user email password)}))
+  (POST "/login" {{:keys [password email]} :body} {:body (login-user email password)})
+
+  (POST "/sessions" { {:keys [password email]} :body}
+    (if (users/password-matches? user-id password)
+      {:status 201
+       :body {:auth-token (make-token! user-id)}}
+      {:status 409
+       :body {:status "error"
+              :message "invalid username or password"}})))
 
 (defroutes site-routes
   (GET "/" [] (content-type (resource-response "index.html" {:root "public"}) "text/html"))
