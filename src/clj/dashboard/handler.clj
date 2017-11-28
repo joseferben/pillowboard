@@ -2,6 +2,7 @@
   (:require [dashboard.core :as core :refer [fetch-state! store-post-and-broadcast!
                                              generate-state-and-broadcast!
                                              reset-state-and-broadcast!]]
+            [dashboard.db :as db]
             [compojure.core :refer [context routes defroutes GET POST wrap-routes]]
             [compojure.route :as route]
             [compojure.handler :as handler]
@@ -16,8 +17,8 @@
             [ring.middleware.json :refer [wrap-json-body wrap-json-response]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults api-defaults]]
             [ring.middleware.reload :refer [wrap-reload]]
-            [ring.middleware.cors :refer [wrap-cors]]
-            )
+            [ring.middleware.cors :refer [wrap-cors]])
+
   (:gen-class))
 
 (timbre/set-level! :trace)
@@ -76,31 +77,46 @@
   ;; map to event and forward to event sourcing, return answer
   (response body))
 
-(def OK "200")
+(def OK 200)
 
-(defn add-dashboard
+(defn- fetch-dashboards
+  [user-id]
+  (db/dashboards-all user-id))
+
+(defn- add-dashboard
   [user-id board-name]
-  ;; TODO store dashboard in db
+  (db/dashboard-insert! user-id board-name)
   OK)
 
-(defn add-user
-  ;; TODO
-  [id body])
+(defn- fetch-users
+  []
+  (db/users-all))
 
-(defn post-data
-  [user-id body])
-  ;;TODO)
+(defn- add-user
+  [email password]
+  (db/user-insert! email password)
+  OK)
+
+(defn- post-data
+  [user-id body]
+  (store-post-and-broadcast! body broadcast-state)
+  OK)
+
+(defn- login-user
+  [email password])
 
 (def mock-dashboards {"1" [{:name "kpi" :created "2017-01-01"} {:name "project foo" :created "2017-02-01"}]
                       "2" [{:name "project bar" :created "2016-01-01"}]})
 
+(def mock-users ["Walter White" "Jesse Pinkman" "Saul Goodman"])
+
 (defroutes api-routes
-  (GET "/dashboards/:user-id" [user-id] {:body (get mock-dashboards user-id)})
-  (POST "/dashboards" {{:keys [name]} :body} (prn name) {:body {:status (add-dashboard 0 name)}})
-  (GET "/users" [] {:body ["user a" "user b"]})
-  (POST "/users" {:keys [body]} {:body {:status (add-user body)}})
-  (POST "/data/:id" {:keys [body]} {:body {:status (post-data 0 body)}})
-  (POST "/sessions" [] {:body {:success "authorized"}}))
+  (POST "/dashboards" {{:keys [name]} :body} {:body {:status (add-dashboard 1 name)}})
+  (GET "/users" [] (fetch-users))
+  (POST "/users" {{:keys [password email]} :body} {:body {:status (add-user email password)}})
+  (GET "/users/:user-id/dashboards" [user-id] {:body (get mock-dashboards user-id)})
+  (POST "/data/:id" {:keys [body]} {:body {:status (post-data 1 body)}})
+  (POST "/login" {{:keys [password email]} :body} {:body (login-user email password)}))
 
 (defroutes site-routes
   (GET "/" [] (content-type (resource-response "index.html" {:root "public"}) "text/html"))
