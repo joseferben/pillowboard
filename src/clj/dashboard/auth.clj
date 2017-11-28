@@ -48,6 +48,7 @@
 ;;; user is authorized for some particular scenario. See handler.clj for usage.
 
 (defn authenticated-user [req]
+  (prn req)
   (if (authenticated? req)
     true
     (error "User must be authenticated")))

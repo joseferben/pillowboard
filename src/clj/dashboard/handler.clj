@@ -3,7 +3,8 @@
                                              generate-state-and-broadcast!
                                              reset-state-and-broadcast!]]
             [dashboard.db :as db]
-            [dashboard.auth :refer [make-token!]]
+            [dashboard.auth :refer [auth-backend user-can user-isa user-has-id
+                                    authenticated-user unauthorized-handler make-token!]]
             [compojure.core :refer [context routes defroutes GET POST wrap-routes]]
             [compojure.route :as route]
             [compojure.handler :as handler]
@@ -13,6 +14,8 @@
             [taoensso.sente :as sente]
             [taoensso.sente.server-adapters.http-kit :refer (get-sch-adapter)]
             [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]
+            [buddy.auth.accessrules :refer [restrict]]
+            [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
             [ring.util.response :refer [redirect response content-type resource-response]]
             [ring.middleware.resource :refer [wrap-resource]]
             [ring.middleware.json :refer [wrap-json-body wrap-json-response]]
@@ -86,6 +89,7 @@
 
 (defn- add-dashboard
   [user-id board-name]
+  (prn board-name)
   (db/dashboard-insert! user-id board-name)
   OK)
 
@@ -112,11 +116,21 @@
 (def mock-users ["Walter White" "Jesse Pinkman" "Saul Goodman"])
 
 (defroutes api-routes
-  (POST "/dashboards" {{:keys [name]} :body} {:body {:status (add-dashboard 1 name)}})
+
+  (context "/dashboards" []
+    (restrict (routes (POST "/" req [] {:body {:status (add-dashboard (:identity req) (get-in req [:body :name]))}}))
+            {:handler {:and [authenticated-user]}
+             :on-error unauthorized-handler}))
+
   (GET "/users" [] (fetch-users))
+
   (POST "/users" {{:keys [password email]} :body} {:body {:status (add-user email password)}})
-  (GET "/users/:user-id/dashboards" [user-id] {:body (get mock-dashboards user-id)})
+
+  (context "/users/:user-id" [user-id]
+    (GET "/dashboards" [] {:body (get mock-dashboards user-id)}))
+
   (POST "/data/:id" {:keys [body]} {:body {:status (post-data 1 body)}})
+
   (POST "/sessions" {{:keys [email password]} :body}
     (if (db/user-password-matches? email password)
       {:status 201
@@ -136,8 +150,10 @@
   (wrap-reload
    (routes
     (context "/api" [] (-> api-routes
-                           wrap-json-response
+                           (wrap-authentication auth-backend)
+                           (wrap-authorization auth-backend)
                            (wrap-json-body {:keywords? true})
+                           wrap-json-response
                            (wrap-defaults api-defaults)))
     (wrap-defaults site-routes site-defaults))))
 
