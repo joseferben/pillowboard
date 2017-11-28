@@ -3,9 +3,9 @@
 
 
 (reg-sub
-  :showing
+  :page
   (fn [db _]
-    (:showing db)))
+    (:page db)))
 
 (reg-sub
  :dashboards

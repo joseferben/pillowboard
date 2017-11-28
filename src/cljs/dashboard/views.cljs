@@ -41,14 +41,14 @@
    [reset-button]])
 
 (comment (defn dashboard-container
-  "Injects app-state into dashboard, enables re-render"
-  []
-  [:div.top-container
-   ;;[dev-toolbar]
-   (if (or (nil? @app-state) (empty? (@app-state :charts)))
-     [instructions]
-     [:div.container
-      [grid/main @app-state]])]))
+           "Injects app-state into dashboard, enables re-render"
+           []
+           [:div.top-container
+            ;;[dev-toolbar]
+            (if (or (nil? @app-state) (empty? (@app-state :charts)))
+              [instructions]
+              [:div.container
+               [grid/main @app-state]])]))
 
 (defn register-form []
   [:form
@@ -74,6 +74,6 @@
   (stylefy/init)
   [:div
    [:h3 "Reframe successfully loaded"]
-   [:span "Current route: " @(subscribe [:showing])]
+   [:span "Current route: " @(subscribe [:page])]
    [dashboards]
-   [:button {:on-click #(dispatch [:handler-with-http])} "admin"]])
+   [:button {:on-click #(dispatch [:fetch-dashboards])} "admin"]])

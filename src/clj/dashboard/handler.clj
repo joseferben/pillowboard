@@ -11,7 +11,7 @@
             [taoensso.sente :as sente]
             [taoensso.sente.server-adapters.http-kit :refer (get-sch-adapter)]
             [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]
-            [ring.util.response :refer [redirect response content-type]]
+            [ring.util.response :refer [redirect response content-type resource-response]]
             [ring.middleware.resource :refer [wrap-resource]]
             [ring.middleware.json :refer [wrap-json-body wrap-json-response]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults api-defaults]]
@@ -88,7 +88,7 @@
   (POST "/sessions" [] {:success "authorized"}))
 
 (defroutes site-routes
-  (GET "/" req (redirect "index.html"))
+  (GET "/" [] (content-type (resource-response "index.html" {:root "public"}) "text/html"))
   (GET  "/chsk" req (ring-ajax-get-or-ws-handshake req))
   (POST "/chsk" req (ring-ajax-post                req))
   (route/resources "/")

@@ -22,9 +22,9 @@
 
 (infof "ClojureScript appears to have loaded correctly.")
 
-(defroute "/" [] (dispatch [:set-showing {:landing nil}]))
-(defroute "/admin/:user-id" [user-id] (dispatch [:set-showing {:admin user-id}]))
-(defroute "/dashboard/:board-id" [board-id] (dispatch [:set-showing {:board board-id}]))
+(defroute "/" [] (dispatch [:set-page {:page :landing}]))
+(defroute "/admin/:user-id" [user-id] (dispatch [:set-page {:page :admin :id user-id}]))
+(defroute "/dashboard/:board-id" [board-id] (dispatch [:set-page {:page :board :id board-id}]))
 
 (def history
   (doto (History.)
