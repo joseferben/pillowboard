@@ -3,6 +3,7 @@
                                              generate-state-and-broadcast!
                                              reset-state-and-broadcast!]]
             [dashboard.db :as db]
+            [dashboard.auth :refer [make-token!]]
             [compojure.core :refer [context routes defroutes GET POST wrap-routes]]
             [compojure.route :as route]
             [compojure.handler :as handler]
@@ -116,12 +117,10 @@
   (POST "/users" {{:keys [password email]} :body} {:body {:status (add-user email password)}})
   (GET "/users/:user-id/dashboards" [user-id] {:body (get mock-dashboards user-id)})
   (POST "/data/:id" {:keys [body]} {:body {:status (post-data 1 body)}})
-  (POST "/login" {{:keys [password email]} :body} {:body (login-user email password)})
-
-  (POST "/sessions" { {:keys [password email]} :body}
-    (if (users/password-matches? user-id password)
+  (POST "/sessions" { {:keys [email password]} :body}
+    (if (db/user-password-matches? email password)
       {:status 201
-       :body {:auth-token (make-token! user-id)}}
+       :body {:auth-token (make-token! email)}}
       {:status 409
        :body {:status "error"
               :message "invalid username or password"}})))

@@ -9,9 +9,12 @@
 (defn gen-session-id [] (base64 32))
 
 (defn make-token!
-  "Creates an auth token in the database for the given user and puts it in the database"
-  [user-id]
-  (let [token (gen-session-id)]
+  "Creates an auth token in the database for the given user with `email`
+  and puts it in the database."
+  [email]
+  (let [token (gen-session-id)
+        user-id (:id (db/user-by-email email))]
+    (prn user-id)
     (db/token-insert! user-id token)))
 
 (defn authenticate-token

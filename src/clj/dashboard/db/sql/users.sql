@@ -12,7 +12,7 @@ on user_account.id = auth_token.user_id where auth_token.id = :token
 
 -- :name user-by-email :? :1
 -- :doc Returns a single user with the given email
-select password from user_account
+select id from user_account
 where email = :email
 
 -- :name user-insert :! :n
