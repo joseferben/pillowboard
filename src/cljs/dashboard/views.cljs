@@ -60,9 +60,11 @@
 
 (defn page-container [])
 
+(defmulti page :showing)
+
 (defn app []
   (stylefy/init)
   [:div
    [:h3 "Reframe successfully loaded"]
    [:span "Current route: " @(subscribe [:showing])]
-   [:button {:on-click #(dispatch! "/#/admin/123")} "admin"]])
+   [:button {:on-click #(dispatch [:handler-with-http])} "admin"]])

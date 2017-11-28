@@ -23,6 +23,7 @@
                  [compojure "1.5.1"]
                  [reagent "0.7.0"]
                  [re-frame "0.10.3-alpha1"]
+                 [day8.re-frame/http-fx "0.1.4"]
                  [secretary "1.2.3"]
                  [binaryage/devtools "0.9.4"]
                  [com.taoensso/sente "1.11.0"]

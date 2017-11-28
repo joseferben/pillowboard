@@ -5,5 +5,9 @@
 (reg-sub
   :showing
   (fn [db _]
-    (prn db)
     (:showing db)))
+
+(reg-sub
+ :dashboards
+ (fn [db _]
+   (:dashboards db)))

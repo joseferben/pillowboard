@@ -43,9 +43,9 @@
   )
 
 (add-watch connected-uids :connected-uids
-  (fn [_ _ old new]
-    (when (not= old new)
-      (infof "Connected uids change: %s" new))))
+           (fn [_ _ old new]
+             (when (not= old new)
+               (infof "Connected uids change: %s" new))))
 
 ;; TODO: Do not broadcast upon every event received
 (defn- broadcast-state
@@ -66,9 +66,9 @@
   (reset-state-and-broadcast! broadcast-state))
 
 (go-loop []
-      (let [{ev-msg :event} (<! ch-chsk)]
-        (broadcast-state (fetch-state!)))
-      (recur))
+  (let [{ev-msg :event} (<! ch-chsk)]
+    (broadcast-state (fetch-state!)))
+  (recur))
 
 (defn handle-post
   [body]
@@ -76,8 +76,11 @@
   ;; map to event and forward to event sourcing, return answer
   (response body))
 
+(def mock-dashboards {"1" [{:created "2017-01-01"} {:created "2017-02-01"}]
+                      "2" [{:created "2016-01-01"} {:created "2017-09-01"}]})
+
 (defroutes api-routes
-  (GET "/dashboards" [] (response {:dashboard ["some" "dashboards"]}))
+  (GET "/dashboards/:user-id" [user-id] {:body (get mock-dashboards user-id)})
   (POST "/dashboards" [] (response {:success "You added a dashboard"}))
   (GET "/users" [] (response {:users ["user a" "user b"]}))
   (POST "/users" [] (response {:success "you have create a user"}))
@@ -94,8 +97,10 @@
 (def app
   (wrap-reload
    (routes
-    (context "/api" [] (wrap-json-body
-                        (wrap-defaults api-routes api-defaults)))
+    (context "/api" [] (-> api-routes
+                           wrap-json-response
+                           wrap-json-body
+                           (wrap-defaults api-defaults)))
     (wrap-defaults site-routes site-defaults))))
 
 (defn -main [& args]

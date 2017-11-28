@@ -2,6 +2,7 @@
   (:require [goog.events :as events]
             [reagent.core :as reagent]
             [re-frame.core :refer [dispatch dispatch-sync]]
+            [day8.re-frame.http-fx]
             [secretary.core :as secretary]
             [taoensso.timbre :as timbre :refer-macros (tracef debugf infof warnf errorf)]
             [dashboard.events]
