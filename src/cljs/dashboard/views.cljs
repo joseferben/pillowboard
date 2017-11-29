@@ -69,10 +69,10 @@
 (defn page-container [])
 
 
-(defn dashboard [{:keys [name created]}]
+(defn dashboard [{:keys [name created_at]}]
   [:div
    [:h4 name]
-   [:span (str "Created at " created)]])
+   [:span (str "Created at " created_at)]])
 
 (defn dashboards []
   [:div (map dashboard @(subscribe [:dashboards]))])
@@ -85,7 +85,7 @@
        [:h3.title.has-text-grey "Login"]
        [:p.subtitle.has-text-grey "Please login to proceed."]
        [:div.box
-        [:figure.avatar [:img {:src "http://placekitten.com/g/128/128"}]]
+        ;[:figure.avatar [:img {:src "http://200ok.ch/img/200ok.svg"}]]
         [:form
          [:div.field
           [:div.control
@@ -98,13 +98,14 @@
           [:div.control
            [:input.input.is-large
             {:on-change #(dispatch [:fill-in (-> % .-target .-value) :login :password])
+             :on-key-press #(when (= (-> % .-key) "Enter") (dispatch [:login]))
              :placeholder "Your Password",
              :type "password"}]]]
          [:div.field
           [:label.checkbox
            [:input {:type "checkbox"}]
            "\n                  Remember me\n                "]]
-         [:a.button.is-block.is-info.is-large {:on-click #(dispatch [:login (-> % .-target)])} "Login"]]]
+         [:a.button.is-block.is-info.is-large {:on-click #(dispatch [:login])} "Login"]]]
        [:p.has-text-grey
         [:a {:href "#/register"} "Sign up"]]]]]])
 
@@ -116,7 +117,7 @@
        [:h3.title.has-text-grey "Sign up"]
        [:p.subtitle.has-text-grey "Fill the form below to register."]
        [:div.box
-        [:figure.avatar [:img {:src "http://placekitten.com/g/128/128"}]]
+        ;[:figure.avatar [:img {:src "http://200ok.ch/img/200ok.svg"}]]
         [:form
          [:div.field
           [:div.control
@@ -131,7 +132,7 @@
          [:div.field
           [:div.control
            [:input.input.is-large
-            {:placeholder "Same Password", :type "password"}]]]
+            {:on-key-press #(when (= (-> % .-key) "Enter") (dispatch [:register]) :placeholder "Same Password", :type "password")}]]]
          [:div.field
           [:label.checkbox
            [:input {:type "checkbox"}]
@@ -156,11 +157,14 @@
 
 (defmethod page :admin [_]
   [:div
-   [:h3 "Welcome to the admin page!"]])
+   [:h3 "Welcome to the admin page!"]
+   [:span @(subscribe [:email])]
+   [dashboards]])
 
 (defmethod page :board [_]
   [:div
-   [:h3 "Welcome to the board!"]])
+   [:h3 "Welcome to the board!"]
+   [:span @(subscribe [:email])]])
 
 (defn app-old []
   (stylefy/init)

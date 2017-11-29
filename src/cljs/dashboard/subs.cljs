@@ -15,3 +15,8 @@
  :active
  (fn [db _]
    (:active db)))
+
+(reg-sub
+ :email
+ (fn [db _]
+   (:email db)))
