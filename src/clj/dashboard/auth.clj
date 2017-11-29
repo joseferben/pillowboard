@@ -48,7 +48,6 @@
 ;;; user is authorized for some particular scenario. See handler.clj for usage.
 
 (defn authenticated-user [req]
-  (prn req)
   (if (authenticated? req)
     true
     (error "User must be authenticated")))
@@ -75,6 +74,6 @@
   resource."
   [id]
   (fn [req]
-    (if (= id (get-in req [:identity :id]))
+    (if (= (read-string id) (get req :identity))
       (success)
       (error (str "User does not have id given")))))

@@ -85,11 +85,10 @@
 
 (defn- fetch-dashboards
   [user-id]
-  (db/dashboards-all user-id))
+  (db/dashboards-all (read-string user-id)))
 
 (defn- add-dashboard
   [user-id board-name]
-  (prn board-name)
   (db/dashboard-insert! user-id board-name)
   OK)
 
@@ -118,16 +117,20 @@
 (defroutes api-routes
 
   (context "/dashboards" []
-    (restrict (routes (POST "/" req [] {:body {:status (add-dashboard (:identity req) (get-in req [:body :name]))}}))
-            {:handler {:and [authenticated-user]}
-             :on-error unauthorized-handler}))
+    (restrict (routes (POST "/" req []
+                            {:body {:status (add-dashboard (:identity req) (get-in req [:body :name]))}}))
+              {:handler {:and [authenticated-user]}
+               :on-error unauthorized-handler}))
 
   (GET "/users" [] (fetch-users))
 
   (POST "/users" {{:keys [password email]} :body} {:body {:status (add-user email password)}})
 
   (context "/users/:user-id" [user-id]
-    (GET "/dashboards" [] {:body (get mock-dashboards user-id)}))
+    (restrict (routes (GET "/dashboards" req []
+                           {:body (fetch-dashboards user-id)}))
+              {:handler {:and [authenticated-user (user-has-id user-id)]}
+               :on-error unauthorized-handler}))
 
   (POST "/data/:id" {:keys [body]} {:body {:status (post-data 1 body)}})
 
