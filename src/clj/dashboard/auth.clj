@@ -77,3 +77,7 @@
     (if (= (read-string id) (get req :identity))
       (success)
       (error (str "User does not have id given")))))
+
+(defn user-identity
+  [req]
+  (req :identity))

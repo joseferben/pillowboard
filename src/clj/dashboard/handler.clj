@@ -132,7 +132,9 @@
               {:handler {:and [authenticated-user (user-has-id user-id)]}
                :on-error unauthorized-handler}))
 
-  (POST "/data/:id" {:keys [body]} {:body {:status (post-data 1 body)}})
+  (context "/data/:board-id" [board-id]
+    (POST "/" {:keys [body]} []
+          {:body {:status (post-data board-id body)}}))
 
   (POST "/sessions" {{:keys [email password]} :body}
     (if (db/user-password-matches? email password)
