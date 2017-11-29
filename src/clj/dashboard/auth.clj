@@ -78,6 +78,16 @@
       (success)
       (error (str "User does not have id given")))))
 
-(defn user-identity
+(defn str->int
+  "Returns an int, doesn't attempt parsing if already int or doesn't match regex of
+  an int."
+  [str]
+  (cond
+    (number? str) str
+    (and (re-matches (re-pattern "\\d+") str) (string? str)) (read-string str)
+    :else str))
+
+(defn identify
+  "Returns the `user-id` of a user."
   [req]
-  (req :identity))
+  (str->int (req :identity)))

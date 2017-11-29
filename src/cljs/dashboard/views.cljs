@@ -77,7 +77,6 @@
 (defn dashboards []
   [:div (map dashboard @(subscribe [:dashboards]))])
 
-
 (defn login-page []
    [:section.hero.is-fullheight
     [:div.hero-body
@@ -92,17 +91,20 @@
           [:div.control
            [:input.input.is-large
             {:auto-focus "",
+             :on-change #(dispatch [:fill-in (-> % .-target .-value) :login :email])
              :placeholder "Your Email",
              :type "email"}]]]
          [:div.field
           [:div.control
            [:input.input.is-large
-            {:placeholder "Your Password", :type "password"}]]]
+            {:on-change #(dispatch [:fill-in (-> % .-target .-value) :login :password])
+             :placeholder "Your Password",
+             :type "password"}]]]
          [:div.field
           [:label.checkbox
            [:input {:type "checkbox"}]
            "\n                  Remember me\n                "]]
-         [:a.button.is-block.is-info.is-large "Login"]]]
+         [:a.button.is-block.is-info.is-large {:on-click #(dispatch [:login (-> % .-target)])} "Login"]]]
        [:p.has-text-grey
         [:a {:href "#/register"} "Sign up"]]]]]])
 
@@ -134,7 +136,7 @@
           [:label.checkbox
            [:input {:type "checkbox"}]
            "\n                  Remember me\n                "]]
-         [:a.button.is-block.is-info.is-large "Sign up"]]]
+         [:a.button.is-block.is-info.is-large {:on-click #(dispatch [:register])} "Sign up"]]]
        [:p.has-text-grey
         [:a {:href "#/login"} "Login"]]]]]])
 
@@ -151,6 +153,14 @@
 (defmethod page :register [_]
   [:div
    [register-page]])
+
+(defmethod page :admin [_]
+  [:div
+   [:h3 "Welcome to the admin page!"]])
+
+(defmethod page :board [_]
+  [:div
+   [:h3 "Welcome to the board!"]])
 
 (defn app-old []
   (stylefy/init)

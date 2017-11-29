@@ -3,7 +3,7 @@
                                              generate-state-and-broadcast!
                                              reset-state-and-broadcast!]]
             [dashboard.db :as db]
-            [dashboard.auth :refer [auth-backend user-can user-isa user-has-id
+            [dashboard.auth :refer [auth-backend user-can user-isa user-has-id identify
                                     authenticated-user unauthorized-handler make-token!]]
             [compojure.core :refer [context routes defroutes GET POST wrap-routes]]
             [compojure.route :as route]
@@ -85,7 +85,7 @@
 
 (defn- fetch-dashboards
   [user-id]
-  (db/dashboards-all (read-string user-id)))
+  (db/dashboards-all user-id))
 
 (defn- add-dashboard
   [user-id board-name]
@@ -118,7 +118,9 @@
 
   (context "/dashboards" []
     (restrict (routes (POST "/" req []
-                            {:body {:status (add-dashboard (:identity req) (get-in req [:body :name]))}}))
+                            {:body {:status (add-dashboard (identify req) (get-in req [:body :name]))}})
+                      (GET "/" req []
+                            {:body {:dashboards (fetch-dashboards (identify req))}}))
               {:handler {:and [authenticated-user]}
                :on-error unauthorized-handler}))
 
