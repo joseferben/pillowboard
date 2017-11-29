@@ -13,6 +13,8 @@
 
 (def margin-top {:margin-top "12px"})
 
+(def margin-right {:margin-right "10px"})
+
 (def card-content-style {:padding "0.5em"})
 
 (defn grid-item-style

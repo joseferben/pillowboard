@@ -53,7 +53,7 @@
                [grid/main @app-state]])]))
 
 (defn dashboard [{:keys [name created_at]}]
-  [:tr
+  [:tr {:key name}
    [:td {:width "5%"} [:i.fa.fa-area-chart]]
    [:td name]
    [:td [:a.button.is-small.is-primary {:href "#"} "Open"]]])
@@ -156,17 +156,22 @@
          [:p.card-header-title
           "Dashboards"]
          [:a.card-header-icon
-          {:aria-label "more options", :href "#"}
-          [:span.icon [:i.fa.fa-angle-down {:aria-hidden "true"}]]]]
+          {:aria-label "more options"
+           :href "#"}
+          [:input.input.is-small
+           (merge (use-style styles/margin-right)
+                  {:type "text"
+                   :on-change #(dispatch [:fill-in (-> % .-target .-value) :to-add :name])
+                   :placeholder "Dashboard Name"})]
+          [:span.icon [:i.fa.fa-plus-circle
+                       {:on-click #(dispatch [:add-dashboard])
+                        :aria-hidden "true"}]]]]
         [:div.card-table
          [:div.content
           [dashboards]]]
         [:footer.card-footer
-         [:a.card-footer-item {:href "#"} "View All"]]]
-       "        \n          "]
+         [:a.card-footer-item {:href "#"} "View All"]]]]
       [:div.column.is-6]]]]]])
-
-
 
 (defmulti page :page)
 

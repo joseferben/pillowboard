@@ -32,7 +32,7 @@
                  :on-success      [on-success]
                  :on-failure      [on-failure]}})
   ([uri data on-success on-failure {:keys [token]}]
-   (-> (fetch uri on-success on-failure)
+   (-> (post uri data on-success on-failure)
        (assoc-in [:http-xhrio :headers] {"Authorization" (str "Token " token)}))))
 
 (reg-event-fx
@@ -94,6 +94,26 @@
    (infof "Failed to register: " response)))
 
 (reg-event-fx
+ :add-dashboard
+ (fn [{:keys [db]} [_ evt]]
+   (let [name (get-in db [:form :to-add :name])]
+     (infof (str "Addding dashboard: " name))
+     (post "/api/dashboards" {:name name} :s-add-dashboard :f-add-dashboard db))))
+
+(reg-event-fx
+ :s-add-dashboard
+ (fn [{:keys [db]} [_ _]]
+   (infof "Successfully added dashboard.")
+   {:db (dissoc db :form)
+    :dispatch [:set-page {:page :admin}]}))
+
+(reg-event-db
+ :f-add-dashboard
+ []
+ (fn [db [_ response]]
+   (infof "Failed to add dashboard: " response)))
+
+(reg-event-fx
  :initialise-db
  []
  (fn [{:keys [db]} _]
@@ -108,7 +128,6 @@
  :s-fetch-dashboards
  []
  (fn [db [_ response]]
-   (prn response)
    (assoc db :dashboards (response :dashboards))))
 
 (reg-event-db

@@ -117,7 +117,7 @@
 (defroutes api-routes
 
   (context "/dashboards" []
-    (restrict (routes (POST "/" req []
+    (restrict (routes (POST "/" req [] (prn req)
                             {:body {:status (add-dashboard (identify req) (get-in req [:body :name]))}})
                       (GET "/" req []
                            {:body {:dashboards (fetch-dashboards (identify req))}}))
