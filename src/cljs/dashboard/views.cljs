@@ -1,10 +1,12 @@
 (ns dashboard.views
   (:require
+   [dashboard.styles.core :as styles]
    [stylefy.core :as stylefy]
    [cljs-http.client :as http]
    [secretary.core :refer [dispatch!]]
    [re-frame.core :refer [subscribe dispatch]]
-   [reagent.core :as reagent :refer [atom]]))
+   [reagent.core :as reagent :refer [atom]]
+   [stylefy.core :as stylefy :refer [use-style]]))
 
 (defn instructions
   "Displays basic instructions on how to use the board."
@@ -141,6 +143,97 @@
        [:p.has-text-grey
         [:a {:href "#/login"} "Login"]]]]]])
 
+(defn admin-page []
+ [:nav.navbar.is-dark
+  [:div.container (use-style styles/margin-top)
+   [:div.columns
+    [:div.column.is-3
+     [:aside.menu
+      [:p.menu-label "General"]
+      [:ul.menu-list
+       [:li [:a.is-active "Dashboards"]]]
+      [:p.menu-label "Account"]
+      [:ul.menu-list
+       [:li [:a "Security Settings"]]]]]
+    [:div.column.is-9
+     [:nav.breadcrumb
+      {:aria-label "breadcrumbs"}
+      [:ul
+       [:li [:a {:href "../"} "Logout"]]
+       [:li.is-active [:a {:aria-current "page", :href "#"} "Admin"]]]]
+     [:section.hero.is-info.welcome.is-small
+      [:div.hero-body
+       [:div.container
+        [:h1.title "Hello, Admin."]
+        [:h2.subtitle
+         "I hope you are having a great day!"]]]]
+     [:div.columns
+      [:div.column.is-6
+       [:div.card.boards-card (use-style styles/margin-top)
+        [:header.card-header
+         [:p.card-header-title
+          "Dashboards"]
+         [:a.card-header-icon
+          {:aria-label "more options", :href "#"}
+          [:span.icon [:i.fa.fa-angle-down {:aria-hidden "true"}]]]]
+        [:div.card-table
+         [:div.content
+          [:table.table.is-fullwidth.is-striped
+           [:tbody
+            [:tr
+             [:td {:width "5%"} [:i.fa.fa-bell-o]]
+             [:td "Lorum ipsum dolem aire"]
+             [:td
+              [:a.button.is-small.is-primary {:href "#"} "Action"]]]
+            [:tr
+             [:td {:width "5%"} [:i.fa.fa-bell-o]]
+             [:td "Lorum ipsum dolem aire"]
+             [:td
+              [:a.button.is-small.is-primary {:href "#"} "Action"]]]
+            [:tr
+             [:td {:width "5%"} [:i.fa.fa-bell-o]]
+             [:td "Lorum ipsum dolem aire"]
+             [:td
+              [:a.button.is-small.is-primary {:href "#"} "Action"]]]
+            [:tr
+             [:td {:width "5%"} [:i.fa.fa-bell-o]]
+             [:td "Lorum ipsum dolem aire"]
+             [:td
+              [:a.button.is-small.is-primary {:href "#"} "Action"]]]
+            [:tr
+             [:td {:width "5%"} [:i.fa.fa-bell-o]]
+             [:td "Lorum ipsum dolem aire"]
+             [:td
+              [:a.button.is-small.is-primary {:href "#"} "Action"]]]
+            [:tr
+             [:td {:width "5%"} [:i.fa.fa-bell-o]]
+             [:td "Lorum ipsum dolem aire"]
+             [:td
+              [:a.button.is-small.is-primary {:href "#"} "Action"]]]
+            [:tr
+             [:td {:width "5%"} [:i.fa.fa-bell-o]]
+             [:td "Lorum ipsum dolem aire"]
+             [:td
+              [:a.button.is-small.is-primary {:href "#"} "Action"]]]
+            [:tr
+             [:td {:width "5%"} [:i.fa.fa-bell-o]]
+             [:td "Lorum ipsum dolem aire"]
+             [:td
+              [:a.button.is-small.is-primary {:href "#"} "Action"]]]
+            [:tr
+             [:td {:width "5%"} [:i.fa.fa-bell-o]]
+             [:td "Lorum ipsum dolem aire"]
+             [:td
+              [:a.button.is-small.is-primary
+               {:href "#"}
+               "Action"]]]]]]]
+        [:footer.card-footer
+         [:a.card-footer-item {:href "#"} "View All"]]]
+       "        \n          "]
+      [:div.column.is-6]]]]]])
+
+
+
 (defmulti page :page)
 
 (defmethod page :default [_]
@@ -157,8 +250,8 @@
 
 (defmethod page :admin [_]
   [:div
-   [:h3 "Welcome to the admin page!"]
-   [:span @(subscribe [:email])]
+   [admin-page]
+   ;[:h3 "Welcome to the admin page!"]
    [dashboards]])
 
 (defmethod page :board [_]
