@@ -71,7 +71,27 @@
  :f-login
  []
  (fn [db [_ response]]
-   (infof "Failed login: " response)))
+   (infof "Failed to login: " response)))
+
+(reg-event-fx
+ :register
+ (fn [{:keys [db]} [_ evt]]
+   (let [email (get-in db [:form :register :email])
+         password (get-in db [:form :register :password])]
+      (post "/api/users" {:email email :password password} :s-register :f-register))))
+
+(reg-event-fx
+ :s-register
+ (fn [{:keys [db]} [_ {:keys [auth-token]}]]
+   (infof "Successfully registered.")
+   {:db (dissoc db :form)
+    :dispatch [:set-page {:page :login}]}))
+
+(reg-event-db
+ :f-register
+ []
+ (fn [db [_ response]]
+   (infof "Failed to register: " response)))
 
 (reg-event-fx
  :initialise-db

@@ -120,13 +120,14 @@
     (restrict (routes (POST "/" req []
                             {:body {:status (add-dashboard (identify req) (get-in req [:body :name]))}})
                       (GET "/" req []
-                            {:body {:dashboards (fetch-dashboards (identify req))}}))
+                           {:body {:dashboards (fetch-dashboards (identify req))}}))
               {:handler {:and [authenticated-user]}
                :on-error unauthorized-handler}))
 
   (GET "/users" [] (fetch-users))
 
-  (POST "/users" {{:keys [password email]} :body} {:body {:status (add-user email password)}})
+  (POST "/users" {{:keys [password email]} :body} []
+        {:body {:status (add-user email password)}})
 
   (context "/users/:user-id" [user-id]
     (restrict (routes (GET "/dashboards" req []

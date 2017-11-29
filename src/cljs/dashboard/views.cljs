@@ -89,7 +89,7 @@
          [:div.field
           [:label.checkbox
            [:input {:type "checkbox"}]
-           "\n                  Remember me\n                "]]
+           "Remember me"]]
          [:a.button.is-block.is-info.is-large {:on-click #(dispatch [:login])} "Login"]]]
        [:p.has-text-grey
         [:a {:href "#/register"} "Sign up"]]]]]])
@@ -108,20 +108,19 @@
           [:div.control
            [:input.input.is-large
             {:auto-focus "",
+             :on-change #(dispatch [:fill-in (-> % .-target .-value) :register :email])
              :placeholder "Your Email",
              :type "email"}]]]
          [:div.field
           [:div.control
            [:input.input.is-large
-            {:placeholder "Your Password", :type "password"}]]]
+            {:on-change #(dispatch [:fill-in (-> % .-target .-value) :register :password])
+             :placeholder "Your Password", :type "password"}]]]
          [:div.field
           [:div.control
            [:input.input.is-large
-            {:on-key-press #(when (= (-> % .-key) "Enter") (dispatch [:register])) :placeholder "Same Password", :type "password"}]]]
-         [:div.field
-          [:label.checkbox
-           [:input {:type "checkbox"}]
-           "\n                  Remember me\n                "]]
+            {:on-key-press #(when (= (-> % .-key) "Enter") (dispatch [:register]))
+             :placeholder "Same Password", :type "password"}]]]
          [:a.button.is-block.is-info.is-large {:on-click #(dispatch [:register])} "Sign up"]]]
        [:p.has-text-grey
         [:a {:href "#/login"} "Login"]]]]]])
