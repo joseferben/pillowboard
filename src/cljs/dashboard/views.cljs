@@ -58,9 +58,16 @@
     [:span.icon.is-small.is-left
      [:i.fa.fa-envelope]]]])
 
+(defn login-form []
+  [:form
+   [:div.field
+    [:label.label "Email"]
+    [:div.input {:type "email" :placeholder "Email input"}]
+    [:span.icon.is-small.is-left
+     [:i.fa.fa-envelope]]]])
+
 (defn page-container [])
 
-(defmulti page :showing)
 
 (defn dashboard [{:keys [name created]}]
   [:div
@@ -70,10 +77,89 @@
 (defn dashboards []
   [:div (map dashboard @(subscribe [:dashboards]))])
 
-(defn app []
+
+(defn login-page []
+   [:section.hero.is-fullheight
+    [:div.hero-body
+     [:div.container.has-text-centered
+      [:div.column.is-4.is-offset-4
+       [:h3.title.has-text-grey "Login"]
+       [:p.subtitle.has-text-grey "Please login to proceed."]
+       [:div.box
+        [:figure.avatar [:img {:src "http://placekitten.com/g/128/128"}]]
+        [:form
+         [:div.field
+          [:div.control
+           [:input.input.is-large
+            {:auto-focus "",
+             :placeholder "Your Email",
+             :type "email"}]]]
+         [:div.field
+          [:div.control
+           [:input.input.is-large
+            {:placeholder "Your Password", :type "password"}]]]
+         [:div.field
+          [:label.checkbox
+           [:input {:type "checkbox"}]
+           "\n                  Remember me\n                "]]
+         [:a.button.is-block.is-info.is-large "Login"]]]
+       [:p.has-text-grey
+        [:a {:href "#/register"} "Sign up"]]]]]])
+
+(defn register-page []
+  [:section.hero.is-fullheight
+    [:div.hero-body
+     [:div.container.has-text-centered
+      [:div.column.is-4.is-offset-4
+       [:h3.title.has-text-grey "Sign up"]
+       [:p.subtitle.has-text-grey "Fill the form below to register."]
+       [:div.box
+        [:figure.avatar [:img {:src "http://placekitten.com/g/128/128"}]]
+        [:form
+         [:div.field
+          [:div.control
+           [:input.input.is-large
+            {:auto-focus "",
+             :placeholder "Your Email",
+             :type "email"}]]]
+         [:div.field
+          [:div.control
+           [:input.input.is-large
+            {:placeholder "Your Password", :type "password"}]]]
+         [:div.field
+          [:div.control
+           [:input.input.is-large
+            {:placeholder "Same Password", :type "password"}]]]
+         [:div.field
+          [:label.checkbox
+           [:input {:type "checkbox"}]
+           "\n                  Remember me\n                "]]
+         [:a.button.is-block.is-info.is-large "Sign up"]]]
+       [:p.has-text-grey
+        [:a {:href "#/login"} "Login"]]]]]])
+
+(defmulti page :page)
+
+(defmethod page :default [_]
+  [:div
+   [login-page]])
+
+(defmethod page :login [_]
+  [:div
+   [login-page]])
+
+(defmethod page :register [_]
+  [:div
+   [register-page]])
+
+(defn app-old []
   (stylefy/init)
   [:div
+   [page @(subscribe [:active])]
    [:h3 "Reframe successfully loaded"]
    [:span "Current route: " @(subscribe [:page])]
    [dashboards]
-   [:button {:on-click #(dispatch [:fetch-dashboards])} "admin"]])
+   [:button {:on-click #(dispatch [:fetch-dashboards 2])} "admin"]])
+
+(defn app []
+  [page @(subscribe [:active])])

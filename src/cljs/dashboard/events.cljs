@@ -9,8 +9,12 @@
  :set-page
  []
  (fn [{:keys [db]} [_ page]]
-   {:db (assoc db :active page)
-    :dispatch [:fetch-dashboards "/api/dashboards/1" :s-fetch-dashboards :f-fetch-dashboards]}))
+   {:db (assoc db :active page)}))
+
+(reg-event-db
+ :nothing
+ []
+ (fn [_ _]))
 
 (reg-event-fx
  :initialise-db
@@ -28,8 +32,8 @@
 
 (reg-event-fx
   :fetch-dashboards
-  (fn [{:keys [db]} _]
-    (fetch "/api/dashboards/1" :s-fetch-dashboards :f-fetch-dashboards)))
+  (fn [{:keys [db]} [evt id]]
+    (fetch (str "/api/dashboards/" id) :s-fetch-dashboards :f-fetch-dashboards)))
 
 (reg-event-db
  :s-fetch-dashboards
