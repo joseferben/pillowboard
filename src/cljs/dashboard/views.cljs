@@ -52,32 +52,15 @@
               [:div.container
                [grid/main @app-state]])]))
 
-(defn register-form []
-  [:form
-   [:div.field
-    [:label.label "Email"]
-    [:div.input {:type "email" :placeholder "Email input"}]
-    [:span.icon.is-small.is-left
-     [:i.fa.fa-envelope]]]])
-
-(defn login-form []
-  [:form
-   [:div.field
-    [:label.label "Email"]
-    [:div.input {:type "email" :placeholder "Email input"}]
-    [:span.icon.is-small.is-left
-     [:i.fa.fa-envelope]]]])
-
-(defn page-container [])
-
-
 (defn dashboard [{:keys [name created_at]}]
-  [:div
-   [:h4 name]
-   [:span (str "Created at " created_at)]])
+  [:tr
+   [:td {:width "5%"} [:i.fa.fa-area-chart]]
+   [:td name]
+   [:td [:a.button.is-small.is-primary {:href "#"} "Open"]]])
 
 (defn dashboards []
-  [:div (map dashboard @(subscribe [:dashboards]))])
+  [:table.table.is-fullwidth.is-striped
+   [:tbody (map dashboard @(subscribe [:dashboards]))]])
 
 (defn login-page []
    [:section.hero.is-fullheight
@@ -134,7 +117,7 @@
          [:div.field
           [:div.control
            [:input.input.is-large
-            {:on-key-press #(when (= (-> % .-key) "Enter") (dispatch [:register]) :placeholder "Same Password", :type "password")}]]]
+            {:on-key-press #(when (= (-> % .-key) "Enter") (dispatch [:register])) :placeholder "Same Password", :type "password"}]]]
          [:div.field
           [:label.checkbox
            [:input {:type "checkbox"}]
@@ -178,55 +161,7 @@
           [:span.icon [:i.fa.fa-angle-down {:aria-hidden "true"}]]]]
         [:div.card-table
          [:div.content
-          [:table.table.is-fullwidth.is-striped
-           [:tbody
-            [:tr
-             [:td {:width "5%"} [:i.fa.fa-bell-o]]
-             [:td "Lorum ipsum dolem aire"]
-             [:td
-              [:a.button.is-small.is-primary {:href "#"} "Action"]]]
-            [:tr
-             [:td {:width "5%"} [:i.fa.fa-bell-o]]
-             [:td "Lorum ipsum dolem aire"]
-             [:td
-              [:a.button.is-small.is-primary {:href "#"} "Action"]]]
-            [:tr
-             [:td {:width "5%"} [:i.fa.fa-bell-o]]
-             [:td "Lorum ipsum dolem aire"]
-             [:td
-              [:a.button.is-small.is-primary {:href "#"} "Action"]]]
-            [:tr
-             [:td {:width "5%"} [:i.fa.fa-bell-o]]
-             [:td "Lorum ipsum dolem aire"]
-             [:td
-              [:a.button.is-small.is-primary {:href "#"} "Action"]]]
-            [:tr
-             [:td {:width "5%"} [:i.fa.fa-bell-o]]
-             [:td "Lorum ipsum dolem aire"]
-             [:td
-              [:a.button.is-small.is-primary {:href "#"} "Action"]]]
-            [:tr
-             [:td {:width "5%"} [:i.fa.fa-bell-o]]
-             [:td "Lorum ipsum dolem aire"]
-             [:td
-              [:a.button.is-small.is-primary {:href "#"} "Action"]]]
-            [:tr
-             [:td {:width "5%"} [:i.fa.fa-bell-o]]
-             [:td "Lorum ipsum dolem aire"]
-             [:td
-              [:a.button.is-small.is-primary {:href "#"} "Action"]]]
-            [:tr
-             [:td {:width "5%"} [:i.fa.fa-bell-o]]
-             [:td "Lorum ipsum dolem aire"]
-             [:td
-              [:a.button.is-small.is-primary {:href "#"} "Action"]]]
-            [:tr
-             [:td {:width "5%"} [:i.fa.fa-bell-o]]
-             [:td "Lorum ipsum dolem aire"]
-             [:td
-              [:a.button.is-small.is-primary
-               {:href "#"}
-               "Action"]]]]]]]
+          [dashboards]]]
         [:footer.card-footer
          [:a.card-footer-item {:href "#"} "View All"]]]
        "        \n          "]
@@ -249,10 +184,7 @@
    [register-page]])
 
 (defmethod page :admin [_]
-  [:div
-   [admin-page]
-   ;[:h3 "Welcome to the admin page!"]
-   [dashboards]])
+   [admin-page])
 
 (defmethod page :board [_]
   [:div
