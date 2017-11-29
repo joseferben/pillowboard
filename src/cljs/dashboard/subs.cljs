@@ -20,3 +20,8 @@
  :email
  (fn [db _]
    (:email db)))
+
+(reg-sub
+ :board-state
+ (fn [db _]
+   (:board-state db)))

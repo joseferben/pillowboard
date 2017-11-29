@@ -1,7 +1,11 @@
 (ns dashboard.events
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require
+   [cljs.core.async :as async :refer (<! >! put! chan timeout)]
+   [dashboard.ws :refer [handle-event]]
    [dashboard.db :refer [default-db]]
    [taoensso.timbre :as timbre :refer-macros (tracef debugf infof warnf errorf)]
+   [taoensso.sente  :as sente :refer (cb-success?)]
    [re-frame.core :refer [reg-event-db reg-event-fx
                           inject-cofx path trim-v after debug]]))
 
@@ -40,9 +44,10 @@
  []
  (fn [{:keys [db]} [_ page]]
    (merge
-     (if (= (page :page) :admin)
-       {:dispatch [:fetch-dashboards]})
-     {:db (assoc db :active page)})))
+    (cond
+      (= (page :page) :admin) {:dispatch [:fetch-dashboards]}
+      (= (page :page) :board) {:dispatch [:open-ws (page :id)]})
+    {:db (assoc db :active page)})))
 
 (reg-event-db
  :fill-in
@@ -135,3 +140,29 @@
  []
  (fn [db [_ response]]
    (infof "Failed request: " response)))
+
+(reg-event-db
+ :open-ws
+ []
+ (fn [db [_ board-id]]
+   (let [{:keys [chsk ch-recv send-fn state]}
+         (sente/make-channel-socket-client!
+          "/chsk"
+          {:type :auto
+           :packer :edn})]
+     (go (while true
+           (let [{ev-msg :event} (<! ch-recv)]
+             (infof "Reiceved event: %s" ev-msg)
+             (handle-event ev-msg send-fn))))
+     (-> db
+         (assoc :chsk chsk)
+         (assoc :ch-chsk ch-recv)
+         (assoc :chsk-send! send-fn)
+         (assoc :chsk-state state)))))
+
+(reg-event-db
+ :set-board-state
+ []
+ (fn [db [_ state]]
+   (infof "Updating board state with: " state)
+   (assoc db :board-state state)))

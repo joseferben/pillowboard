@@ -1,11 +1,11 @@
 (ns dashboard.views
   (:require
    [dashboard.styles.core :as styles]
+   [dashboard.grid :as grid]
    [stylefy.core :as stylefy]
    [cljs-http.client :as http]
    [secretary.core :refer [dispatch!]]
    [re-frame.core :refer [subscribe dispatch]]
-   [reagent.core :as reagent :refer [atom]]
    [stylefy.core :as stylefy :refer [use-style]]))
 
 (defn instructions
@@ -42,21 +42,11 @@
    [randomize-button]
    [reset-button]])
 
-(comment (defn dashboard-container
-           "Injects app-state into dashboard, enables re-render"
-           []
-           [:div.top-container
-            ;;[dev-toolbar]
-            (if (or (nil? @app-state) (empty? (@app-state :charts)))
-              [instructions]
-              [:div.container
-               [grid/main @app-state]])]))
-
-(defn dashboard [{:keys [name created_at]}]
-  [:tr {:key name}
+(defn dashboard [{:keys [id name created_at]}]
+  [:tr {:key id}
    [:td {:width "5%"} [:i.fa.fa-area-chart]]
    [:td name]
-   [:td [:a.button.is-small.is-primary {:href "#"} "Open"]]])
+   [:td [:a.button.is-small.is-primary {:href (str "#/dashboard/" id)} "Open"]]])
 
 (defn dashboards []
   [:table.table.is-fullwidth.is-striped
@@ -146,7 +136,7 @@
      [:section.hero.is-info.welcome.is-small
       [:div.hero-body
        [:div.container
-        [:h1.title "Hello, Admin."]
+        [:h1.title "Hello there."]
         [:h2.subtitle
          "I hope you are having a great day!"]]]]
      [:div.columns
@@ -173,6 +163,16 @@
          [:a.card-footer-item {:href "#"} "View All"]]]]
       [:div.column.is-6]]]]]])
 
+(defn dashboard-page
+  []
+  [:div.top-container
+   ;;[dev-toolbar]
+   (let [board-state @(subscribe [:board-state])]
+     (if (or (nil? board-state) (empty? (board-state :charts)))
+       [instructions]
+       [:div.container
+        [grid/main board-state]]))])
+
 (defmulti page :page)
 
 (defmethod page :default [_]
@@ -191,9 +191,7 @@
    [admin-page])
 
 (defmethod page :board [_]
-  [:div
-   [:h3 "Welcome to the board!"]
-   [:span @(subscribe [:email])]])
+  [dashboard-page])
 
 (defn app-old []
   (stylefy/init)

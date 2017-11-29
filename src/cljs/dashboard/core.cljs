@@ -1,5 +1,6 @@
 (ns dashboard.core
   (:require [goog.events :as events]
+            [goog.history.EventType :as HistoryEventType]
             [reagent.core :as reagent]
             [re-frame.core :refer [dispatch dispatch-sync]]
             [day8.re-frame.http-fx]
@@ -10,8 +11,7 @@
             [dashboard.views]
             [devtools.core :as devtools])
   (:require-macros [secretary.core :refer [defroute]])
-  (:import [goog History]
-           [goog.history EventType]))
+  (:import [goog History]))
 
 (devtools/install!)
 (enable-console-print!)
@@ -28,11 +28,13 @@
 (defroute "/admin" [user-id] (dispatch [:set-page {:page :admin}]))
 (defroute "/dashboard/:board-id" [board-id] (dispatch [:set-page {:page :board :id board-id}]))
 
-(def history
+(defn hook-browser-navigation! []
   (doto (History.)
-    (events/listen EventType.NAVIGATE
-                   (fn [event] (secretary/dispatch! (.-token event))))
-    (.setEnabled true)))
+        (events/listen
+          HistoryEventType/NAVIGATE
+          (fn [event]
+              (secretary/dispatch! (.-token event))))
+        (.setEnabled true)))
 
 (defn ^:export main
   []
@@ -41,3 +43,5 @@
 
   (reagent/render [dashboard.views/app]
                   (.getElementById js/document "app")))
+
+(hook-browser-navigation!)
