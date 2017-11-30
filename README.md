@@ -85,3 +85,8 @@ Use [this](https://github.com/venantius/ultra) lein plugin to pretty print tests
  :name2 "bar"
  :value2 "24"}
 ```
+
+## Example authenticated request
+'''
+http POST :3000/api/dashboards 'Authorization:Token eBniAEtO/KEAGSP60/RD1Wwtb21V4RnNGWb6wZhHGms=' name=myboard
+'''

@@ -1,74 +1,47 @@
 (ns dashboard.core
-  (:require
-   [dashboard.grid :as grid :refer [main]]
-   [dashboard.components :refer [instructions dev-toolbar]]
-   [clojure.string  :as str]
-   [cljs.core.async :as async :refer (<! >! put! chan timeout)]
-   [taoensso.timbre :as timbre :refer-macros (tracef debugf infof warnf errorf)]
-   [taoensso.encore :as encore :refer-macros (have have?)]
-   [taoensso.sente  :as sente :refer (cb-success?)]
-   [stylefy.core :as stylefy]
-   [reagent.core :as reagent :refer [atom]])
-  (:require-macros
-   [cljs.core.async.macros :as asyncm :refer (go go-loop)]))
+  (:require [goog.events :as events]
+            [goog.history.EventType :as HistoryEventType]
+            [reagent.core :as reagent]
+            [re-frame.core :refer [dispatch dispatch-sync]]
+            [day8.re-frame.http-fx]
+            [secretary.core :as secretary]
+            [taoensso.timbre :as timbre :refer-macros (tracef debugf infof warnf errorf)]
+            [dashboard.events]
+            [dashboard.subs]
+            [dashboard.views]
+            [devtools.core :as devtools])
+  (:require-macros [secretary.core :refer [defroute]])
+  (:import [goog History]))
 
+(devtools/install!)
 (enable-console-print!)
+
+(secretary/set-config! :prefix "#")
 
 (timbre/set-level! :debug)
 
-(defonce app-state (atom {}))
-
 (infof "ClojureScript appears to have loaded correctly.")
 
-(let [{:keys [chsk ch-recv send-fn state]}
-      (sente/make-channel-socket-client! (clojure.string/replace (.-pathname (.-location js/window)) "index.html" "chsk")
-       {:type :auto
-        :packer :edn
-       })]
-  (def chsk       chsk)
-  (def ch-chsk    ch-recv)
-  (def chsk-send! send-fn)
-  (def chsk-state state))
+(defroute "/" [] (dispatch [:set-page {:page :login}]))
+(defroute "/login" [] (dispatch [:set-page {:page :login}]))
+(defroute "/register" [] (dispatch [:set-page {:page :register}]))
+(defroute "/admin" [user-id] (dispatch [:set-page {:page :admin}]))
+(defroute "/dashboard/:board-id" [board-id] (dispatch [:set-page {:page :board :id board-id}]))
 
-(add-watch chsk-state :state
-           (fn [_ _ old new]
-             (infof "State changed from %s to %s" old new)
-             (if (and (:open? new) (not= (:open? old)))
-               (chsk-send! [:board/req-init-state {}] 4000))))
+(defn hook-browser-navigation! []
+  (doto (History.)
+        (events/listen
+          HistoryEventType/NAVIGATE
+          (fn [event]
+              (secretary/dispatch! (.-token event))))
+        (.setEnabled true)))
 
-(defn container []
-  "Injects app-state into dashboard, enables re-render"
-  [:div.top-container
-   ;;[dev-toolbar]
-  (if (or (nil? @app-state) (empty? (@app-state :charts)))
-    [instructions]
-    [:div.container
-     [grid/main @app-state]])])
+(defn ^:export main
+  []
+  ;; Put an initial value into app-db.
+  (dispatch-sync [:initialise-db])
 
-(defn init! []
-  (stylefy/init)
-  (reagent/render-component [container]
-                          (.getElementById js/document "app")))
+  (reagent/render [dashboard.views/app]
+                  (.getElementById js/document "app")))
 
-(defmulti handle-event first)
-
-(defmethod handle-event :chsk/handshake
-  [event]
-  (chsk-send! [:board/req-init-state {}] 4000))
-
-(defmethod handle-event :chsk/recv
-  [event]
-  (when (= (first (second event)) :board/state)
-    (infof "Updating state because of event: %s" event)
-    (reset! app-state (get (second (second event)) :state))))
-
-(defmethod handle-event :default
-  [event]
-  (infof "No handler for event found: %s" event))
-
-(init!)
-
-(go (while true
-      (let [{ev-msg :event} (<! ch-chsk)]
-        (infof "Reiceved event: %s" ev-msg)
-        (handle-event ev-msg))))
+(hook-browser-navigation!)

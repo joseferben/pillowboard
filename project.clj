@@ -1,4 +1,4 @@
-(defproject dashboard "0.0.4-SNAPSHOT"
+(defproject dashboard "0.1.0-SNAPSHOT"
   :description "Zero config dashboard that makes sense of your data."
   :url "http://www.200ok.ch"
   :license {:name "Eclipse Public License"
@@ -12,16 +12,23 @@
                  [org.clojure/spec.alpha "0.1.143"]
                  [org.clojure/test.check "0.10.0-alpha2"]
                  [com.layerware/hugsql "0.4.8"]
-                 [org.postgresql/postgresql "9.2-1002-jdbc4"]
+                 [org.postgresql/postgresql "42.1.4.jre6"]
                  [ring/ring-defaults "0.2.1"]
                  [ring/ring-devel "1.6.3"]
                  [ring/ring-json "0.4.0"]
+                 [buddy/buddy-hashers "1.3.0"]
+                 [buddy/buddy-auth "2.1.0"]
                  [ring-cors "0.1.11"]
                  [ragtime "0.7.2"]
                  [com.layerware/hugsql "0.4.8"]
                  [cheshire "5.8.0"]
                  [compojure "1.5.1"]
                  [reagent "0.7.0"]
+                 [re-frame "0.10.3-alpha1"]
+                 [day8.re-frame/http-fx "0.1.4"]
+                 [cljs-ajax "0.7.3"]
+                 [secretary "1.2.3"]
+                 [binaryage/devtools "0.9.4"]
                  [com.taoensso/sente "1.11.0"]
                  [com.taoensso/timbre "4.7.4"]
                  [stylefy "1.0.1"]
@@ -46,7 +53,7 @@
   :cljsbuild {:builds
               [{:id "dev"
                 :source-paths ["src/cljs" "src/cljc"]
-                :figwheel {:on-jsload "dashboard.core/on-js-reload"
+                :figwheel {:on-jsload "dashboard.core/main"
                            :open-urls ["http://localhost:3449/index.html"]}
 
                 :compiler {:main dashboard.core
