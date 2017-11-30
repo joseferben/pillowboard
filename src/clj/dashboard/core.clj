@@ -3,30 +3,27 @@
             [dashboard.pipeline.group :refer [group process]]
             [dashboard.pipeline.configure :refer [configure]]
             [dashboard.pipeline.transform :refer [transform]]
+            [dashboard.auth :refer [str->int]]
             [dashboard.db :refer [events-all event-insert!]]
             [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]))
-
-(timbre/set-level! :trace)
-
-;; TODO simple form of persistence by writing timeseries to files
-(def events (atom []))
 
 (defn pipeline [events]
   ((comp transform configure (partial process :last) group fold-events) events))
 
-(defn fetch-state! []
-  (pipeline (events-all 1)))
+(defn fetch-state! [board-id]
+  (pipeline (events-all (str->int board-id))))
 
 (defn- store-event!
-  [event]
-  (event-insert! event 1)
-  (tracef "Stored event: %s" event)
-  (fetch-state!))
+  [event board-id]
+  (debugf "Event to store: %s" event)
+  (event-insert! event (str->int board-id))
+  (debugf "Stored event: %s" event)
+  (fetch-state! board-id))
 
 (defn store-post-and-broadcast!
-  [post broadcast-state]
+  [post broadcast-state board-id]
   (let [event (post->event post)]
-    (broadcast-state (store-event! event))))
+    (broadcast-state (store-event! event board-id))))
 
 ;; TODO fix?
 (defn generate-state-and-broadcast!

@@ -77,7 +77,7 @@
         (do
           (debugf "Adding uid %s to board-id %s" uid board-id)
           (swap! board-sessions update board-id conj uid)
-          (broadcast-state board-id (fetch-state!))))))
+          (broadcast-state board-id (fetch-state! board-id))))))
   (recur))
 
 (def OK 200)
@@ -102,7 +102,7 @@
 
 (defn- post-data
   [board-id post]
-  (store-post-and-broadcast! post (partial broadcast-state board-id))
+  (store-post-and-broadcast! post (partial broadcast-state board-id) board-id)
   OK)
 
 (defn- login-user

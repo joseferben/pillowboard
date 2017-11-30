@@ -166,7 +166,8 @@
  (fn [db [_ _]]
    (let [board-id (get-in db [:active :id])]
      (infof "Registering board with id: %s" board-id)
-     ((db :chsk-send!) [:board/register-board board-id] 4000))))
+     ((db :chsk-send!) [:board/register-board board-id] 4000)
+     db)))
 
 (reg-event-db
  :set-board-state

@@ -80,16 +80,16 @@
 
 (defmethod post->event :gauge [post]
   (debugf "Received raw post of type gauge: %s" post)
-  (let [name (extract-name post)
-        value (get post name)]
-    {:name name :value value}))
+  (let [label (extract-name post)
+        value (str (get post label))]
+    {:name (name label) :value value}))
 
 (defmethod post->event :default [post]
   (debugf "Received raw post of type timeseries: %s" post)
-  (let [name (extract-name post)
-        value (get post name)
+  (let [label (extract-name post)
+        value (get post label)
         time (or (post "time") (System/currentTimeMillis))]
-    {:name name :time time :value value}))
+    {:name (name label) :time time :value value}))
 
 (defn- random-event [label]
   {:name label :time (System/currentTimeMillis) :value (rand 5)})

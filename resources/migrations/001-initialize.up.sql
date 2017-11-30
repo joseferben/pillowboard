@@ -22,7 +22,7 @@ create table auth_token (
 
 create table event_timeseries (
        id serial primary key,
-       dashboard_id integer references dashboard on delete cascade,
+       dashboard_id integer not null references dashboard on delete cascade,
        name varchar(60) not null,
        time bigint not null default 0,
        value real not null default 0.0,
@@ -31,7 +31,7 @@ create table event_timeseries (
 
 create table event_gauge (
        id serial primary key,
-       dashboard_id integer references dashboard on delete cascade,
+       dashboard_id integer not null references dashboard on delete cascade,
        name varchar(60) not null,
        value real not null default 0.0,
        created_at timestamp not null default current_timestamp
@@ -39,7 +39,7 @@ create table event_gauge (
 
 create table event_tuple (
        id serial primary key,
-       dashboard_id integer references dashboard on delete cascade,
+       dashboard_id integer not null references dashboard on delete cascade,
        name1 varchar(60) not null,
        value1 real not null default 0.0,
        name2 varchar(60) not null,
