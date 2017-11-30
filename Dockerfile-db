@@ -1,0 +1,4 @@
+FROM postgres:10
+MAINTAINER Josef Erben <josef@200ok.ch>
+
+ADD resources/migrations/001-initialize.up.sql /docker-entrypoint-initdb.d/
