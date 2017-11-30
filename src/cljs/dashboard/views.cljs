@@ -94,12 +94,8 @@
           [:div.control
            [:input.input.is-large
             {:on-change #(dispatch [:fill-in (-> % .-target .-value) :register :password])
+             :on-key-press #(when (= (-> % .-key) "Enter") (dispatch [:register]))
              :placeholder "Your Password", :type "password"}]]]
-         [:div.field
-          [:div.control
-           [:input.input.is-large
-            {:on-key-press #(when (= (-> % .-key) "Enter") (dispatch [:register]))
-             :placeholder "Same Password", :type "password"}]]]
          [:a.button.is-block.is-info.is-large {:on-click #(dispatch [:register])} "Sign up"]]]
        [:p.has-text-grey
         [:a {:href "#/login"} "Login"]]]]]])
