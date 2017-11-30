@@ -11,36 +11,25 @@
 (defn instructions
   "Displays basic instructions on how to use the board."
   []
-  [:div.instructions
-   [:h4.title.is-4 "Usage"]
-   [:div.usage "Get started by POSTing metrics to /api/dashboard:"]
-   [:p]
-   [:code "http POST /api/dashboard commits:=3"]
-   [:p]
-   [:div.usage "The time will be set automatically. You can override the time value like this:"]
-   [:p]
-   [:code "http POST /api/dashboard commits:=3 time:=1510851134350"]
-   [:p]
-   [:div.usage "The key defines the unique name of the metric. The values must be numbers, the value of the time key must be millis since epoch."]
-   [:div.usage "Note: The data is currently not persisted."]])
-
-(defn- randomize-button
-  "Randomizes data of the dashboard."
-  []
-  [:div.button {:on-click (fn [] (http/post "/api/random" {:json-params {:foo :bar}}))}
-   "Randomize"])
-
-(defn- reset-button
-  "Resets data of the dashboard, can be used to show instructions again."
-  []
-  [:div.button {:on-click (fn [] (http/post "/api/reset" {:json-params {:foo :bar}}))}
-   "Reset"])
-
-(defn dev-toolbar
-  []
-  [:div.dev-toolbar
-   [randomize-button]
-   [reset-button]])
+  (let [base-url (-> js/window .-location .-origin)
+        board-id (@(subscribe [:active]) :id)
+        data-endpoint (str base-url "/api/data/" board-id)]
+   [:section.hero.is-fullheight
+    [:div.hero-body
+     [:div.container
+      [:div.column.is-8.is-offset-2
+       [:div.box
+        [:div.instructions
+          [:h4.title.is-4 "Usage"]
+          [:div.usage "Get started by POSTing metrics to the data endpoint of this dashboard:"]
+          [:p]
+          [:code "http POST " data-endpoint " commits:=3"]
+          [:p]
+          [:div.usage "The time will be set automatically. You can override the time value like this:"]
+          [:p]
+          [:code "http POST " data-endpoint " commits:=3 time:=1510851134350"]
+          [:p]
+          [:div.usage "The key defines the unique name of the metric. The values must be numbers, the value of the time key must be millis since epoch."]]]]]]]))
 
 (defn dashboard [{:keys [id name created_at]}]
   [:tr {:key id}
@@ -192,15 +181,6 @@
 
 (defmethod page :board [_]
   [dashboard-page])
-
-(defn app-old []
-  (stylefy/init)
-  [:div
-   [page @(subscribe [:active])]
-   [:h3 "Reframe successfully loaded"]
-   [:span "Current route: " @(subscribe [:page])]
-   [dashboards]
-   [:button {:on-click #(dispatch [:fetch-dashboards 2])} "admin"]])
 
 (defn app []
   [page @(subscribe [:active])])
