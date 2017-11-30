@@ -76,7 +76,7 @@
  :f-login
  []
  (fn [db [_ response]]
-   (infof "Failed to login: " response)))
+   (infof "Failed to login: %s" response)))
 
 (reg-event-fx
  :register
@@ -96,13 +96,13 @@
  :f-register
  []
  (fn [db [_ response]]
-   (infof "Failed to register: " response)))
+   (infof "Failed to register: %s" response)))
 
 (reg-event-fx
  :add-dashboard
  (fn [{:keys [db]} [_ evt]]
    (let [name (get-in db [:form :to-add :name])]
-     (infof (str "Addding dashboard: " name))
+     (infof "Addding dashboard: %s" name)
      (post "/api/dashboards" {:name name} :s-add-dashboard :f-add-dashboard db))))
 
 (reg-event-fx
@@ -116,7 +116,7 @@
  :f-add-dashboard
  []
  (fn [db [_ response]]
-   (infof "Failed to add dashboard: " response)))
+   (infof "Failed to add dashboard: %s" response)))
 
 (reg-event-fx
  :initialise-db
@@ -139,7 +139,7 @@
  :f-fetch-dashboards
  []
  (fn [db [_ response]]
-   (infof "Failed request: " response)))
+   (infof "Failed request: %s" response)))
 
 (reg-event-db
  :open-ws
@@ -161,8 +161,16 @@
          (assoc :chsk-state state)))))
 
 (reg-event-db
+ :register-board
+ []
+ (fn [db [_ _]]
+   (let [board-id (get-in db [:active :id])]
+     (infof "Registering board with id: %s" board-id)
+     ((db :chsk-send!) [:board/register-board board-id] 4000))))
+
+(reg-event-db
  :set-board-state
  []
  (fn [db [_ state]]
-   (infof "Updating board state with: " state)
+   (infof "Updating board state to: %s" state)
    (assoc db :board-state state)))

@@ -17,15 +17,20 @@
 
 (defmulti handle-event (fn [event _] (first event)))
 
-(defmethod handle-event :chsk/handshake
+(comment (defmethod handle-event :chsk/handshake)
   [event chsk-send!]
   (chsk-send! [:board/req-init-state {}] 4000))
 
+(defmethod handle-event :chsk/state
+  [[type [m0 m1] _]]
+  (if (m1 :first-open?)
+    (dispatch [:register-board])))
+
 (defmethod handle-event :chsk/recv
   [event _]
-  (when (= (first (second event)) :board/state)
-    (infof "Updating state because of event: %s" event)
-    (dispatch [:set-board-state (get (second (second event)) :state)])))
+  (infof "Handling event: %s" event)
+  (when
+    (= (first (second event)) :board/state) (dispatch [:set-board-state (get (second (second event)) :state)])))
 
 (defmethod handle-event :default
   [event _]

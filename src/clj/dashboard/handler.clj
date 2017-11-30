@@ -25,7 +25,11 @@
 
   (:gen-class))
 
-(timbre/set-level! :trace)
+(timbre/set-level! :debug)
+
+(def board-sessions (atom {}))
+
+(defn- uuid [] (.toString (java.util.UUID/randomUUID)))
 
 (let [;; Serializtion format, must use same val for client + server:
       packer :edn ; Default packer, a good choice in most cases
@@ -34,7 +38,7 @@
       chsk-server
       (sente/make-channel-socket-server!
        ;; TODO replace custom id with sensible session based id generation
-       (get-sch-adapter) {:packer packer :user-id-fn (fn [req] "some-custom-id-42")})
+       (get-sch-adapter) {:packer packer :user-id-fn (fn [req] (uuid))})
 
       {:keys [ch-recv send-fn connected-uids
               ajax-post-fn ajax-get-or-ws-handshake-fn]}
@@ -44,8 +48,7 @@
   (def ring-ajax-get-or-ws-handshake ajax-get-or-ws-handshake-fn)
   (def ch-chsk                       ch-recv) ; ChannelSocket's receive channel
   (def chsk-send!                    send-fn) ; ChannelSocket's send API fn
-  (def connected-uids                connected-uids) ; Watchable, read-only atom
-  )
+  (def connected-uids                connected-uids)) ; Watchable, read-only atom
 
 (add-watch connected-uids :connected-uids
            (fn [_ _ old new]
@@ -54,32 +57,28 @@
 
 ;; TODO: Do not broadcast upon every event received
 (defn- broadcast-state
-  [state]
-  (let [uids (:any @connected-uids)]
-    (debugf "Broadcasting server>user: %s uids" (count uids))
+  [board-id state]
+  (let [uids (get @board-sessions board-id)]
+    (debugf "Broadcasting state to: %s" uids)
+    (debugf "Currently connected uids: %s" @connected-uids)
+    (debugf "Currently registered boards: %s" @board-sessions)
     (doseq [uid uids]
+      (debugf "Sending {:foo-state 42} to %s" uid)
       (chsk-send! uid
                   [:board/state
                    {:state state}]))))
 
-(defn- random-state
-  []
-  (generate-state-and-broadcast! broadcast-state))
-
-(defn- reset-state
-  []
-  (reset-state-and-broadcast! broadcast-state))
-
 (go-loop []
-  (let [{ev-msg :event} (<! ch-chsk)]
-    (broadcast-state (fetch-state!)))
+  (let [event (<! ch-chsk)]
+    ;(debugf "Receiving event: %s" event)
+    (let [{[type board-id] :event} event
+          {uid :uid} event]
+      (if (= :board/register-board type)
+        (do
+          (debugf "Adding uid %s to board-id %s" uid board-id)
+          (swap! board-sessions update board-id conj uid)
+          (broadcast-state board-id (fetch-state!))))))
   (recur))
-
-(defn handle-post
-  [body]
-  (store-post-and-broadcast! body broadcast-state)
-  ;; map to event and forward to event sourcing, return answer
-  (response body))
 
 (def OK 200)
 
@@ -102,17 +101,12 @@
   OK)
 
 (defn- post-data
-  [user-id body]
-  (store-post-and-broadcast! body broadcast-state)
+  [board-id post]
+  (store-post-and-broadcast! post (partial broadcast-state board-id))
   OK)
 
 (defn- login-user
   [email password])
-
-(def mock-dashboards {"1" [{:name "kpi" :created "2017-01-01"} {:name "project foo" :created "2017-02-01"}]
-                      "2" [{:name "project bar" :created "2016-01-01"}]})
-
-(def mock-users ["Walter White" "Jesse Pinkman" "Saul Goodman"])
 
 (defroutes api-routes
 
