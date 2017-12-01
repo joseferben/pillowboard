@@ -71,7 +71,7 @@
            "Remember me"]]
          [:a.button.is-block.is-info.is-large {:on-click #(dispatch [:login])} "Login"]]]
        [:p.has-text-grey
-        [:a {:href "#/register"} "Sign up"]]]]]])
+        [:a {:href "/register"} "Sign up"]]]]]])
 
 (defn register-page []
   [:section.hero.is-fullheight
@@ -98,7 +98,7 @@
              :placeholder "Your Password", :type "password"}]]]
          [:a.button.is-block.is-info.is-large {:on-click #(dispatch [:register])} "Sign up"]]]
        [:p.has-text-grey
-        [:a {:href "#/login"} "Login"]]]]]])
+        [:a {:href "/login"} "Login"]]]]]])
 
 (defn admin-page []
  [:nav.navbar.is-dark
