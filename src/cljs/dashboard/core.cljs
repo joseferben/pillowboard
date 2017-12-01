@@ -21,12 +21,13 @@
                   "login" :login
                   "register" :register
                   "admin" :admin
-                  "dashboard" :dashboard}])
+                  "dashboard/" {[:id] :board}}])
 
 (defn- parse-url [url]
   (bidi/match-route routes url))
 
 (defn- dispatch-route [matched-route]
+  (prn matched-route)
   (let [panel-name (:handler matched-route)
         id (get-in matched-route [:route-params :id])]
     (debugf "Setting panel: %s" matched-route)
@@ -40,7 +41,8 @@
 (pushy/start! history)
 
 (defn nav! [url]
-  (pushy/set-token! history url))
+  (pushy/set-token! history url)
+  false)
 
 (defn ^:export main
   []

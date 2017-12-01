@@ -2,6 +2,7 @@
   (:require
    [dashboard.styles.core :as styles]
    [dashboard.grid :as grid]
+   [dashboard.core :refer [nav!]]
    [stylefy.core :as stylefy]
    [cljs-http.client :as http]
    [re-frame.core :refer [subscribe dispatch]]
@@ -34,7 +35,7 @@
   [:tr {:key id}
    [:td {:width "5%"} [:i.fa.fa-area-chart]]
    [:td name]
-   [:td [:a.button.is-small.is-primary {:href (str "#/dashboard/" id)} "Open"]]])
+   [:td [:a.button.is-small.is-primary {:on-click #(nav! (str "/dashboard/" id)) :href ""} "Open"]]])
 
 (defn dashboards []
   [:table.table.is-fullwidth.is-striped
