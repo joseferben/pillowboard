@@ -4,7 +4,6 @@
    [dashboard.grid :as grid]
    [stylefy.core :as stylefy]
    [cljs-http.client :as http]
-   [secretary.core :refer [dispatch!]]
    [re-frame.core :refer [subscribe dispatch]]
    [stylefy.core :as stylefy :refer [use-style]]))
 

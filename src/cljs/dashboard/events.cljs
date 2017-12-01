@@ -4,6 +4,7 @@
    [cljs.core.async :as async :refer (<! >! put! chan timeout)]
    [dashboard.ws :refer [handle-event]]
    [dashboard.db :refer [default-db]]
+   [dashboard.core :refer [nav!]]
    [taoensso.timbre :as timbre :refer-macros (tracef debugf infof warnf errorf)]
    [taoensso.sente  :as sente :refer (cb-success?)]
    [re-frame.core :refer [reg-event-db reg-event-fx
@@ -66,11 +67,11 @@
  :s-login
  (fn [{:keys [db]} [_ {:keys [auth-token]}]]
    (infof "Successfully logged in.")
+   (nav! "/admin")
    {:db (-> db
          (assoc :email (get-in db [:form :login :email]))
          (dissoc :form)
-         (assoc :token auth-token))
-    :dispatch [:set-page {:page :admin}]}))
+         (assoc :token auth-token))}))
 
 (reg-event-db
  :f-login

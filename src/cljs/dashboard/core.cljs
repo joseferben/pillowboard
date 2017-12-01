@@ -1,34 +1,46 @@
 (ns dashboard.core
-  (:require [goog.events :as events]
-            [goog.history.EventType :as EventType]
-            [reagent.core :as reagent]
+  (:require [reagent.core :as reagent]
             [re-frame.core :refer [dispatch dispatch-sync]]
             [day8.re-frame.http-fx]
-            [secretary.core :as secretary :include-macros true]
+            [bidi.bidi :as bidi]
+            [pushy.core :as pushy]
             [taoensso.timbre :as timbre :refer-macros (tracef debugf infof warnf errorf)]
             [dashboard.events]
             [dashboard.subs]
             [dashboard.views]
-            [devtools.core :as devtools])
-  (:require-macros [secretary.core :refer [defroute]])
-  (:import goog.history.Html5History
-             goog.Uri))
+            [devtools.core :as devtools]))
 
 (devtools/install!)
 (enable-console-print!)
-
-;;(secretary/set-config! :prefix "#")
 
 (timbre/set-level! :debug)
 
 (infof "ClojureScript appears to have loaded correctly.")
 
-(defroute "/" [] (dispatch [:set-page {:page :login}]))
-(defroute "/login" [] (dispatch [:set-page {:page :login}]))
-(defroute "/register" [] (dispatch [:set-page {:page :register}]))
-(defroute "/admin" [user-id] (dispatch [:set-page {:page :admin}]))
-(defroute "/dashboard/:board-id" [board-id] (dispatch [:set-page {:page :board :id board-id}]))
-(secretary/defroute "/test" [] (prn "Test is working!"))
+(def routes ["/" {"" :login
+                  "login" :login
+                  "register" :register
+                  "admin" :admin
+                  "dashboard" :dashboard}])
+
+(defn- parse-url [url]
+  (bidi/match-route routes url))
+
+(defn- dispatch-route [matched-route]
+  (let [panel-name (:handler matched-route)
+        id (get-in matched-route [:route-params :id])]
+    (debugf "Setting panel: %s" matched-route)
+    (dispatch [:set-page {:page panel-name :id id}])))
+
+(def history
+ (pushy/pushy dispatch-route parse-url))
+
+(def url-for (partial bidi/path-for routes))
+
+(pushy/start! history)
+
+(defn nav! [url]
+  (pushy/set-token! history url))
 
 (defn ^:export main
   []
@@ -37,26 +49,3 @@
 
   (reagent/render [dashboard.views/app]
                   (.getElementById js/document "app")))
-
-;; -------------------------
-;; History
-(defn hook-browser-navigation! []
-  (let [history (doto (Html5History.)
-                  (events/listen
-                    EventType/NAVIGATE
-                    (fn [event]
-                      (secretary/dispatch! (.-token event))))
-                  (.setUseFragment false)
-                  (.setPathPrefix "")
-                  (.setEnabled true))]
-
-    (events/listen js/document "click"
-                   (fn [e]
-                     (. e preventDefault)
-                     (let [path (.getPath (.parse Uri (.-href (.-target e))))
-                           title (.-title (.-target e))]
-                       (when path
-                         (. history (setToken path title))))))))
-
-;; need to run this after routes have been defined
-(hook-browser-navigation!)

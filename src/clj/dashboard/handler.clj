@@ -146,7 +146,7 @@
   (GET  "/chsk" req (ring-ajax-get-or-ws-handshake req))
   (POST "/chsk" req (ring-ajax-post                req))
   (route/resources "/")
-  (route/not-found "<h1>Page not found</h1>"))
+  (route/not-found (content-type (resource-response "index.html" {:root "public"}) "text/html")))
 
 (def app
   (wrap-reload
