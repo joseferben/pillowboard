@@ -4,7 +4,7 @@
    [cljs.core.async :as async :refer (<! >! put! chan timeout)]
    [dashboard.ws :refer [handle-event]]
    [dashboard.db :refer [default-db]]
-   [dashboard.core :refer [nav!]]
+   [dashboard.routes :refer [nav!]]
    [taoensso.timbre :as timbre :refer-macros (tracef debugf infof warnf errorf)]
    [taoensso.sente  :as sente :refer (cb-success?)]
    [re-frame.core :refer [reg-event-db reg-event-fx
