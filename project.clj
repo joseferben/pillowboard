@@ -56,9 +56,8 @@
                 :source-paths ["src/cljs" "src/cljc"]
                 :figwheel {:on-jsload "dashboard.core/main"
                            :open-urls ["http://localhost:3449/index.html"]}
-
                 :compiler {:main dashboard.core
-                           :asset-path "js/compiled/out"
+                           :asset-path "/js/compiled/out"
                            :output-to "resources/public/js/compiled/app.js"
                            :output-dir "resources/public/js/compiled/out"
                            :source-map-timestamp true
@@ -67,6 +66,7 @@
                 :source-paths ["src/cljs" "src/cljc"]
                 :compiler {:output-to "resources/public/js/compiled/app.js"
                            :main dashboard.core
+                           :asset-path "/js/compiled/out"
                            :optimizations :advanced
                            :pretty-print false}}]}
   :profiles {:dev {:dependencies [[binaryage/devtools "0.9.4"]

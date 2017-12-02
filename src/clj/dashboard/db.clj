@@ -8,9 +8,9 @@
 
 
 (def db
-  {:classname "org.postgresql.Driver"
+  {:classname "og.postgresql.Driver"
    :subprotocol "postgresql"
-   :subname "//localhost:5432/postgres"
+   :subname "//db:5432/postgres"
    :user "postgres"
    :password "postgres"
    :sslmode "disable"
