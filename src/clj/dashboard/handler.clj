@@ -53,7 +53,6 @@
              (when (not= old new)
                (infof "Connected uids change: %s" new))))
 
-;; TODO: Do not broadcast upon every event received
 (defn- broadcast-state
   [board-id state]
   (let [uids (get @board-sessions board-id)]
@@ -64,14 +63,14 @@
       (debugf "Sending state %s to %s" state uid)
       (chsk-send! uid
                   [:board/state
-                   {:state state}]))))
+                   {:state state}] 20000))))
 
 (go-loop []
   (let [event (<! ch-chsk)]
     ;(debugf "Receiving event: %s" event)
     (let [{[type board-id] :event} event
           {uid :uid} event]
-      (if (= :board/register-board type)
+      (if (and (= :board/register-board type) (not (nil? board-id)))
         (do
           (debugf "Adding uid %s to board-id %s" uid board-id)
           (swap! board-sessions update board-id conj uid)

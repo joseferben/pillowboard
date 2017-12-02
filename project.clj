@@ -78,7 +78,6 @@
                                   [ring/ring-mock "0.3.0"]]
                    :source-paths ["src/clj" "src/cljc"]
                    :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
-                   :ragtime {:database "jdbc:postgresql://localhost:5432/postgres?user=postgres&password=postgres"}
                    :clean-targets ^{:protect false} ["resources/public/js/compiled"
                                                      :target-path]}
              :uberjar {:hooks [leiningen.cljsbuild]}})
