@@ -5,6 +5,7 @@
             [dashboard.pipeline.transform :refer [transform]]
             [dashboard.auth :refer [str->int]]
             [dashboard.db :refer [events-all event-insert!]]
+            [user :as user]
             [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]))
 
 (defn pipeline [events]
@@ -25,17 +26,7 @@
   (let [event (post->event post)]
     (broadcast-state (store-event! event board-id))))
 
-;; TODO fix?
-(defn generate-state-and-broadcast!
-  [broadcast-state]
-  ;;(let [generated-events (generate-events 15)]
-  ;;  (reset! events generated-events)
-  ;;  (broadcast-state (pipeline generated-events))))
-  )
-
-;; TODO fix?
-(defn reset-state-and-broadcast!
-  [broadcast-state]
-  ;;(event-delete-all!)
-  ;;(broadcast-state (pipeline @events))
-  )
+(defn init!
+  "Gets called on startup, runs tasks that need to run exactly once."
+  []
+  (user/migrate))

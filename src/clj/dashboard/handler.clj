@@ -1,7 +1,5 @@
 (ns dashboard.handler
-  (:require [dashboard.core :as core :refer [fetch-state! store-post-and-broadcast!
-                                             generate-state-and-broadcast!
-                                             reset-state-and-broadcast!]]
+  (:require [dashboard.core :as core :refer [fetch-state! store-post-and-broadcast! init!]]
             [dashboard.db :as db]
             [dashboard.auth :refer [auth-backend user-can user-isa user-has-id identify
                                     authenticated-user unauthorized-handler make-token!]]
@@ -167,6 +165,7 @@
     (wrap-defaults site-routes site-defaults))))
 
 (defn -main [& args]
+  (init!)
   (let [port (Integer/parseInt (get (System/getenv) "PORT" "3000"))]
     (run-server app {:port port})
     (infof "Web server is running at port %s" port)))
