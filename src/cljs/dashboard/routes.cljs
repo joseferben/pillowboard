@@ -14,6 +14,7 @@
   (bidi/match-route routes url))
 
 (defn- dispatch-route [matched-route]
+  (prn matched-route)
   (let [panel-name (:handler matched-route)
         id (get-in matched-route [:route-params :id])]
     (debugf "Setting panel:  %s" matched-route)

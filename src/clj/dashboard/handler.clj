@@ -63,7 +63,7 @@
     (debugf "Currently connected uids: %s" @connected-uids)
     (debugf "Currently registered boards: %s" @board-sessions)
     (doseq [uid uids]
-      (debugf "Sending {:foo-state 42} to %s" uid)
+      (debugf "Sending state %s to %s" state uid)
       (chsk-send! uid
                   [:board/state
                    {:state state}]))))

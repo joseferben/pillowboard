@@ -88,7 +88,7 @@
   (debugf "Received raw post of type timeseries: %s" post)
   (let [label (extract-name post)
         value (get post label)
-        time (or (post "time") (System/currentTimeMillis))]
+        time (or (post :time) (System/currentTimeMillis))]
     {:name (name label) :time time :value value}))
 
 (defn- random-event [label]
