@@ -6,7 +6,6 @@
             [dashboard.pipeline.event :refer [event-type]]
             [buddy.hashers :as hashers]))
 
-
 (def db
   {:classname "og.postgresql.Driver"
    :subprotocol "postgresql"

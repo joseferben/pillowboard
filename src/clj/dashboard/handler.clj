@@ -141,12 +141,19 @@
        :body {:status "error"
               :message "invalid username or password"}})))
 
+(defn index-html []
+  (content-type (resource-response "index.html" {:root "public"}) "text/html"))
+
 (defroutes site-routes
-  (GET "/" [] (content-type (resource-response "index.html" {:root "public"}) "text/html"))
+  (GET "/" [] (index-html))
+  (GET "/login" [] (index-html))
+  (GET "/register" [] (index-html))
+  (GET "/admin" [] (index-html))
+  (GET "/dashboard/:board-id" [board-id] (index-html))
   (GET  "/chsk" req (ring-ajax-get-or-ws-handshake req))
   (POST "/chsk" req (ring-ajax-post                req))
   (route/resources "/")
-  (route/not-found (content-type (resource-response "index.html" {:root "public"}) "text/html")))
+  (route/not-found "Page not found - 404"))
 
 (def app
   (wrap-reload
