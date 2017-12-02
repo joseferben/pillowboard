@@ -48,17 +48,28 @@
       (= label (extract-metric-name (first state))) idx
       :else (recur (inc idx) (rest state)))))
 
+(defn- extract-meta
+  "Extracts meta information out of an event, returns a map."
+  [event]
+  (dissoc event :time :name :value))
+
 (defmulti fold-event
   "Folds an event on already folded events to make up the initial state."
   event-type)
 
 (defmethod fold-event :timeseries
-  [{:keys [time name value]} state]
-  (let [idx (get-idx state name)]
+  [event state]
+  (let [{time :time} event
+        {name :name} event
+        {value :value} event
+        idx (get-idx state name)]
     (if (= idx -1)
         (conj state {:category :timeseries
-                     :data #{{"time" time name value}}})
-        (update-in state [idx :data] conj {"time" time name value}))))
+                     :data #{{"time" time name value}}
+                     :meta (extract-meta event)})
+        (-> state
+            (update-in [idx :data] conj {"time" time name value})
+            (update-in [idx :meta] merge (extract-meta event))))))
 
 (defmethod fold-event :gauge
   [{:keys [name value]} state]

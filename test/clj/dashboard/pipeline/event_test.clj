@@ -26,10 +26,23 @@
                      :data #{{"time" 1 "commit" 0}
                              {"time" 2 "commit" 2}
                              {"time" 4 "commit" 4}
-                             {"time" 5 "commit" 2}}}
+                             {"time" 5 "commit" 2}}
+                     :meta {}}
                     {:category :timeseries
                      :data #{{"time" 1 "merge-request" 1}
-                             {"time" 2 "merge-request" 11}}}]]
+                             {"time" 2 "merge-request" 11}}
+                     :meta {}}]]
+      (is (= expected (fun events)))))
+  (deftest fold-events-sum
+    (let [fun #'dashboard.pipeline.event/fold-events
+          events [{:name "foo" :time 1 :value 2}
+                  {:name "foo" :time 2 :value 3 :mode :sum}
+                  {:name "foo" :time 4 :value 1}]
+          expected [{:category :timeseries
+                     :data #{{"time" 1 "foo" 2}
+                             {"time" 2 "foo" 3}
+                             {"time" 4 "foo" 1}}
+                     :meta {:mode :sum}}]]
       (is (= expected (fun events)))))
   (deftest post->event
     (let [event  (sut/post->event {:foo 2})]
