@@ -5,10 +5,9 @@
 
 (testing "event"
   (deftest event-type-timeseries
-    (is (= :timeseries (sut/event-type {:name "foo" :time 42 :value 2})))))
-(deftest event-type-timeseries
-    (is (= :timeseries (sut/event-type {:name "foo" :time 42 :value 2})))
-
+    (is (= :timeseries (sut/event-type {:name "foo" :time 42 :value 2}))))
+  (deftest event-type-timeseries-sum-mode
+    (is (= :timeseries (sut/event-type {:name "foo" :time 42 :value 2 :mode :sum}))))
   (deftest event-type-gauge
     (is (= :gauge (sut/event-type {:name "foo" :value 2}))))
   (deftest event-type-tuple
