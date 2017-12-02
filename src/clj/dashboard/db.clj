@@ -4,14 +4,15 @@
             [dashboard.db.users :as users]
             [dashboard.db.tokens :as tokens]
             [dashboard.pipeline.event :refer [event-type]]
+            [environ.core :refer [env]]
             [buddy.hashers :as hashers]))
 
 (def db
   {:classname "og.postgresql.Driver"
    :subprotocol "postgresql"
-   :subname "//localhost:5432/postgres"
-   :user "postgres"
-   :password "postgres"
+   :subname (or (env :database-url) "//localhost:5432/postgres")
+   :user (or (env :database-user) "postgres")
+   :password (or (env :database-password) "postgres")
    :sslmode "disable"
    })
 

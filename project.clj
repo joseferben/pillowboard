@@ -20,6 +20,7 @@
                  [buddy/buddy-auth "2.1.0"]
                  [ring-cors "0.1.11"]
                  [ragtime "0.7.2"]
+                 [environ "1.1.0"]
                  [com.layerware/hugsql "0.4.8"]
                  [cheshire "5.8.0"]
                  [compojure "1.5.1"]
