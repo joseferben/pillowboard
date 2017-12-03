@@ -22,7 +22,7 @@
   (let [values (map #(get % (extract-label data)) data)]
     (cond
       (and (<= 0 (apply min values)) (>= 1 (apply max values))) :ratio
-      (= (data :mode)) :sum
+      (= (data :mode) :sum) :sum
       :else :absolute)))
 
 (defn- same-sub-category? [metric grp]
