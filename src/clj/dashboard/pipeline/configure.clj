@@ -3,7 +3,8 @@
 (def default-colors ["#934444" "#FF5733" "#33CAFF" "#7D33FF"])
 (def default-board-config {:width 2})
 (def chart-types {:timeseries {:absolute :linechart
-                               :ratio :areachart}})
+                               :ratio :areachart
+                               :sum :areachart}})
 
 (defn- configure-metric [metric idx]
   (assoc metric :color (nth default-colors (mod idx (count default-colors)))))

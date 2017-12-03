@@ -29,7 +29,8 @@
           {"time" 5 "bug" 38}
           {"time" 6 "bug" 24}
           {"time" 8 "bug" 9}
-          {"time" 12 "bug" 3}}}
+          {"time" 12 "bug" 3}}
+  :meta {:mode :sum}}
  {:category :timeseries
   :data #{{"time" 0 "branches" 1}
           {"time" 2 "branches" 1}

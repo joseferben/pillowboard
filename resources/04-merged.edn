@@ -1,27 +1,29 @@
 [{:category :timeseries
   :count 3
   :sub-category :absolute
-  :metrics #{{"time" 0 "commit" 0 "merge-requests" 0 "bug" 0}
-             {"time" 1 "commit" 1 "merge-requests" 1 "bug" 1}
-             {"time" 2 "commit" 1 "merge-requests" 1 "bug" 0}
-             {"time" 3 "commit" 2 "merge-requests" 2 "bug" 8}
-             {"time" 4 "commit" 0 "merge-requests" 2 "bug" 12}
-             {"time" 5 "commit" 2 "merge-requests" 3 "bug" 38}
-             {"time" 6 "commit" 3 "merge-requests" 2 "bug" 24}
-             {"time" 7 "commit" 1 "merge-requests" 1 "bug" 24}
-             {"time" 8 "commit" 4 "merge-requests" 2 "bug" 9}
-             {"time" 9 "commit" 2 "merge-requests" 4 "bug" 9}
-             {"time" 12 "commit" 2 "merge-requests" 4 "bug" 3}}}
+  :metrics #{{"time" 0 "commit" 0 "merge-requests" 0 "branches" 1}
+             {"time" 1 "commit" 1 "merge-requests" 1 "branches" 1}
+             {"time" 2 "commit" 1 "merge-requests" 1 "branches" 1}
+             {"time" 3 "commit" 2 "merge-requests" 2 "branches" 1}
+             {"time" 4 "commit" 0 "merge-requests" 2 "branches" 1}
+             {"time" 5 "commit" 2 "merge-requests" 3 "branches" 4}
+             {"time" 6 "commit" 3 "merge-requests" 2 "branches" 2}
+             {"time" 7 "commit" 1 "merge-requests" 1 "branches" 4}
+             {"time" 8 "commit" 4 "merge-requests" 2 "branches" 4}
+             {"time" 9 "commit" 2 "merge-requests" 4 "branches" 6}
+             {"time" 12 "commit" 2 "merge-requests" 4 "branches" 6}}}
  {:category :timeseries
   :count 1
-  :sub-category :absolute
-  :metrics #{{"time" 0 "branches" 1}
-             {"time" 2 "branches" 1}
-             {"time" 3 "branches" 0}
-             {"time" 5 "branches" 4}
-             {"time" 6 "branches" 2}
-             {"time" 7 "branches" 4}
-             {"time" 9 "branches" 6}}}
+  :sub-category :sum
+  :metrics #{{"time" 0 "bug" 0}
+             {"time" 1 "bug" 1}
+             {"time" 2 "bug" 1}
+             {"time" 3 "bug" 9}
+             {"time" 4 "bug" 21}
+             {"time" 5 "bug" 59}
+             {"time" 6 "bug" 83}
+             {"time" 8 "bug" 92}
+             {"time" 12 "bug" 95}}}
  {:category :timeseries
   :count 1
   :sub-category :ratio

@@ -59,9 +59,8 @@
      :else (recur metric original (rest to-check) (inc idx)))))
 
 (defn- aggregate [metrics label]
-  (let [metrics (sort-by #(get % "time") metrics)]
-    (reduce (fn [acc b] (conj acc (assoc b label (+ (get b label 0)
-                                                    (get (last acc) label 0))))) [] metrics)))
+  (reduce (fn [acc b] (conj acc (assoc b label (+ (get b label 0)
+                                                  (get (last acc) label 0))))) [] metrics))
 
 (defn- execute-aggregate
   "Given a seq of `metric`s, it aggregates the value by summing up.
@@ -70,7 +69,7 @@
   (let [{:keys [metrics sub-category]} metric
         label (extract-label (first metrics))]
     (if (= sub-category :sum)
-      (assoc metric :metrics (vector (aggregate (first metrics) label)))
+      (assoc metric :metrics (aggregate (first metrics) label))
       metric)))
 
 (defn group

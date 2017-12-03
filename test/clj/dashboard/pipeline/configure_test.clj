@@ -6,5 +6,5 @@
 (testing "configure metrics, dimensions and board"
   (deftest configure
    (let [actual (sut/configure (edn/read-string (slurp "resources/04-merged.edn")))
-          expected (edn/read-string (slurp "resources/05-configured.edn"))]
+         expected (edn/read-string (slurp "resources/05-configured.edn"))]
      (is (= expected actual)))))
