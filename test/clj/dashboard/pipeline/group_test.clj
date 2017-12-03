@@ -42,15 +42,15 @@
           expected {:category :timeseries
                     :count 1
                     :sub-category :sum
-                    :metrics [[{"time" 0 "bug" 0}
-                               {"time" 1 "bug" 1}
-                               {"time" 2 "bug" 1}
-                               {"time" 3 "bug" 9}
-                               {"time" 4 "bug" 21}
-                               {"time" 5 "bug" 59}
-                               {"time" 6 "bug" 83}
-                               {"time" 8 "bug" 92}
-                               {"time" 12 "bug" 95}]]}]
+                    :metrics [#{{"time" 0 "bug" 0}
+                                {"time" 1 "bug" 1}
+                                {"time" 2 "bug" 1}
+                                {"time" 3 "bug" 9}
+                                {"time" 4 "bug" 21}
+                                {"time" 5 "bug" 59}
+                                {"time" 6 "bug" 83}
+                                {"time" 8 "bug" 92}
+                                {"time" 12 "bug" 95}}]}]
       (is (= expected (fun events)))))
 (deftest process
   (let [actual (sut/process (edn/read-string (slurp "resources/03-grouped.edn")))

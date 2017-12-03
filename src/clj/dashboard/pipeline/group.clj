@@ -22,7 +22,7 @@
   (let [values (map #(get % (extract-label data)) data)]
     (cond
       (and (<= 0 (apply min values)) (>= 1 (apply max values))) :ratio
-      (= (data :mode) :sum) :sum
+      (= (get meta :mode :none) :sum) :sum
       :else :absolute)))
 
 (defn- same-sub-category? [metric grp]
@@ -37,7 +37,7 @@
 
 (defn- create-group [metric]
   {:category (metric :category)
-   :sub-category (determine-sub-category (metric :data))
+   :sub-category (determine-sub-category metric)
    :count 1
    :metrics [(metric :data)]})
 
@@ -70,7 +70,7 @@
   (let [{:keys [metrics sub-category]} metric
         label (extract-label (first metrics))]
     (if (= sub-category :sum)
-      (assoc metric :metrics (vector (aggregate (first metrics) label)))
+      (assoc metric :metrics (vector (set (aggregate (first metrics) label))))
       metric)))
 
 (defn group
@@ -88,5 +88,5 @@
    (process nil grouped))
   ([strategy grouped]
    (->> grouped
-        (execute-aggregate)
+        (map execute-aggregate)
         (map #(update % :metrics (partial full-join "time" strategy))))))

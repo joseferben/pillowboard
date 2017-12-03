@@ -11,13 +11,6 @@
               {"time" 7 "commit" 1}
               {"time" 8 "commit" 4}
               {"time" 9 "commit" 2}}
-            #{{"time" 0 "branches" 1}
-              {"time" 2 "branches" 1}
-              {"time" 3 "branches" 0}
-              {"time" 5 "branches" 4}
-              {"time" 6 "branches" 2}
-              {"time" 7 "branches" 4}
-              {"time" 9 "branches" 6}}
             #{{"time" 0 "merge-requests" 0}
               {"time" 1 "merge-requests" 1}
               {"time" 2 "merge-requests" 1}
@@ -27,7 +20,14 @@
               {"time" 6 "merge-requests" 2}
               {"time" 7 "merge-requests" 1}
               {"time" 8 "merge-requests" 2}
-              {"time" 9 "merge-requests" 4}}]}
+              {"time" 9 "merge-requests" 4}}
+            #{{"time" 0 "branches" 1}
+              {"time" 2 "branches" 1}
+              {"time" 3 "branches" 0}
+              {"time" 5 "branches" 4}
+              {"time" 6 "branches" 2}
+              {"time" 7 "branches" 4}
+              {"time" 9 "branches" 6}}]}
  {:category :timeseries
   :count 1
   :sub-category :sum
