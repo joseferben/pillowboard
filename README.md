@@ -1,8 +1,25 @@
 # dashboard
 
-Zero config dashboard for generic data rendering. Throw all your data at it!
+This is a zero configuratin data driven dashboard. Stop wasting your time setting up dashboards, just throw your data at me!
 
-## Setup
+![Screenshot](docs/screenshot.png)
+
+## Features
+
+* real-time data
+* event sourcing
+* authenticated/authorized dashboard admin panel
+* time series data type with sane defaults
+
+## Getting started
+
+The fastest way to get started is by using `docker-compose`:
+
+```
+docker-compose up
+```
+
+## Development
 
 To run the backend with auto-reload enabled run:
 
@@ -87,6 +104,7 @@ Use [this](https://github.com/venantius/ultra) lein plugin to pretty print tests
 ```
 
 ## Example authenticated request
-'''
+
+```
 http POST :3000/api/dashboards 'Authorization:Token eBniAEtO/KEAGSP60/RD1Wwtb21V4RnNGWb6wZhHGms=' name=myboard
-'''
+```
