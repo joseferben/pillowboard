@@ -1,7 +1,7 @@
 # dashboard
 
-This is a **zero** configuration data driven dashboard. Stop wasting your time setting up dashboards, start throwing your data at it!
-The dashboard tries to figure out itself how to visualize and present incoming data.
+This is a **zero** configuration data driven dashboard. Stop wasting your time setting up other dashboards, start throwing your data at this one!
+The dashboard tries to make sense of your data and it tries to figure how to visualize and present it.
 
 ![Screenshot](doc/screenshot.png?raw=true "Screenshot")
 
@@ -11,6 +11,7 @@ The dashboard tries to figure out itself how to visualize and present incoming d
 * event sourcing
 * authenticated/authorized dashboard admin panel
 * supports generic time series data
+* supports two sub-types: ratio timeseries and absolute timeseries
 
 ## Roadmap
 
