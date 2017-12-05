@@ -2,7 +2,7 @@
 
 This is a zero configuratin data driven dashboard. Stop wasting your time setting up dashboards, just throw your data at me!
 
-![Screenshot](docs/screenshot.png?raw=true "Screenshot")
+![Screenshot](doc/screenshot.png?raw=true "Screenshot")
 
 ## Features
 
