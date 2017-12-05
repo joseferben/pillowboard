@@ -1,7 +1,7 @@
 # dashboard
 
 This is a **zero** configuration data driven dashboard. Stop wasting your time setting up other dashboards, start throwing your data at this one!
-The dashboard tries to make sense of your data and it tries to figure how to visualize and present it.
+The dashboard tries to make sense of your data and present it in a sensible way.
 
 ![Screenshot](doc/screenshot.png?raw=true "Screenshot")
 
