@@ -1,6 +1,7 @@
 # dashboard
 
-This is a zero configuratin data driven dashboard. Stop wasting your time setting up dashboards, just throw your data at me!
+This is a **zero** configuration data driven dashboard. Stop wasting your time setting up dashboards, start throwing your data at it!
+The dashboard tries to figure out itself how to visualize and present incoming data.
 
 ![Screenshot](doc/screenshot.png?raw=true "Screenshot")
 
@@ -10,6 +11,11 @@ This is a zero configuratin data driven dashboard. Stop wasting your time settin
 * event sourcing
 * authenticated/authorized dashboard admin panel
 * supports generic time series data
+
+## Roadmap
+
+* more supported data types: gauge, n-tuples
+* meta data support as configuration replacement
 
 ## Getting started
 
