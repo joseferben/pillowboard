@@ -4,38 +4,62 @@
             [dashboard.db.users :as users]
             [dashboard.db.tokens :as tokens]
             [dashboard.pipeline.event :refer [event-type]]
+            [clj-http.client :as client]
             [environ.core :refer [env]]
+            [cheshire.core :refer [generate-string]]
             [buddy.hashers :as hashers]))
 
-(def db
+(def db-old
   {:classname "og.postgresql.Driver"
    :subprotocol "postgresql"
    :subname (or (env :database-url) "//localhost:5432/postgres")
    :user (or (env :database-user) "postgres")
    :password (or (env :database-password) "postgres")
-   :sslmode "disable"
-   })
+   :sslmode "disable"})
+
+(def db (or (env :database-url) "http://localhost:5984/db"))
 
 (defn events-all
   "Retrieves a list of all stored events for the dashboard with `id`.
   The list may contain events of different types."
   [id]
+  (client/put db)
   (concat (events/events-timeseries-all db {:id id})
           (events/events-gauge-all db {:id id})
           (events/events-tuple-all db {:id id})))
+
+(defn- event-meta-insert!
+  "Stores meta data of an event."
+  [event-id {:keys [mode]}]
+  (events/event-meta-insert db {:event_id event-id :mode mode}))
 
 (defmulti event-insert!
   "Stores an `event` of any type with dashboard `id`."
   event-type)
 
-(defmethod event-insert! :timeseries [{:keys [name time value]} id]
-  (events/event-timeseries-insert db {:dashboard_id id :name name :time time :value value}))
+(defmethod event-insert! :timeseries [{:keys [name time value mode]} id]
+  (let [event-id (events/event-timeseries-insert db {:dashboard_id id
+                                                     :name name
+                                                     :time time
+                                                     :value value})]
+    (when (some? mode)
+      (event-meta-insert! event-id {:mode mode}))))
 
-(defmethod event-insert! :gauge [{:keys [name value]} id]
-  (events/event-gauge-insert db {:dashboard_id id :name name :value value}))
+(defmethod event-insert! :gauge [{:keys [name value mode]} id]
+  (let [event-id (events/event-gauge-insert db {:dashboard_id id
+                                                :name name
+                                                :value value})]
+    (when (some? mode)
+      (event-meta-insert! event-id {:mode mode}))))
 
-(defmethod event-insert! :tuple [{:keys [name1 value1 name2 value2]} id]
-  (events/event-tuple-insert db {:dashboard_id id :name1 name1 :value1 value1 :name2 name2 :value2 value2}))
+(defmethod event-insert! :tuple [{:keys [name1 value1 name2 value2 mode]} id]
+  (let [event-id (events/event-tuple-insert db {:dashboard_id id
+                                                :name1 name1
+                                                :value1 value1
+                                                :name2 name2
+                                                :value2 value2})]
+    (when (some? mode)
+      (event-meta-insert! event-id {:mode mode}))))
 
 (defn dashboards-all
   "Retrieves a list of dashboard for a user with `user-id`.

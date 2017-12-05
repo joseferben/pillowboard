@@ -22,6 +22,7 @@
                  [ragtime "0.7.2"]
                  [environ "1.1.0"]
                  [com.layerware/hugsql "0.4.8"]
+                 [clj-http "3.7.0"]
                  [cheshire "5.8.0"]
                  [compojure "1.5.1"]
                  [reagent "0.7.0"]

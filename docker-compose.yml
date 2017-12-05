@@ -2,22 +2,20 @@ version: '3'
 services:
   dashboard:
     image: jerben/dashboard
+    container_name: dashboard
     environment:
-      - DATABASE_URL=//db:5432/postgres
-      - DATABASE_USER=postgres
-      - DATABASE_PASSWORD=postgres
+      - DATABASE_URL=http://db:5984
+      - DATABASE_USER=couchdb
+      - DATABASE_PASSWORD=couchdb
     ports:
       - 80:3000
     depends_on:
       - db
   db:
-    image: postgres:10
-    container_name: postgres
-    environment:
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_USER=postgres
+    image: couchdb
+    container_name: couchdb
     ports:
-      - 5432:5432
+      - 5984:5984
   db_ui:
     image: sosedoff/pgweb
     container_name: postgres-ui
