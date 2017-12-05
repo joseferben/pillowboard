@@ -9,7 +9,7 @@ This is a zero configuratin data driven dashboard. Stop wasting your time settin
 * real-time data
 * event sourcing
 * authenticated/authorized dashboard admin panel
-* time series data type with sane defaults
+* supports generic time series data
 
 ## Getting started
 
