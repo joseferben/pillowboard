@@ -1,6 +1,6 @@
 # dashboard
 
-This is a **zero** configuration data driven dashboard. Stop wasting your time setting up other dashboards, start throwing your data at this one!
+This is a **zero** configuration data-driven dashboard. Stop wasting your time setting up other dashboards, start throwing your data at this one!
 The dashboard tries to make sense of your data and present it in a sensible way.
 
 ![Screenshot](doc/screenshot.png?raw=true "Screenshot")
@@ -25,7 +25,7 @@ The fastest way to get started is by using `docker-compose`:
 ```
 docker-compose up
 ```
-
+Now open `http://localhost`, register, login, create your dashboard and start pushing data.
 ## Development
 
 To run the backend with auto-reload enabled run:
