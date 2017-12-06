@@ -67,19 +67,22 @@
   "Retrieves a list of dashboard id name paris for a user with `user-id`.
   Without argument all dashboards are returned."
   ([user-id]
-   (get-view (get-in doc-views [:dashboard :all]) {"key" user-id}))
+   (-> (get-view (get-in doc-views [:dashboard :all]) {"key" user-id})
+       (get "rows")))
   ([]
-   (get-view (get-in doc-views [:dashboard :all]))))
+   (-> (get-view (get-in doc-views [:dashboard :all]))
+       (get "rows"))))
 
 (defn dashboard-insert!
   "Stores a dashboard for a given user with `user-id`."
   [user-id name]
-  (put-doc! (uuid) {:user-id user-id :name name :events []}))
+  (put-doc! (uuid) {:type "dashboard" :user-id user-id :name name :events []}))
 
 (defn users-all
   "Retrieves a list of all users."
   []
-  (get-view (get-in doc-views [:user :all])))
+  (-> (get-view (get-in doc-views [:user :all]))
+      (get "rows")))
 
 (defn user-by-token
   "Retrieves a user by token, nil of no user exists."
@@ -116,5 +119,5 @@
   "Check to see if the password given matches the digest of the user's saved password"
   [email password]
   (-> (user-by-email email)
-      :password
+      (get "password")
       (->> (hashers/check password))))

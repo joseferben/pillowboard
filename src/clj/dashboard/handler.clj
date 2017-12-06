@@ -99,9 +99,6 @@
   (store-post-and-broadcast! post (partial broadcast-state board-id) board-id)
   OK)
 
-(defn- login-user
-  [email password])
-
 (defroutes api-routes
 
   (context "/dashboards" []

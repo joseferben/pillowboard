@@ -13,7 +13,7 @@
   and puts it in the database. Returns the created token."
   [email]
   (let [token (gen-session-id)
-        user-id (:id (db/user-by-email email))]
+        user-id (get (db/user-by-email email) "_id")]
     (db/token-insert! user-id token)
     token))
 
@@ -22,7 +22,7 @@
   [req token]
   (-> token
       db/user-by-token
-      (get :id nil)))
+      (get "_id" nil)))
 
 (defn unauthorized-handler [req msg]
   {:status 401
