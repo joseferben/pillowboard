@@ -12,7 +12,7 @@
                        :email {:view "users-email-view"}}
                 :sessions {:all {:view "sessions-view"}}})
 
-(defn uuid [] (.toString (java.util.UUID/randomUUID)))
+(defn uuid [] (str (java.util.UUID/randomUUID)))
 
 (defn- p-get
   "Returns the body of a response to a GET request to `url` as clojure map."
@@ -115,6 +115,6 @@
 (defn user-password-matches?
   "Check to see if the password given matches the digest of the user's saved password"
   [email password]
-  (-> (users/user-by-email db {:email email})
+  (-> (user-by-email email)
       :password
       (->> (hashers/check password))))

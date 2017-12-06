@@ -25,8 +25,3 @@
   [post broadcast-state board-id]
   (let [event (post->event post)]
     (broadcast-state (store-event! event board-id))))
-
-(defn init!
-  "Gets called on startup, runs tasks that need to run exactly once."
-  []
-  (user/migrate))

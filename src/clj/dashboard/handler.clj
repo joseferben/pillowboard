@@ -1,5 +1,5 @@
 (ns dashboard.handler
-  (:require [dashboard.core :as core :refer [fetch-state! store-post-and-broadcast! init!]]
+  (:require [dashboard.core :as core :refer [fetch-state! store-post-and-broadcast!]]
             [dashboard.db :as db]
             [dashboard.auth :refer [auth-backend user-can user-isa user-has-id identify
                                     authenticated-user unauthorized-handler make-token!]]
@@ -68,11 +68,10 @@
     ;(debugf "Receiving event: %s" event)
     (let [{[type board-id] :event} event
           {uid :uid} event]
-      (if (and (= :board/register-board type) (not (nil? board-id)))
-        (do
-          (debugf "Adding uid %s to board-id %s" uid board-id)
-          (swap! board-sessions update board-id conj uid)
-          (broadcast-state board-id (fetch-state! board-id))))))
+      (when (and (= :board/register-board type) (not (nil? board-id)))
+         (debugf "Adding uid %s to board-id %s" uid board-id)
+         (swap! board-sessions update board-id conj uid)
+         (broadcast-state board-id (fetch-state! board-id)))))
   (recur))
 
 (def OK 200)
@@ -162,7 +161,6 @@
     (wrap-defaults site-routes site-defaults))))
 
 (defn -main [& args]
-  (init!)
   (let [port (Integer/parseInt (get (System/getenv) "PORT" "3000"))]
     (run-server app {:port port})
     (infof "Web server is running at port %s" port)))
