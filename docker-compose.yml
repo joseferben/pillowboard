@@ -16,13 +16,3 @@ services:
     container_name: couchdb
     ports:
       - 5984:5984
-  db_ui:
-    image: sosedoff/pgweb
-    container_name: postgres-ui
-    environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres?sslmode=disable
-    ports:
-      - 8081:8081
-    depends_on:
-      - db
-    restart: unless-stopped

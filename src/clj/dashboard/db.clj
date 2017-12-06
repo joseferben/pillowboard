@@ -6,24 +6,41 @@
             [dashboard.pipeline.event :refer [event-type]]
             [clj-http.client :as client]
             [environ.core :refer [env]]
-            [cheshire.core :refer [generate-string]]
+            [cheshire.core :refer [generate-string parse-string]]
             [buddy.hashers :as hashers]))
 
-(def db-old
-  {:classname "og.postgresql.Driver"
-   :subprotocol "postgresql"
-   :subname (or (env :database-url) "//localhost:5432/postgres")
-   :user (or (env :database-user) "postgres")
-   :password (or (env :database-password) "postgres")
-   :sslmode "disable"})
-
 (def db (or (env :database-url) "http://localhost:5984/db"))
+
+(defn- p-get
+  "Returns the body of a response to a GET request to `url` as clojure map."
+  [url]
+  (-> url
+      client/get
+      :body
+      parse-string))
+
+(defn- p-put!
+  "PUTs a stringified `body` to a `url`."
+  [url body]
+  (client/put url {:body (generate-string body)}))
+
+(defn- get-doc [doc-id]
+  (p-get (str db "/" doc-id)))
+
+(defn- update-doc!
+  "Updates a document with id `doc-id` by applying a function
+  `f` with arguments `args` to the old version of that document."
+  [doc-id f & args]
+  (let [old (get-doc doc-id)]
+    (prn args)
+    (p-put! (str db "/" doc-id)
+            (merge (apply f old args) {"_rev" (get old "_rev")}))))
 
 (defn events-all
   "Retrieves a list of all stored events for the dashboard with `id`.
   The list may contain events of different types."
   [id]
-  (client/put db)
+  (client/get db)
   (concat (events/events-timeseries-all db {:id id})
           (events/events-gauge-all db {:id id})
           (events/events-tuple-all db {:id id})))
