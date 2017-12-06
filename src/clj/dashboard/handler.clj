@@ -27,8 +27,6 @@
 
 (def board-sessions (atom {}))
 
-(defn- uuid [] (.toString (java.util.UUID/randomUUID)))
-
 (let [;; Serializtion format, must use same val for client + server:
       packer :edn ; Default packer, a good choice in most cases
       ;; (sente-transit/get-transit-packer) ; Needs Transit dep
@@ -36,7 +34,7 @@
       chsk-server
       (sente/make-channel-socket-server!
        ;; TODO replace custom id with sensible session based id generation
-       (get-sch-adapter) {:packer packer :user-id-fn (fn [req] (uuid))})
+       (get-sch-adapter) {:packer packer :user-id-fn (fn [req] (db/uuid))})
 
       {:keys [ch-recv send-fn connected-uids
               ajax-post-fn ajax-get-or-ws-handshake-fn]}

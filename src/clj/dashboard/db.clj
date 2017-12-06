@@ -1,9 +1,5 @@
 (ns dashboard.db
-  (:require [dashboard.db.events :as events]
-            [dashboard.db.dashboards :as dashboards]
-            [dashboard.db.users :as users]
-            [dashboard.db.tokens :as tokens]
-            [dashboard.pipeline.event :refer [event-type]]
+  (:require [dashboard.pipeline.event :refer [event-type]]
             [clj-http.client :as client]
             [environ.core :refer [env]]
             [cheshire.core :refer [generate-string parse-string]]
@@ -11,8 +7,12 @@
 
 (def db (or (env :database-url) "http://localhost:5984/db"))
 
-(def doc-views {:dashboard {:view "dashboards-view"}
-                :user {:view "users-view"}})
+(def doc-views {:dashboard {:all {:view "dashboards-view"}}
+                :user {:all {:view "users-view"}
+                       :email {:view "users-email-view"}}
+                :sessions {:all {:view "sessions-view"}}})
+
+(defn uuid [] (.toString (java.util.UUID/randomUUID)))
 
 (defn- p-get
   "Returns the body of a response to a GET request to `url` as clojure map."
@@ -28,7 +28,10 @@
   (client/put url {:body (generate-string body)}))
 
 (defn- map->query [query]
-  (str "?" (clojure.string/join "&" (map #(str (first %) "=" (second %)) query))))
+  (->> query
+       (map #(str (first %) "=" "\"" (second %) "\""))
+       (clojure.string/join "&")
+       (str "?")))
 
 (defn- get-doc [doc-id]
   (p-get (str db "/" doc-id)))
@@ -55,12 +58,8 @@
   [id]
   (get (get-doc id) "events" []))
 
-(defn- event-meta-insert!
-  "Stores meta data of an event."
-  [event-id {:keys [mode]}]
-  (events/event-meta-insert db {:event_id event-id :mode mode}))
-
 (defn event-insert!
+  "Inserts `event` at the board with id `board-id`."
   [event board-id]
   (update-doc! board-id update "events" conj event))
 
@@ -68,40 +67,50 @@
   "Retrieves a list of dashboard id name paris for a user with `user-id`.
   Without argument all dashboards are returned."
   ([user-id]
-   (get-view (doc-views :dashboard) {"key" user-id}))
+   (get-view (get-in doc-views [:dashboard :all]) {"key" user-id}))
   ([]
-   (get-view (doc-views :dashboard))))
+   (get-view (get-in doc-views [:dashboard :all]))))
 
 (defn dashboard-insert!
   "Stores a dashboard for a given user with `user-id`."
   [user-id name]
-  (dashboards/dashboard-insert db {:user_id user-id :name name}))
+  (put-doc! (uuid) {:user-id user-id :name name :events []}))
 
 (defn users-all
   "Retrieves a list of all users."
   []
-  (users/users-all db))
+  (get-view (get-in doc-views [:user :all])))
 
 (defn user-by-token
   "Retrieves a user by token, nil of no user exists."
   [token]
-  (users/user-by-token db {:token token}))
+  (let [sessions (get-view (get-in doc-views [:sessions :all]))]
+    (-> sessions
+        (get "rows")
+        first
+        (get "id")
+        get-doc
+        (get-in ["tokens" token])
+        get-doc)))
 
 (defn user-by-email
   "Retrieves a user by email, nil of no user exists."
   [email]
-  (-> (users/user-by-email db {:email email})
-      (dissoc :password)))
+  (let [user-id (first (get (get-view (get-in doc-views [:user :email]) {"key" email}) "rows" []))]
+    (get-doc (get user-id "id"))))
 
 (defn user-insert!
   "Stores a user with given `email` and `password`."
   [email password]
-  (users/user-insert db {:email email :password (hashers/encrypt password)}))
+  (put-doc! (uuid) {:type "user" :email email :password (hashers/encrypt password)}))
 
 (defn token-insert!
   "Stores a token for a `user-id`."
   [user-id id]
-  (tokens/token-insert db {:id id :user_id user-id}))
+  (let [sessions (get-view (get-in doc-views [:sessions :all]))]
+    (if (zero? (get sessions "total_rows"))
+      (put-doc! (uuid) {:type "sessions" :tokens {id user-id}})
+      (update-doc! (get (first (get sessions "rows")) "id") update "tokens" assoc id user-id))))
 
 (defn user-password-matches?
   "Check to see if the password given matches the digest of the user's saved password"
