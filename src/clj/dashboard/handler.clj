@@ -1,5 +1,5 @@
 (ns dashboard.handler
-  (:require [dashboard.core :as core :refer [fetch-state! store-post-and-broadcast! init!]]
+  (:require [dashboard.core :as core :refer [fetch-state! store-post-and-broadcast!]]
             [dashboard.db :as db]
             [dashboard.auth :refer [auth-backend user-can user-isa user-has-id identify
                                     authenticated-user unauthorized-handler make-token!]]
@@ -27,8 +27,6 @@
 
 (def board-sessions (atom {}))
 
-(defn- uuid [] (.toString (java.util.UUID/randomUUID)))
-
 (let [;; Serializtion format, must use same val for client + server:
       packer :edn ; Default packer, a good choice in most cases
       ;; (sente-transit/get-transit-packer) ; Needs Transit dep
@@ -36,7 +34,7 @@
       chsk-server
       (sente/make-channel-socket-server!
        ;; TODO replace custom id with sensible session based id generation
-       (get-sch-adapter) {:packer packer :user-id-fn (fn [req] (uuid))})
+       (get-sch-adapter) {:packer packer :user-id-fn (fn [req] (db/uuid))})
 
       {:keys [ch-recv send-fn connected-uids
               ajax-post-fn ajax-get-or-ws-handshake-fn]}
@@ -70,11 +68,10 @@
     ;(debugf "Receiving event: %s" event)
     (let [{[type board-id] :event} event
           {uid :uid} event]
-      (if (and (= :board/register-board type) (not (nil? board-id)))
-        (do
-          (debugf "Adding uid %s to board-id %s" uid board-id)
-          (swap! board-sessions update board-id conj uid)
-          (broadcast-state board-id (fetch-state! board-id))))))
+      (when (and (= :board/register-board type) (not (nil? board-id)))
+         (debugf "Adding uid %s to board-id %s" uid board-id)
+         (swap! board-sessions update board-id conj uid)
+         (broadcast-state board-id (fetch-state! board-id)))))
   (recur))
 
 (def OK 200)
@@ -101,9 +98,6 @@
   [board-id post]
   (store-post-and-broadcast! post (partial broadcast-state board-id) board-id)
   OK)
-
-(defn- login-user
-  [email password])
 
 (defroutes api-routes
 
@@ -164,7 +158,6 @@
     (wrap-defaults site-routes site-defaults))))
 
 (defn -main [& args]
-  (init!)
   (let [port (Integer/parseInt (get (System/getenv) "PORT" "3000"))]
     (run-server app {:port port})
     (infof "Web server is running at port %s" port)))

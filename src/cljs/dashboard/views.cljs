@@ -31,13 +31,14 @@
           [:p]
           [:div.usage "The key defines the unique name of the metric. The values must be numbers, the value of the time key must be millis since epoch."]]]]]]]))
 
-(defn dashboard [{:keys [id name created_at]}]
+(defn dashboard [{:keys [id value]}]
   [:tr {:key id}
    [:td {:width "5%"} [:i.fa.fa-area-chart]]
-   [:td name]
+   [:td value]
    [:td [:a.button.is-small.is-primary {:on-click #(nav! (str "/dashboard/" id)) :href "#"} "Open"]]])
 
 (defn dashboards []
+  (prn @(subscribe [:dashboards]))
   [:table.table.is-fullwidth.is-striped
    [:tbody (map dashboard @(subscribe [:dashboards]))]])
 

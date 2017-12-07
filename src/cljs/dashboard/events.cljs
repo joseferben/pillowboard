@@ -21,8 +21,9 @@
                  :on-success      [on-success]
                  :on-failure      [on-failure]}})
   ([uri on-success on-failure {:keys [token]}]
-   (-> (fetch uri on-success on-failure)
-       (assoc-in [:http-xhrio :headers] {"Authorization" (str "Token " token)}))))
+   (assoc-in (fetch uri on-success on-failure)
+             [:http-xhrio :headers]
+             {"Authorization" (str "Token " token)})))
 
 (defn- post
   "Given `uri` and two callbacks `on-success` and `on-failure` returns an effect
@@ -37,8 +38,9 @@
                  :on-success      [on-success]
                  :on-failure      [on-failure]}})
   ([uri data on-success on-failure {:keys [token]}]
-   (-> (post uri data on-success on-failure)
-       (assoc-in [:http-xhrio :headers] {"Authorization" (str "Token " token)}))))
+   (assoc-in (post uri data on-success on-failure)
+             [:http-xhrio :headers]
+             {"Authorization" (str "Token " token)})))
 
 (reg-event-fx
  :set-page
