@@ -20,7 +20,8 @@
   (-> url
       client/get
       :body
-      parse-string))
+      parse-string
+      clojure.walk/keywordize-keys))
 
 (defn- p-put!
   "PUTs a stringified `body` to a `url`."
@@ -29,7 +30,7 @@
 
 (defn- map->query [query]
   (->> query
-       (map #(str (first %) "=" "\"" (second %) "\""))
+       (map #(str (name (first %)) "=" "\"" (second %) "\""))
        (clojure.string/join "&")
        (str "?")))
 
@@ -50,28 +51,28 @@
   [doc-id f & args]
   (let [old (get-doc doc-id)]
     (p-put! (str db "/" doc-id)
-            (merge (apply f old args) {"_rev" (get old "_rev")}))))
+            (merge (apply f old args) {:_rev (get old :_rev)}))))
 
 (defn events-all
   "Retrieves a list of all stored events for the dashboard with `id`.
   The list may contain events of different types."
   [id]
-  (get (get-doc id) "events" []))
+  (get (get-doc id) :events []))
 
 (defn event-insert!
   "Inserts `event` at the board with id `board-id`."
   [event board-id]
-  (update-doc! board-id update "events" conj event))
+  (update-doc! board-id update :events conj event))
 
 (defn dashboards-all
   "Retrieves a list of dashboard id name paris for a user with `user-id`.
   Without argument all dashboards are returned."
   ([user-id]
-   (-> (get-view (get-in doc-views [:dashboard :all]) {"key" user-id})
-       (get "rows")))
+   (-> (get-view (get-in doc-views [:dashboard :all]) {:key user-id})
+       (get :rows)))
   ([]
    (-> (get-view (get-in doc-views [:dashboard :all]))
-       (get "rows"))))
+       (get :rows))))
 
 (defn dashboard-insert!
   "Stores a dashboard for a given user with `user-id`."
@@ -82,25 +83,25 @@
   "Retrieves a list of all users."
   []
   (-> (get-view (get-in doc-views [:user :all]))
-      (get "rows")))
+      (get :rows)))
 
 (defn user-by-token
   "Retrieves a user by token, nil of no user exists."
   [token]
   (let [sessions (get-view (get-in doc-views [:sessions :all]))]
     (-> sessions
-        (get "rows")
+        (get :rows)
         first
-        (get "id")
+        (get :id)
         get-doc
-        (get-in ["tokens" token])
+        (get-in [:tokens (keyword token)])
         get-doc)))
 
 (defn user-by-email
   "Retrieves a user by email, nil of no user exists."
   [email]
-  (let [user-id (first (get (get-view (get-in doc-views [:user :email]) {"key" email}) "rows" []))]
-    (get-doc (get user-id "id"))))
+  (let [user-id (first (get (get-view (get-in doc-views [:user :email]) {:key email}) :rows []))]
+    (get-doc (get user-id :id))))
 
 (defn user-insert!
   "Stores a user with given `email` and `password`."
@@ -111,13 +112,13 @@
   "Stores a token for a `user-id`."
   [user-id id]
   (let [sessions (get-view (get-in doc-views [:sessions :all]))]
-    (if (zero? (get sessions "total_rows"))
+    (if (zero? (get sessions :total_rows))
       (put-doc! (uuid) {:type "sessions" :tokens {id user-id}})
-      (update-doc! (get (first (get sessions "rows")) "id") update "tokens" assoc id user-id))))
+      (update-doc! (get (first (get sessions :rows)) :id) update :tokens assoc id user-id))))
 
 (defn user-password-matches?
   "Check to see if the password given matches the digest of the user's saved password"
   [email password]
   (-> (user-by-email email)
-      (get "password")
+      (get :password)
       (->> (hashers/check password))))

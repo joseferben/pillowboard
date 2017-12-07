@@ -38,6 +38,7 @@
    [:td [:a.button.is-small.is-primary {:on-click #(nav! (str "/dashboard/" id)) :href "#"} "Open"]]])
 
 (defn dashboards []
+  (prn @(subscribe [:dashboards]))
   [:table.table.is-fullwidth.is-striped
    [:tbody (map dashboard @(subscribe [:dashboards]))]])
 
