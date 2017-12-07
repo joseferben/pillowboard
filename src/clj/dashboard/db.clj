@@ -51,7 +51,7 @@
   [doc-id f & args]
   (let [old (get-doc doc-id)]
     (p-put! (str db "/" doc-id)
-            (merge (apply f old args) {:_rev (get old :_rev)}))))
+            (merge (apply f old args) {:_rev (old :_rev)}))))
 
 (defn events-all
   "Retrieves a list of all stored events for the dashboard with `id`.
@@ -69,10 +69,10 @@
   Without argument all dashboards are returned."
   ([user-id]
    (-> (get-view (get-in doc-views [:dashboard :all]) {:key user-id})
-       (get :rows)))
+       :rows))
   ([]
    (-> (get-view (get-in doc-views [:dashboard :all]))
-       (get :rows))))
+       :rows)))
 
 (defn dashboard-insert!
   "Stores a dashboard for a given user with `user-id`."
@@ -83,16 +83,16 @@
   "Retrieves a list of all users."
   []
   (-> (get-view (get-in doc-views [:user :all]))
-      (get :rows)))
+      :rows))
 
 (defn user-by-token
   "Retrieves a user by token, nil of no user exists."
   [token]
   (let [sessions (get-view (get-in doc-views [:sessions :all]))]
     (-> sessions
-        (get :rows)
+        :rows
         first
-        (get :id)
+        :id
         get-doc
         (get-in [:tokens (keyword token)])
         get-doc)))
@@ -101,7 +101,7 @@
   "Retrieves a user by email, nil of no user exists."
   [email]
   (let [user-id (first (get (get-view (get-in doc-views [:user :email]) {:key email}) :rows []))]
-    (get-doc (get user-id :id))))
+    (get-doc (user-id :id))))
 
 (defn user-insert!
   "Stores a user with given `email` and `password`."
@@ -112,13 +112,13 @@
   "Stores a token for a `user-id`."
   [user-id id]
   (let [sessions (get-view (get-in doc-views [:sessions :all]))]
-    (if (zero? (get sessions :total_rows))
+    (if (zero? (sessions :total_rows))
       (put-doc! (uuid) {:type "sessions" :tokens {id user-id}})
-      (update-doc! (get (first (get sessions :rows)) :id) update :tokens assoc id user-id))))
+      (update-doc! ((first (get sessions :rows)) :id) update :tokens assoc id user-id))))
 
 (defn user-password-matches?
   "Check to see if the password given matches the digest of the user's saved password"
   [email password]
   (-> (user-by-email email)
-      (get :password)
+      :password
       (->> (hashers/check password))))
