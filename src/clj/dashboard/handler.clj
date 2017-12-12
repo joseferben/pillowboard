@@ -159,5 +159,6 @@
 
 (defn -main [& args]
   (let [port (Integer/parseInt (get (System/getenv) "PORT" "3000"))]
+    (db/init!)
     (run-server app {:port port})
     (infof "Web server is running at port %s" port)))

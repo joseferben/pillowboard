@@ -11,6 +11,7 @@ services:
       - 80:3000
     depends_on:
       - db
+    command: ["./wait-for-it.sh", "db:5984", "--", "java", "-jar", "dashboard-standalone.jar"]
   db:
     image: couchdb
     container_name: couchdb

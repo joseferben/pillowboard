@@ -1,11 +1,12 @@
-(ns dashboard.db
-  (:require [dashboard.pipeline.event :refer [event-type]]
-            [clj-http.client :as client]
-            [environ.core :refer [env]]
-            [cheshire.core :refer [generate-string parse-string]]
-            [buddy.hashers :as hashers]))
+(ns dashboard.db (:require [dashboard.pipeline.event :refer [event-type]]
+                           [clj-http.client :as client]
+                           [environ.core :refer [env]]
+                           [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]
+                           [cheshire.core :refer [generate-string parse-string]]
+                           [buddy.hashers :as hashers]))
 
-(def db (or (env :database-url) "http://localhost:5984/db"))
+(def base-url "http://localhost:5984")
+(def db (or (env :database-url) (str base-url "/db")))
 
 (def doc-views {:dashboard {:all {:view "dashboards-view"}}
                 :user {:all {:view "users-view"}
@@ -122,3 +123,29 @@
   (-> (user-by-email email)
       :password
       (->> (hashers/check password))))
+
+(defn- create-db!
+  "Creates the db idempotently."
+  []
+  (debugf "Check whether we need to create a db.")
+  (try
+    (let [db-res (p-get db)]
+      (when (not= (:db_name db-res) "db")
+        (p-put! db {})))
+    (catch Exception e
+      (do
+        (debugf "Failed to find valid db. Creating new one.")
+        (p-put! db {})))))
+
+(defn- create-views!
+  "Creates view idempotently."
+  [views]
+  (put-doc! "_design/doc" views))
+
+(defn init!
+  "Initializes the database by installing views. This function must be idempotent!."
+  []
+
+  (let [views (parse-string (slurp (clojure.java.io/resource "migrations/initialize-views.js")))]
+    (create-db!)
+    (create-views! views)))
