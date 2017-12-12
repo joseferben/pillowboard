@@ -134,13 +134,17 @@
         (p-put! db {})))
     (catch Exception e
       (do
-        (debugf "Failed to find valid db. Creating new one.")
+        (debugf "Failed to find valid db. Creating new one: %s" db)
         (p-put! db {})))))
 
 (defn- create-views!
   "Creates view idempotently."
   [views]
-  (put-doc! "_design/doc" views))
+  (debugf "Adding views.")
+  (try
+    (put-doc! "_design/doc" views)
+    (catch Exception e
+      (debugf "Failed to add views, seems like they are already there."))))
 
 (defn init!
   "Initializes the database by installing views. This function must be idempotent!."

@@ -4,9 +4,10 @@ services:
     image: jerben/dashboard
     container_name: dashboard
     environment:
-      - DATABASE_URL=http://db:5984
+      - DATABASE_URL=http://db:5984/db
       - DATABASE_USER=couchdb
       - DATABASE_PASSWORD=couchdb
+      - HTTP_PORT=3000
     ports:
       - 80:3000
     depends_on:

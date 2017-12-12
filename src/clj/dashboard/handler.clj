@@ -3,6 +3,8 @@
             [dashboard.db :as db]
             [dashboard.auth :refer [auth-backend user-can user-isa user-has-id identify
                                     authenticated-user unauthorized-handler make-token!]]
+
+            [environ.core :refer [env]]
             [compojure.core :refer [context routes defroutes GET POST wrap-routes]]
             [compojure.route :as route]
             [compojure.handler :as handler]
@@ -158,7 +160,7 @@
     (wrap-defaults site-routes site-defaults))))
 
 (defn -main [& args]
-  (let [port (Integer/parseInt (get (System/getenv) "PORT" "3000"))]
+  (let [port (Integer/parseInt (get (System/getenv) "HTTP_PORT" "3000"))]
     (db/init!)
     (run-server app {:port port})
     (infof "Web server is running at port %s" port)))
