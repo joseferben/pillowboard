@@ -54,11 +54,20 @@
     (p-put! (str db "/" doc-id)
             (merge (apply f old args) {:_rev (old :_rev)}))))
 
+(defn- keywordize-events
+  "Given a list of events returns a list of events with keywordized map values where
+  it makes sense (types, enumarions)."
+  [events]
+  (map (fn [evt] (update-in evt [:meta :mode] keyword)) events))
+
 (defn events-all
   "Retrieves a list of all stored events for the dashboard with `id`.
   The list may contain events of different types."
   [id]
-  (get (get-doc id) :events []))
+  (-> id
+      get-doc
+      (get :events [])
+      keywordize-events))
 
 (defn event-insert!
   "Inserts `event` at the board with id `board-id`."

@@ -29,7 +29,10 @@
           [:p]
           [:code "http POST " data-endpoint " commits:=3 time:=1510851134350"]
           [:p]
-          [:div.usage "The key defines the unique name of the metric. The values must be numbers, the value of the time key must be millis since epoch."]]]]]]]))
+          [:div.usage "The key defines the unique name of the metric. The values must be numbers, the value of the time key must be millis since epoch."]
+          [:div.usage "To automatically sum the values, you can specify a mode:"]
+          [:p]
+          [:code "http POST " data-endpoint " bugs-fixed:=1 mode=sum"]]]]]]]))
 
 (defn dashboard [{:keys [id value]}]
   [:tr {:key id}

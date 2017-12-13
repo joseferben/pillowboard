@@ -1,4 +1,4 @@
-(defproject dashboard "0.1.0-SNAPSHOT"
+(defproject dashboard "0.1.1"
   :description "Zero config dashboard that makes sense of your data."
   :url "http://www.200ok.ch"
   :license {:name "Eclipse Public License"
@@ -75,4 +75,5 @@
                    :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
                    :clean-targets ^{:protect false} ["resources/public/js/compiled"
                                                      :target-path]}
-             :uberjar {:hooks [leiningen.cljsbuild]}})
+             :uberjar {:hooks [leiningen.cljsbuild]
+                       :aot :all}})
