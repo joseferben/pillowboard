@@ -51,11 +51,6 @@
       (= label (extract-metric-name (first state))) idx
       :else (recur (inc idx) (rest state)))))
 
-(defn- extract-meta
-  "Extracts meta information out of an event, returns a map."
-  [event]
-  (dissoc event :time :name :value))
-
 (defmulti fold-event
   "Folds an event on already folded events to make up the initial state."
   event-type)
@@ -69,10 +64,10 @@
     (if (= idx -1)
         (conj state {:category :timeseries
                      :data #{{"time" time name value}}
-                     :meta (extract-meta event)})
+                     :meta (:meta event {})})
         (-> state
             (update-in [idx :data] conj {"time" time name value})
-            (update-in [idx :meta] merge (extract-meta event))))))
+            (update-in [idx :meta] (fn [old] (merge (:meta event) old)))))))
 
 (defmethod fold-event :gauge
   [{:keys [name value]} state]
@@ -105,12 +100,6 @@
         time (or (post :time) (System/currentTimeMillis))]
     {:name (name label) :time time :value value}))
 
-(defn- post->meta-data
-  "Extracts meta data of a post and returns it as map."
-  [post]
-  (-> {}
-      (assoc :mode (keyword (post :mode)))))
-
 (defn- append-meta-data
   "Extracts and adds meta data to the event map, only if the meta data exists."
   [core-data post]
@@ -121,17 +110,16 @@
       (let [meta-data-k (first to-check)
             meta-data (get post meta-data-k)]
         (recur (rest to-check)
-          (if (not (nil? meta-data))
-            (assoc-in result [:meta meta-data-k] meta-data)
-            result))))))
+          (if (nil? meta-data)
+            result
+            (assoc-in result [:meta meta-data-k] (keyword meta-data))))))))
 
 (defn post->event
   "Maps post data to event with meta data."
   [post]
   (-> post
       post->data
-      (append-meta-data post)
-      (merge {:meta (post->meta-data post)})))
+      (append-meta-data post)))
 
 (defn- random-event [label]
   {:name label :time (System/currentTimeMillis) :value (rand 5)})

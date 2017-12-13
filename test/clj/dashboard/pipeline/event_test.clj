@@ -36,7 +36,7 @@
   (deftest fold-events-sum
     (let [fun #'dashboard.pipeline.event/fold-events
           events [{:name "foo" :time 1 :value 2}
-                  {:name "foo" :time 2 :value 3 :mode :sum}
+                  {:name "foo" :time 2 :value 3 :meta {:mode :sum}}
                   {:name "foo" :time 4 :value 1}]
           expected [{:category :timeseries
                      :data #{{"time" 1 "foo" 2}
@@ -50,8 +50,7 @@
       (is (= "foo" (get event :name)))))
   (deftest post->event-with-time
     (let [event  (sut/post->event {:foo 2 :time 42})]
-      (is (= 42 (get event :time)))
-      (is (= "foo" (get event :name)))))
+      (is (= {:value 2 :name "foo" :time 42} event))))
   (deftest post->event-with-meta-data
     (let [event  (sut/post->event {:foo 2 :time 42 :mode "sum" :else 42})]
       (is (= {:value 2 :time 42 :name "foo" :meta {:mode :sum}} event)))))
