@@ -85,22 +85,35 @@
   [post]
   (first (filter #(not= % :type) (keys post))))
 
-(defmulti post->event
-  "Maps a post to an event."
+(defmulti post->data
+  "Maps post data to an event."
   (fn [post] (post :type)))
 
-(defmethod post->event :gauge [post]
+(defmethod post->data :gauge [post]
   (debugf "Received raw post of type gauge: %s" post)
   (let [label (extract-name post)
         value (str (get post label))]
     {:name (name label) :value value}))
 
-(defmethod post->event :default [post]
+(defmethod post->data :default [post]
   (debugf "Received raw post of type timeseries: %s" post)
   (let [label (extract-name post)
         value (get post label)
         time (or (post :time) (System/currentTimeMillis))]
     {:name (name label) :time time :value value}))
+
+(defn- post->meta-data
+  "Extracts meta data of a post and returns it as map."
+  [post]
+  (-> {}
+      (assoc :mode (keyword (post :mode)))))
+
+(defn post->event
+  "Maps post data to event with meta data."
+  [post]
+  (-> post
+      post->data
+      (merge {:meta (post->meta-data post)})))
 
 (defn- random-event [label]
   {:name label :time (System/currentTimeMillis) :value (rand 5)})
