@@ -54,7 +54,4 @@
       (is (= "foo" (get event :name)))))
   (deftest post->event-with-meta-data
     (let [event  (sut/post->event {:foo 2 :time 42 :mode "sum" :else 42})]
-      (is (= 42 (get event :time)))
-      (is (= "foo" (get event :name)))
-      (is (nil? (get-in event [:meta :else])))
-      (is (= :sum (get-in event [:meta :mode]))))))
+      (is (= {:value 2 :time 42 :name "foo" :meta {:mode :sum}} event)))))

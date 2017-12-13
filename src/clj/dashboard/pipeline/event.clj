@@ -8,6 +8,9 @@
 (def event-labels '("commit" "merge-request" "user-registration"
                        "incident" "error" "alert" "tickets-done"
                        "time-spent" "foo" "bar"))
+
+(def supported-meta-data [:mode])
+
 (s/def ::time-value (s/and int? pos?))
 (s/def ::metric-value (s/and number?))
 (s/def ::metric-name (s/and string?))
@@ -108,11 +111,26 @@
   (-> {}
       (assoc :mode (keyword (post :mode)))))
 
+(defn- append-meta-data
+  "Extracts and adds meta data to the event map, only if the meta data exists."
+  [core-data post]
+  (loop [to-check supported-meta-data
+         result core-data]
+    (if (empty? to-check)
+      result
+      (let [meta-data-k (first to-check)
+            meta-data (get post meta-data-k)]
+        (recur (rest to-check)
+          (if (not (nil? meta-data))
+            (assoc-in result [:meta meta-data-k] meta-data)
+            result))))))
+
 (defn post->event
   "Maps post data to event with meta data."
   [post]
   (-> post
       post->data
+      (append-meta-data post)
       (merge {:meta (post->meta-data post)})))
 
 (defn- random-event [label]
