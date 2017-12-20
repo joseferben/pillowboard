@@ -1,5 +1,7 @@
 # dashboard
 
+Tests: ![](https://circleci.com/gh/jerben/dashboard.svg?style=svg)
+
 This is a **zero** configuration data-driven dashboard. Stop wasting your time setting up other dashboards, start throwing your data at this one!
 The dashboard tries to make sense of your data and present it in a sensible way.
 
