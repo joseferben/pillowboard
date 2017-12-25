@@ -58,3 +58,21 @@ flycheck_*.el
 
 # directory configuration
 .dir-locals.el
+
+# Ignore bundler config.
+/web/.bundle
+
+# Ignore the default SQLite database.
+/web/db/*.sqlite3
+/web/db/*.sqlite3-journal
+
+# Ignore all logfiles and tempfiles.
+/web/log/*
+/web/tmp/*
+!/web/log/.keep
+!/web/tmp/.keep
+
+/web/node_modules
+/web/yarn-error.log
+
+/web/.byebug_history
