@@ -12,8 +12,17 @@
 
 ActiveRecord::Schema.define(version: 20171225171001) do
 
-# Could not dump table "dashboards" because of following StandardError
-#   Unknown type 'uuid' for column 'id'
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "dashboards", force: :cascade do |t|
+    t.string "name"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "created_at"], name: "index_dashboards_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_dashboards_on_user_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "name"
@@ -23,4 +32,5 @@ ActiveRecord::Schema.define(version: 20171225171001) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "dashboards", "users"
 end
