@@ -1,2 +1,40 @@
-<h1>Users#new</h1>
-<p>Find me in app/views/users/new.html.erb</p>
+<section class="hero is-fullheight">
+    <div class="hero-body">
+      <div class="container has-text-centered">
+	<div class="column is-4 is-offset-4">
+	  <h3 class="title has-text-grey">Signup</h3>
+	  <div class="box">
+	    <figure class="avatar">
+	      <img src="https://placehold.it/128x128">
+	    </figure>
+	    <%= form_for(@user) do |f| %>
+	      <%= render 'shared/error_messages' %>
+	      <div class="field">
+		<div class="control">
+		  <%= f.email_field :email, placeholder: 'Your Email', class: 'input is-large' %>
+		</div>
+	      </div>
+
+	      <div class="field">
+		<div class="control">
+		  <%= f.password_field :password, placeholder: 'Your Password', class: 'input is-large' %>
+		</div>
+	      </div>
+
+	      <div class="field">
+		<div class="control">
+		  <%= f.password_field :password_confirmation, placeholder: 'Confirm Password', class: 'input is-large' %>
+		</div>
+	      </div>
+	      <%= f.submit 'Signup', class: 'button is-block is-info is-large' %>
+	    <% end %>
+	  </div>
+	  <p class="has-text-grey">
+	    <a href="/login">Login</a> &nbsp;·&nbsp;
+	    <a href="/reset">Forgot Password</a> &nbsp;
+	  </p>
+	</div>
+      </div>
+    </div>
+  </section>
+  <script async type="text/javascript" src="https://raw.githubusercontent.com/dansup/bulma-templates/master/js/bulma.js"></script>
