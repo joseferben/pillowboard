@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  skip_before_action :require_login, only: [:new, :create]
 
   def index
     @users = User.all
@@ -16,7 +17,7 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     if @user.save
       log_in @user
-      flash[:success] = "Welcome to the Dashboard!"
+      flash[:success] = "Successfully registered, welcome!"
       redirect_to @user
     else
       render 'new'
