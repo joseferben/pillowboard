@@ -14,6 +14,8 @@
                  [ring/ring-defaults "0.2.1"]
                  [ring/ring-devel "1.6.3"]
                  [ring/ring-json "0.4.0"]
+                 [buddy/buddy-hashers "1.3.0"]
+                 [buddy/buddy-auth "2.1.0"]
                  [ring-cors "0.1.11"]
                  [environ "1.1.0"]
                  [clj-http "3.7.0"]

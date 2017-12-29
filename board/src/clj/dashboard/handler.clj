@@ -3,7 +3,6 @@
             [dashboard.db :as db]
             [dashboard.auth :refer [auth-backend user-can user-isa user-has-id identify
                                     authenticated-user unauthorized-handler make-token!]]
-
             [environ.core :refer [env]]
             [compojure.core :refer [context routes defroutes GET POST wrap-routes]]
             [compojure.route :as route]
@@ -77,22 +76,9 @@
 
 (def OK 200)
 
-(defn- fetch-dashboards
-  [user-id]
-  (db/dashboards-all user-id))
-
 (defn- add-dashboard
   [user-id board-name]
   (db/dashboard-insert! user-id board-name)
-  OK)
-
-(defn- fetch-users
-  []
-  (db/users-all))
-
-(defn- add-user
-  [email password]
-  (db/user-insert! email password)
   OK)
 
 (defn- post-data
@@ -101,47 +87,16 @@
   OK)
 
 (defroutes api-routes
-
-  (context "/dashboards" []
-    (restrict (routes (POST "/" req [] (prn req)
-                            {:body {:status (add-dashboard (identify req) (get-in req [:body :name]))}})
-                      (GET "/" req []
-                           {:body {:dashboards (fetch-dashboards (identify req))}}))
-              {:handler {:and [authenticated-user]}
-               :on-error unauthorized-handler}))
-
-  (GET "/users" [] (fetch-users))
-
-  (POST "/users" {{:keys [password email]} :body} []
-        {:body {:status (add-user email password)}})
-
-  (context "/users/:user-id" [user-id]
-    (restrict (routes (GET "/dashboards" req []
-                           {:body (fetch-dashboards user-id)}))
-              {:handler {:and [authenticated-user (user-has-id user-id)]}
-               :on-error unauthorized-handler}))
-
-  (context "/data/:board-id" [board-id]
+  (context "/data/:id" [id]
     (POST "/" {:keys [body]} []
-          {:body {:status (post-data board-id body)}}))
-
-  (POST "/sessions" {{:keys [email password]} :body}
-    (if (db/user-password-matches? email password)
-      {:status 201
-       :body {:auth-token (make-token! email)}}
-      {:status 409
-       :body {:status "error"
-              :message "invalid username or password"}})))
+          {:body {:status (post-data id body)}})))
 
 (defn index-html []
   (content-type (resource-response "index.html" {:root "public"}) "text/html"))
 
 (defroutes site-routes
   (GET "/" [] (index-html))
-  (GET "/login" [] (index-html))
-  (GET "/register" [] (index-html))
-  (GET "/admin" [] (index-html))
-  (GET "/dashboard/:board-id" [board-id] (index-html))
+  (GET "/data/:id" [] (index-html))
   (GET  "/chsk" req (ring-ajax-get-or-ws-handshake req))
   (POST "/chsk" req (ring-ajax-post                req))
   (route/resources "/")
