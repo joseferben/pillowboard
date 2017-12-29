@@ -17,7 +17,7 @@ class DashboardsController < ApplicationController
 
  private
     def dashboard_params
-      params.require(:dashboard).permit(:name)
+      params.require(:dashboard).permit(:name).merge(uuid: SecureRandom.uuid)
     end
 
 end

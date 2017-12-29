@@ -103,7 +103,7 @@
                       <td width="5%"><i class="fa fa-bar-chart"></i></td>
                       <td><%= dashboard.name %></td>
                       <td>
-                        <%= link_to 'Open', dashboard, class: 'button is-small is-primary' %>
+                        <%= link_to 'Open', '/data/' + dashboard.uuid, class: 'button is-small is-primary' %>
                         <%= link_to 'Delete', dashboard, method: :delete, class: 'button is-small is-danger' %>
                       </td>
                     </tr>
