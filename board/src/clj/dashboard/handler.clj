@@ -1,8 +1,6 @@
 (ns dashboard.handler
   (:require [dashboard.core :as core :refer [fetch-state! store-post-and-broadcast!]]
             [dashboard.db :as db]
-            [dashboard.auth :refer [auth-backend user-can user-isa user-has-id identify
-                                    authenticated-user unauthorized-handler make-token!]]
             [environ.core :refer [env]]
             [compojure.core :refer [context routes defroutes GET POST wrap-routes]]
             [compojure.route :as route]
@@ -13,8 +11,6 @@
             [taoensso.sente :as sente]
             [taoensso.sente.server-adapters.http-kit :refer (get-sch-adapter)]
             [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]
-            [buddy.auth.accessrules :refer [restrict]]
-            [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
             [ring.util.response :refer [redirect response content-type resource-response]]
             [ring.middleware.resource :refer [wrap-resource]]
             [ring.middleware.json :refer [wrap-json-body wrap-json-response]]
