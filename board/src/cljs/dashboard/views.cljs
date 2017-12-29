@@ -2,6 +2,7 @@
   (:require
    [dashboard.styles.core :as styles]
    [dashboard.grid :as grid]
+   [dashboard.db :refer [db]]
    [stylefy.core :as stylefy]
    [cljs-http.client :as http]
    [stylefy.core :as stylefy :refer [use-style]]))
@@ -31,10 +32,11 @@
           [:code "http POST " data-endpoint " bugs-fixed:=1 mode=sum"]]]]]]]))
 
 (defn page
-  [board-state]
-  [:div.top-container
-   ;;[dev-toolbar]
-   (if (or (nil? board-state) (empty? (board-state :charts)))
-     [instructions]
-     [:div.container
-      [grid/main board-state]])])
+  []
+  (let [board-state (@db :board)]
+    [:div.top-container]
+    ;;[dev-toolbar]
+    (if (or (nil? board-state) (empty? (board-state :charts)))
+      [instructions]
+      [:div.container
+       [grid/main board-state]])))

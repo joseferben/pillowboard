@@ -34,7 +34,8 @@
          "/chsk"
          {:type :auto
           :packer :edn})]
-    (swap! db merge {:chsk chsk :ch-recv ch-recv :chsk-send! send-fn :state state})
+    (swap! db merge {:chsk chsk :ch-recv ch-recv
+                     :chsk-send! send-fn :state state})
     (go (while true
           (let [{ev-msg :event} (<! ch-recv)]
             (infof "Reiceved event: %s" ev-msg)

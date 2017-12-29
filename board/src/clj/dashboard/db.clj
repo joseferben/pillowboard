@@ -67,15 +67,20 @@
       (get :events [])
       keywordize-events))
 
-(defn event-insert!
-  "Inserts `event` at the board with id `board-id`."
-  [event board-id]
-  (update-doc! board-id update :events conj event))
-
 (defn dashboard-insert!
-  "Stores a dashboard for a given user with `user-id`."
-  [user-id name]
-  (put-doc! (uuid) {:type "dashboard" :user-id user-id :name name :events []}))
+  "Inserts a dashboard with an `id`."
+  [id]
+  (put-doc! id {:type "dashboard" :events []}))
+
+(defn event-insert!
+  "Inserts `event` at the board with id `board-id`. Creates board if it doesn't exist."
+  [event board-id]
+  (try
+    (update-doc! board-id update :events conj event)
+    (catch Exception e
+      (do
+        (dashboard-insert! board-id)
+        (update-doc! board-id update :events conj event)))))
 
 (defn- create-db!
   "Creates the db idempotently."
@@ -102,7 +107,7 @@
 (defn init!
   "Initializes the database by installing views. This function must be idempotent!."
   []
-
+  (debugf "Initializing database.")
   (let [views (parse-string (slurp (clojure.java.io/resource "migrations/initialize-views.js")))]
     (create-db!)
     (create-views! views)))

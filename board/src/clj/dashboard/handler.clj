@@ -83,6 +83,7 @@
 
 (defn- post-data
   [board-id post]
+  (debugf "Posting post %s to board with id %s" post board-id)
   (store-post-and-broadcast! post (partial broadcast-state board-id) board-id)
   OK)
 
@@ -105,12 +106,10 @@
 (def app
   (wrap-reload
    (routes
-    (context "/api" [] (-> api-routes
-                           (wrap-authentication auth-backend)
-                           (wrap-authorization auth-backend)
-                           (wrap-json-body {:keywords? true})
-                           wrap-json-response
-                           (wrap-defaults api-defaults)))
+    (-> api-routes
+        (wrap-json-body {:keywords? true})
+        wrap-json-response
+        (wrap-defaults api-defaults))
     (wrap-defaults site-routes site-defaults))))
 
 (defn -main [& args]
