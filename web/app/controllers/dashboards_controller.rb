@@ -9,6 +9,12 @@ class DashboardsController < ApplicationController
     end
   end
 
+  def destroy
+    @dashboard = Dashboard.find(params[:id])
+    @dashboard.destroy
+    redirect_to current_user
+  end
+
  private
     def dashboard_params
       params.require(:dashboard).permit(:name)
