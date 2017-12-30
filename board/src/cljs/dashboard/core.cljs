@@ -8,12 +8,13 @@
 
 (devtools/install!)
 (enable-console-print!)
-(timbre/set-level! :debug)
+(timbre/set-level! :info)
 
 (infof "ClojureScript appears to have loaded correctly.")
 
 (defn init!
   []
+  (infof "Initializing dashboard SPA.")
   (init-db!)
   (init-ws! handle-event)
   (r/render [views/page]

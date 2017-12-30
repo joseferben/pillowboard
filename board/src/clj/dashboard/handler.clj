@@ -42,10 +42,10 @@
   (def chsk-send!                    send-fn) ; ChannelSocket's send API fn
   (def connected-uids                connected-uids)) ; Watchable, read-only atom
 
-(add-watch connected-uids :connected-uids
-           (fn [_ _ old new]
-             (when (not= old new)
-               (infof "Connected uids change: %s" new))))
+;;(add-watch connected-uids :connected-uids
+;;           (fn [_ _ old new]
+;;             (when (not= old new)
+;;               (infof "Connected uids change: %s" new))))
 
 (defn- broadcast-state
   [board-id state]
@@ -61,13 +61,13 @@
 
 (go-loop []
   (let [event (<! ch-chsk)]
-    ;(debugf "Receiving event: %s" event)
     (let [{[type board-id] :event} event
           {uid :uid} event]
       (when (and (= :board/register-board type) (not (nil? board-id)))
+        (do
          (debugf "Adding uid %s to board-id %s" uid board-id)
          (swap! board-sessions update board-id conj uid)
-         (broadcast-state board-id (fetch-state! board-id)))))
+         (broadcast-state board-id (fetch-state! board-id))))))
   (recur))
 
 (def OK 200)

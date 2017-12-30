@@ -28,7 +28,7 @@
 
 (defn init-ws!
   [handle-event]
-  (debugf "Opening ws")
+  (debugf "Opening websocket connection.")
   (let [{:keys [chsk ch-recv send-fn state]}
         (sente/make-channel-socket-client!
          "/chsk"

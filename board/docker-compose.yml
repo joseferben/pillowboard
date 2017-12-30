@@ -1,19 +1,6 @@
 version: '3'
 services:
-  dashboard:
-    image: jerben/dashboard
-    container_name: dashboard
-    environment:
-      - DATABASE_URL=http://db:5984/db
-      - DATABASE_USER=couchdb
-      - DATABASE_PASSWORD=couchdb
-      - HTTP_PORT=3000
-    ports:
-      - 80:3000
-    depends_on:
-      - db
-    command: ["./wait-for-it.sh", "db:5984", "--", "java", "-jar", "dashboard-standalone.jar"]
-  db:
+  docstore:
     image: couchdb
     container_name: couchdb
     ports:
