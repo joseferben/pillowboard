@@ -9,8 +9,6 @@
 (def db (or (env :database-url) (str base-url "/db")))
 
 (def doc-views {:dashboard {:all {:view "dashboards-view"}}
-                :user {:all {:view "users-view"}
-                       :email {:view "users-email-view"}}
                 :sessions {:all {:view "sessions-view"}}})
 
 (defn uuid [] (str (java.util.UUID/randomUUID)))
@@ -69,69 +67,20 @@
       (get :events [])
       keywordize-events))
 
-(defn event-insert!
-  "Inserts `event` at the board with id `board-id`."
-  [event board-id]
-  (update-doc! board-id update :events conj event))
-
-(defn dashboards-all
-  "Retrieves a list of dashboard id name paris for a user with `user-id`.
-  Without argument all dashboards are returned."
-  ([user-id]
-   (-> (get-view (get-in doc-views [:dashboard :all]) {:key user-id})
-       :rows))
-  ([]
-   (-> (get-view (get-in doc-views [:dashboard :all]))
-       :rows)))
-
 (defn dashboard-insert!
-  "Stores a dashboard for a given user with `user-id`."
-  [user-id name]
-  (put-doc! (uuid) {:type "dashboard" :user-id user-id :name name :events []}))
+  "Inserts a dashboard with an `id`."
+  [id]
+  (put-doc! id {:type "dashboard" :events []}))
 
-(defn users-all
-  "Retrieves a list of all users."
-  []
-  (-> (get-view (get-in doc-views [:user :all]))
-      :rows))
-
-(defn user-by-token
-  "Retrieves a user by token, nil of no user exists."
-  [token]
-  (let [sessions (get-view (get-in doc-views [:sessions :all]))]
-    (-> sessions
-        :rows
-        first
-        :id
-        get-doc
-        (get-in [:tokens (keyword token)])
-        get-doc)))
-
-(defn user-by-email
-  "Retrieves a user by email, nil of no user exists."
-  [email]
-  (let [user-id (first (get (get-view (get-in doc-views [:user :email]) {:key email}) :rows []))]
-    (get-doc (user-id :id))))
-
-(defn user-insert!
-  "Stores a user with given `email` and `password`."
-  [email password]
-  (put-doc! (uuid) {:type "user" :email email :password (hashers/encrypt password)}))
-
-(defn token-insert!
-  "Stores a token for a `user-id`."
-  [user-id id]
-  (let [sessions (get-view (get-in doc-views [:sessions :all]))]
-    (if (zero? (sessions :total_rows))
-      (put-doc! (uuid) {:type "sessions" :tokens {id user-id}})
-      (update-doc! ((first (get sessions :rows)) :id) update :tokens assoc id user-id))))
-
-(defn user-password-matches?
-  "Check to see if the password given matches the digest of the user's saved password"
-  [email password]
-  (-> (user-by-email email)
-      :password
-      (->> (hashers/check password))))
+(defn event-insert!
+  "Inserts `event` at the board with id `board-id`. Creates board if it doesn't exist."
+  [event board-id]
+  (try
+    (update-doc! board-id update :events conj event)
+    (catch Exception e
+      (do
+        (dashboard-insert! board-id)
+        (update-doc! board-id update :events conj event)))))
 
 (defn- create-db!
   "Creates the db idempotently."
@@ -158,7 +107,7 @@
 (defn init!
   "Initializes the database by installing views. This function must be idempotent!."
   []
-
+  (debugf "Initializing database.")
   (let [views (parse-string (slurp (clojure.java.io/resource "migrations/initialize-views.js")))]
     (create-db!)
     (create-views! views)))

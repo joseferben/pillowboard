@@ -22,8 +22,6 @@
                  [cheshire "5.8.0"]
                  [compojure "1.5.1"]
                  [reagent "0.7.0"]
-                 [re-frame "0.10.3-alpha1"]
-                 [day8.re-frame/http-fx "0.1.4"]
                  [cljs-ajax "0.7.3"]
                  [bidi "2.1.2"]
                  [kibu/pushy "0.3.8"]

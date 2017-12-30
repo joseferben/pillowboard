@@ -1,4 +1,4 @@
-(ns dashboard.db)
+(ns dashboard.db
+  (:require [reagent.core :as r]))
 
-(def default-db
-  {:active {:page :login}})
+(defonce db (r/atom (sorted-map)))

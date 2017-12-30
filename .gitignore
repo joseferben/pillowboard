@@ -1,17 +1,17 @@
-/resources/public/js/compiled/**
-figwheel_server.log
-pom.xml
+/board/resources/public/js/compiled/**
+/board/figwheel_server.log
+/board/pom.xml
 *jar
-/lib/
-/classes/
-/out/
-/target/
-.lein-deps-sum
-.lein-repl-history
-.lein-plugins/
-.lein-failures
-.repl
-.nrepl-port
+/board/lib/
+/board/classes/
+/board/out/
+/board/target/
+/board/.lein-deps-sum
+/board/.lein-repl-history
+/board/.lein-plugins/
+/board/.lein-failures
+/board/.repl
+/board/.nrepl-port
 
 
 *~

@@ -1,20 +1,46 @@
 version: '3'
 services:
   dashboard:
-    image: jerben/dashboard
-    container_name: dashboard
+    build:
+      context: ./board
+    container_name: ring
     environment:
-      - DATABASE_URL=http://db:5984/db
+      - DATABASE_URL=http://docstore:5984/db
       - DATABASE_USER=couchdb
       - DATABASE_PASSWORD=couchdb
       - HTTP_PORT=3000
     ports:
       - 80:3000
     depends_on:
-      - db
-    command: ["./wait-for-it.sh", "db:5984", "--", "java", "-jar", "dashboard-standalone.jar"]
-  db:
+      - docstore
+    command: ["./wait-for-it.sh", "docstore:5984", "--", "java", "-jar", "dashboard-standalone.jar"]
+  docstore:
     image: couchdb
     container_name: couchdb
     ports:
       - 5984:5984
+  db:
+    container_name: postgres
+    image: postgres:10
+    restart: always
+  web:
+    container_name: rails
+    build:
+      context: ./web
+    command: bundle exec rails s -p 3001 -b '0.0.0.0'
+    volumes:
+      - ./web:/myap
+    ports:
+      - 3001:3001
+    depends_on:
+      - db
+  pgweb:
+    container_name: pgweb
+    restart: always
+    image: sosedoff/pgweb
+    ports:
+        - 8081:8081
+    environment:
+        - DATABASE_URL=postgres://postgres:@db:5432/myapp_development?sslmode=disable
+    depends_on:
+        - db
