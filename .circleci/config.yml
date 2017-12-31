@@ -2,44 +2,55 @@
 #
 # Check https://circleci.com/docs/2.0/language-clojure/ for more details
 #
+
+clj_app: &clj_app
+  docker:
+    - image: circleci/clojure:lein-2.7.1
+  environment:
+    LEIN_ROOT: "true"
+    JVM_OPTS: -Xmx3200m
+  steps:
+    - checkout
+    - run:
+        command: |
+          cd $CIRCLE_JOB
+          lein test
+          lein eastwood
+
+rails_app: &rails_app
+  docker:
+    - image: circleci/ruby:2.4.3-node
+      environment:
+        BUNDLE_JOBS: 3
+        BUNDLE_RETRY: 3
+        BUNDLE_PATH: vendor/bundle
+        DB_HOST: 127.0.0.1
+        RAILS_ENV: test
+    - image: circleci/postgres:9.5-alpine
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_DB: myapp_test
+        POSTGRES_PASSWORD: ""
+  steps:
+    - checkout
+    - run:
+        command: |
+          cd $CIRCLE_JOB
+          bundle install
+          sudo apt-get -y install libpq-dev
+          dockerize -wait tcp://localhost:5432 -timeout 1m
+          bundle exec rake db:schema:load --trace
+          bundle exec rake test
+
 version: 2
 jobs:
-  build:
-    docker:
-      # specify the version you desire here
-      - image: circleci/clojure:lein-2.7.1
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
-    working_directory: ~/repo
-
-    environment:
-      LEIN_ROOT: "true"
-      # Customize the JVM maximum heap limit
-      JVM_OPTS: -Xmx3200m
-
-    steps:
-      - checkout
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "project.clj" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
-      - run: lein deps
-
-      - save_cache:
-          paths:
-            - ~/.m2
-          key: v1-dependencies-{{ checksum "project.clj" }}
-
-      # run tests!
-      - run: lein test
-
-      # run linters!
-      - run: lein eastwood
+  board:
+    <<: *clj_app
+  web:
+    <<: *rails_app
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - board
+      - web

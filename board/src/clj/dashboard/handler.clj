@@ -72,11 +72,6 @@
 
 (def OK 200)
 
-(defn- add-dashboard
-  [user-id board-name]
-  (db/dashboard-insert! user-id board-name)
-  OK)
-
 (defn- post-data
   [board-id post]
   (debugf "Posting post %s to board with id %s" post board-id)
