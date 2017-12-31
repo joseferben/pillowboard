@@ -38,7 +38,7 @@ rails_app: &rails_app
           cd $CIRCLE_JOB
           bundle install
           dockerize -wait tcp://localhost:5432 -timeout 1m
-          bin/rails db:schema:load --trace
+          bundle exec rake db:create db:schema:load --trace
           rails test
 
 version: 2
