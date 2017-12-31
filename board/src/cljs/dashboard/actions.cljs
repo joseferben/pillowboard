@@ -24,7 +24,7 @@
   []
   (let [id (extract-id)]
     (debugf "Initializing db with board-id: %s" id)
-    (swap! db assoc :id id)))
+    (reset! db {:id id})))
 
 (defn init-ws!
   [handle-event]

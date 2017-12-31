@@ -24,10 +24,7 @@
 
 (def board-sessions (atom {}))
 
-(let [;; Serializtion format, must use same val for client + server:
-      packer :edn ; Default packer, a good choice in most cases
-      ;; (sente-transit/get-transit-packer) ; Needs Transit dep
-
+(let [packer :edn
       chsk-server
       (sente/make-channel-socket-server!
        (get-sch-adapter) {:packer packer :user-id-fn (fn [req] (db/uuid))})
@@ -42,11 +39,6 @@
   (def chsk-send!                    send-fn) ; ChannelSocket's send API fn
   (def connected-uids                connected-uids)) ; Watchable, read-only atom
 
-;;(add-watch connected-uids :connected-uids
-;;           (fn [_ _ old new]
-;;             (when (not= old new)
-;;               (infof "Connected uids change: %s" new))))
-
 (defn- broadcast-state
   [board-id state]
   (let [uids (get @board-sessions board-id)]
@@ -59,7 +51,7 @@
                   [:board/state
                    {:state state}] 20000))))
 
-(go
+(comment (go)
   (while true
    (let [event (<! ch-chsk)]
     (debugf "EVENT: %s \n" (event :event))
@@ -70,6 +62,40 @@
          (debugf "Adding uid %s to board-id %s" uid board-id)
          (swap! board-sessions update board-id conj uid)
          (broadcast-state board-id (fetch-state! board-id))))))))
+
+(defmulti -event-msg-handler
+  "Multimethod to handle Sente `event-msg`s"
+  :id) ; Dispatch on event-id
+
+(defn event-msg-handler
+  "Wraps `-event-msg-handler` with logging, error catching, etc."
+  [{:as ev-msg :keys [id ?data event]}]
+  (-event-msg-handler ev-msg))
+
+(defmethod -event-msg-handler
+  :default ; Default/fallback case (no other matching handler)
+  [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
+  (let [session (:session ring-req)
+        uid     (:uid     session)]
+    (debugf "Unhandled event: %s" event)
+    (when ?reply-fn
+      (?reply-fn {:umatched-event-as-echoed-from-from-server event}))))
+
+(defmethod -event-msg-handler
+  :board/register-board
+  [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
+  (let [uid (:uid ev-msg)]
+    (debugf "Registering board with id %s" ?data)
+    (swap! board-sessions update ?data conj uid)
+    (broadcast-state ?data (fetch-state! ?data))))
+
+(defonce router_ (atom nil))
+(defn stop-router! [] (when-let [stop-fn @router_] (stop-fn)))
+(defn start-router! []
+  (stop-router!)
+  (reset! router_
+    (sente/start-server-chsk-router!
+      ch-chsk event-msg-handler)))
 
 (def OK 200)
 
@@ -107,5 +133,7 @@
 (defn -main [& args]
   (let [port (Integer/parseInt (get (System/getenv) "HTTP_PORT" "3000"))]
     (db/init!)
+    (start-router!)
+    (infof "Websocket router is running.")
     (run-server app {:port port})
-    (infof "Web server is running at port %s" port)))
+    (infof "Web server is running at port %s." port)))
