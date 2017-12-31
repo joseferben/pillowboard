@@ -37,9 +37,10 @@ rails_app: &rails_app
         command: |
           cd $CIRCLE_JOB
           bundle install
+          sudo apt-get -y install libpq-dev
           dockerize -wait tcp://localhost:5432 -timeout 1m
-          bundle exec rake db:create db:schema:load --trace
-          rails test
+          bundle exec rake db:schema:load --trace
+          bundle exec rake test
 
 version: 2
 jobs:
