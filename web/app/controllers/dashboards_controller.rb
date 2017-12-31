@@ -7,7 +7,7 @@ class DashboardsController < ApplicationController
     if @dashboard.save
       redirect_to current_user
     else
-      flash[:danger] = "Failed to add dashboard. Please enter a valid name."
+      flash[:danger] = "Failed to add Dashboard. Please enter a valid name."
       redirect_to current_user
     end
   end
