@@ -62,10 +62,13 @@
   "Retrieves a list of all stored events for the dashboard with `id`.
   The list may contain events of different types."
   [id]
-  (-> id
-      get-doc
-      (get :events [])
-      keywordize-events))
+  (try
+    (-> id
+        get-doc
+        (get :events [])
+        keywordize-events)
+    (catch Exception e
+        '())))
 
 (defn dashboard-insert!
   "Inserts a dashboard with an `id`."

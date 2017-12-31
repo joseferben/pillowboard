@@ -59,16 +59,17 @@
                   [:board/state
                    {:state state}] 20000))))
 
-(go-loop []
-  (let [event (<! ch-chsk)]
+(go
+  (while true
+   (let [event (<! ch-chsk)]
+    (debugf "EVENT: %s \n" (event :event))
     (let [{[type board-id] :event} event
           {uid :uid} event]
       (when (and (= :board/register-board type) (not (nil? board-id)))
         (do
          (debugf "Adding uid %s to board-id %s" uid board-id)
          (swap! board-sessions update board-id conj uid)
-         (broadcast-state board-id (fetch-state! board-id))))))
-  (recur))
+         (broadcast-state board-id (fetch-state! board-id))))))))
 
 (def OK 200)
 
