@@ -11,10 +11,11 @@ clj_app: &clj_app
     JVM_OPTS: -Xmx3200m
   steps:
     - checkout
-    - run: command: |
-        cd $CIRCLE_JOB
-        lein test
-        lein eastwood
+    - run:
+        command: |
+          cd $CIRCLE_JOB
+          lein test
+          lein eastwood
 
 version: 2
 jobs:
