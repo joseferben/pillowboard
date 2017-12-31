@@ -2,22 +2,26 @@
 #
 # Check https://circleci.com/docs/2.0/language-clojure/ for more details
 #
+
+clj_app: &clj_app
+  docker:
+    - image: circleci/clojure:lein-2.7.1
+  environment:
+    LEIN_ROOT: "true"
+    JVM_OPTS: -Xmx3200m
+  steps:
+    - checkout
+    - run: command: |
+        cd $CIRCLE_JOB
+        lein test
+        lein eastwood
+
 version: 2
 jobs:
-  build-board:
-    working_directory: ~/board
-    docker:
-      - image: circleci/clojure:lein-2.7.1
-    environment:
-      LEIN_ROOT: "true"
-      JVM_OPTS: -Xmx3200m
-    steps:
-      - checkout
-      - run: lein test
-      - run: lein eastwood
-
+  board:
+    <<: *clj_app
 workflows:
   version: 2
   build-and-deploy:
     jobs:
-      - build-board
+      - board
