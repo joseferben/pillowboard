@@ -50,7 +50,7 @@ jobs:
     <<: *rails_app
 workflows:
   version: 2
-  build-and-deploy:
+  build:
     jobs:
       - board
       - web

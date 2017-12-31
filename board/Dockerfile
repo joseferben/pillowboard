@@ -6,5 +6,3 @@ COPY wait-for-it.sh wait-for-it.sh
 ENV PORT 3000
 
 EXPOSE 3000
-
-#CMD ["java", "-jar", "dashboard-standalone.jar"]
