@@ -30,4 +30,3 @@ workflows:
   build-and-deploy:
     jobs:
       - build-board
-      - build-web
