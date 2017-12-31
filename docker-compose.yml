@@ -14,7 +14,7 @@ services:
       - docstore
     command: ["./wait-for-it.sh", "docstore:5984", "--", "java", "-jar", "dashboard-standalone.jar"]
   docstore:
-    image: couchdb
+    image: couchdb:2.1.1
     ports:
       - 5984:5984
   db:
@@ -23,9 +23,11 @@ services:
   web:
     build:
       context: ./web
+    environment:
+      - DB_HOST=db
     command: bundle exec rails s -p 3001 -b '0.0.0.0'
     volumes:
-      - ./web:/myap
+      - ./web:/myapp
     ports:
       - 3001:3001
     depends_on:
@@ -35,6 +37,7 @@ services:
       context: ./router
     ports:
       - 8080:8080
+    command: ["./wait-for-it.sh", "web:3001", "--", "nginx", "-g", "daemon off;"]
     depends_on:
       - dashboard
       - web
