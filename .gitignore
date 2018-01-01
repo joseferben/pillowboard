@@ -62,8 +62,6 @@ flycheck_*.el
 # Ignore bundler config.
 /web/.bundle
 
-/web/public
-
 # Ignore the default SQLite database.
 /web/db/*.sqlite3
 /web/db/*.sqlite3-journal
