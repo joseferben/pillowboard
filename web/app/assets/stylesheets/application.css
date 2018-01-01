@@ -13,3 +13,7 @@
  *= require_tree .
  *= require_self
  */
+
+.is-top-space {
+  padding: .75rem;
+}
