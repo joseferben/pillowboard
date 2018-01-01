@@ -12,7 +12,7 @@ services:
       - 3000:3000
     depends_on:
       - docstore
-    command: ["./wait-for-it.sh", "docstore:5984", "--", "java", "-jar", "dashboard-standalone.jar"]
+    command: ["./wait-for-it.sh", "docstore:5984", "-t", "30", "--", "java", "-jar", "dashboard-standalone.jar"]
   docstore:
     image: couchdb:2.1.1
     ports:
