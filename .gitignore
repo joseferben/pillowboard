@@ -76,6 +76,3 @@ flycheck_*.el
 /web/yarn-error.log
 
 /web/.byebug_history
-
-# production keys
-docker-compose.prod.yml
