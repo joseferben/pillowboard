@@ -62,6 +62,8 @@ flycheck_*.el
 # Ignore bundler config.
 /web/.bundle
 
+/web/public
+
 # Ignore the default SQLite database.
 /web/db/*.sqlite3
 /web/db/*.sqlite3-journal
@@ -76,3 +78,6 @@ flycheck_*.el
 /web/yarn-error.log
 
 /web/.byebug_history
+
+# production keys
+docker-compose.prod.yml
