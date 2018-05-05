@@ -35,7 +35,6 @@
   []
   (let [board-state (@db :board)]
     [:div.top-container]
-    ;;[dev-toolbar]
     (if (or (nil? board-state) (empty? (board-state :charts)))
       [instructions]
       [:div.container

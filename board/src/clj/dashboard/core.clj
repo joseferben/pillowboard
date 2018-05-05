@@ -7,7 +7,6 @@
             [dashboard.utils :refer [str->int]]
             [taoensso.timbre :as timbre :refer [debugf]]))
 
-
 (defn- pipeline [events]
   ((comp transform configure (partial process :last) group fold-events) events))
 
