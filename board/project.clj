@@ -1,6 +1,6 @@
 (defproject dashboard "0.1.1"
   :description "Zero config dashboard that makes sense of your data."
-  :url "http://www.200ok.ch"
+  :url "http://board.erben.io"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :min-lein-version "2.7.1"
@@ -11,34 +11,32 @@
                  [org.clojure/core.async  "0.3.443"]
                  [org.clojure/spec.alpha "0.1.143"]
                  [org.clojure/test.check "0.10.0-alpha2"]
-                 [ring/ring-defaults "0.2.1"]
-                 [ring/ring-devel "1.6.3"]
+                 [ring/ring "1.6.3"]
+                 [ring/ring-defaults "0.3.1"]
                  [ring/ring-json "0.4.0"]
-                 [buddy/buddy-hashers "1.3.0"]
-                 [buddy/buddy-auth "2.1.0"]
-                 [ring-cors "0.1.11"]
-                 [environ "1.1.0"]
                  [clj-http "3.7.0"]
+                 [environ "1.1.0"]
+                 [com.taoensso/timbre "4.10.0"]
+                 [io.aviso/pretty "0.1.34"]
                  [cheshire "5.8.0"]
-                 [compojure "1.5.1"]
+                 [compojure "1.6.1"]
                  [reagent "0.7.0"]
                  [cljs-ajax "0.7.3"]
                  [bidi "2.1.2"]
                  [kibu/pushy "0.3.8"]
                  [binaryage/devtools "0.9.4"]
-                 [com.taoensso/sente "1.11.0"]
-                 [com.taoensso/timbre "4.7.4"]
                  [stylefy "1.0.1"]
-                 [http-kit "2.2.0"]
                  [cljsjs/recharts "0.22.4-2"]
                  [cljsjs/moment "2.17.1-1"]
                  [cljs-http "0.1.44"]]
+
   :plugins [[lein-figwheel "0.5.14"]
             [lein-ring "0.9.7"]
             [lein-kibit "0.1.6"]
             [lein-bikeshed "0.5.0"]
+            [io.aviso/pretty "0.1.34"]
             [jonase/eastwood "0.2.5"]
-            [com.jakemccrary/lein-test-refresh "0.21.1"]
+            [com.jakemccrary/lein-test-refresh "0.22.0"]
             [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
 
   :ring {:handler dashboard.handler/app}

@@ -2,8 +2,7 @@
                            [clj-http.client :as client]
                            [environ.core :refer [env]]
                            [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]
-                           [cheshire.core :refer [generate-string parse-string]]
-                           [buddy.hashers :as hashers]))
+                           [cheshire.core :refer [generate-string parse-string]]))
 
 (def base-url "http://localhost:5984")
 (def db (or (env :database-url) (str base-url "/db")))
