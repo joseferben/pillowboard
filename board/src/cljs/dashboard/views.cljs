@@ -10,7 +10,9 @@
 (defn instructions
   "Displays basic instructions on how to use the board."
   []
-  (let [data-endpoint (-> js/window .-location .-href)]
+  (let [data-endpoint (str (-> js/window .-location .-origin)
+                           "/api/data"
+                           (-> js/window .-location .-pathname))]
    [:section.hero.is-fullheight
     [:div.hero-body
      [:div.container
@@ -18,18 +20,19 @@
        [:div.box
         [:div.instructions
           [:h4.title.is-4 "Usage"]
-          [:div.usage "Get started by POSTing metrics to the data endpoint of this dashboard:"]
+          [:div.usage "Get started by pushing metrics to the data endpoint of this dashboard. Just set the data as
+                       query parameter and issue a GET request:"]
           [:p]
-          [:code "http POST " data-endpoint " commits:=3"]
+          [:code data-endpoint "?foo=3"]
           [:p]
           [:div.usage "The time will be set automatically. You can override the time value like this:"]
           [:p]
-          [:code "http POST " data-endpoint " commits:=3 time:=1510851134350"]
+          [:code data-endpoint "?foo=3&time=1510851134350"]
           [:p]
           [:div.usage "The key defines the unique name of the metric. The values must be numbers, the value of the time key must be millis since epoch."]
           [:div.usage "To automatically sum the values, you can specify a mode:"]
           [:p]
-          [:code "http POST " data-endpoint " bugs-fixed:=1 mode=sum"]]]]]]]))
+          [:code data-endpoint "?foo=3&mode=sum"]]]]]]]))
 
 (defn page
   []
