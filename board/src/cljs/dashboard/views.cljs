@@ -1,11 +1,8 @@
 (ns dashboard.views
   (:require
-   [dashboard.styles.core :as styles]
    [dashboard.grid :as grid]
    [dashboard.db :refer [db]]
-   [stylefy.core :as stylefy]
-   [cljs-http.client :as http]
-   [stylefy.core :as stylefy :refer [use-style]]))
+   [cljs-http.client :as http]))
 
 (defn instructions
   "Displays basic instructions on how to use the board."
