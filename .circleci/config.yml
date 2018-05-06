@@ -25,6 +25,7 @@ jobs:
       - run: docker-compose -f docker-compose.test.yml build --pull --no-cache
       - run: docker push jerben/dashboard:latest
       #- run: sudo apt install rsync -y
+      - run: echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
       - run: ssh root@51.15.110.49 "mkdir -p /usr/share/docker/dashboard/ && rm -f /usr/share/docker/dashboard/docker-compose.test.yml"
       - run: ssh root@51.15.110.49 "rm -f /usr/share/docker/dashboard/.env"
       - run: ssh root@51.15.110.49 "echo DATABASE_URL=$DATABASE_URL > /usr/share/docker/dashboard/.env"
