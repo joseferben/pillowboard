@@ -6,6 +6,7 @@ jobs:
     environment:
       LEIN_ROOT: nbd
       JVM_OPTS: -Xmx3200m
+    working_directory: /tmp
     steps:
       - checkout
       - run:
@@ -22,15 +23,24 @@ jobs:
       - store_artifacts:
           path: board/target/dashboard-standalone.jar
           destination: uberjar
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            - board/target
 
   release-stage:
     machine: true
+    working_directory: /tmp
     steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
       - run:
           name: Release if tests pass and branch is master
           command: |
+            mv /tmp/workspace/board/target/dashboard-standalone.jar .
             docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker build --pull -t jerben/dashboard:latest board
+            docker build --pull -t jerben/dashboard:latest .
             docker push jerben/dashboard:latest
 
   deploy-stage:
