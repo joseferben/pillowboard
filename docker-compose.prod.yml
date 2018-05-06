@@ -2,12 +2,16 @@ version: '3.3'
 services:
   dashboard:
     container_name: dashboard
-    image: jerben/dashboard:0.4.2
+    image: jerben/dashboard:0.4.3
     environment:
       - DATABASE_URL=${DATABASE_URL}
-      - DATABASE_NAME=${DATABASE_NAME}
       - HTTP_PORT=3000
-      - ENV=PRODUCTION
+      - ENV=production
+    networks:
+      - live
     ports:
       - 3000:80
     command: ["java", "-jar", "dashboard-standalone.jar"]
+
+networks:
+  live:

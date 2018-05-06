@@ -5,9 +5,13 @@ services:
     image: jerben/dashboard:latest
     environment:
       - DATABASE_URL=${DATABASE_URL}
-      - DATABASE_NAME=${DATABASE_NAME}
       - HTTP_PORT=3000
-      - ENV=STAGING
+      - ENV=staging
+    networks:
+      - staging
     ports:
       - 3000:3000
     command: ["java", "-jar", "dashboard-standalone.jar"]
+
+networks:
+  staging:
