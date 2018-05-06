@@ -36,13 +36,12 @@ jobs:
     machine: true
     working_directory: /tmp
     steps:
-      - checkout
       - attach_workspace:
           at: /tmp/workspace
       - run:
           name: Release if tests pass and branch is master
           command: |
-            mv /tmp/workspace/board/target/dashboard-standalone.jar .
+            mv /tmp/workspace/compiled/dashboard-standalone.jar .
             docker login -u $DOCKER_USER -p $DOCKER_PASS
             docker build --pull -t jerben/dashboard:latest .
             docker push jerben/dashboard:latest
