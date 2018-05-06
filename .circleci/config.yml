@@ -25,13 +25,13 @@ jobs:
       - run:
           name: Move artifacts and Dockerfile to workspace
           command: |
-            mkdir -p /tmp/workspace/compiled
-            mv board/target/dashboard-standalone.jar /tmp/workspace/compiled
-            mv board/Dockerfile /tmp/workspace/compiled
+            mkdir -p /tmp/workspace/board/target
+            mv board/target/dashboard-standalone.jar /tmp/workspace/board/target
+            mv board/Dockerfile /tmp/workspace/board
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
-            - compiled
+            - board
 
   release-stage:
     machine: true
@@ -42,10 +42,9 @@ jobs:
       - run:
           name: Release if tests pass and branch is master
           command: |
-            mv /tmp/workspace/compiled/dashboard-standalone.jar .
-            mv /tmp/workspace/compiled/Dockerfile .
+            mv /tmp/workspace/board .
             docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker build --pull -t jerben/dashboard:latest .
+            docker build --pull -t jerben/dashboard:latest board
             docker push jerben/dashboard:latest
 
   deploy-stage:
