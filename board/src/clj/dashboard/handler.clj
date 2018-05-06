@@ -2,7 +2,7 @@
   (:gen-class)
   (:require [compojure.core :refer [context defroutes GET routes]]
             [compojure.route :as route]
-            [dashboard.core :as core :refer [store-post!]]
+            [dashboard.core :as core :refer [fetch-state! store-post!]]
             [dashboard.db :as db]
             [ring.adapter.jetty :refer [run-jetty]]
             [ring.middleware.defaults
