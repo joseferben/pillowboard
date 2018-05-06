@@ -6,20 +6,20 @@ jobs:
     environment:
       LEIN_ROOT: nbd
       JVM_OPTS: -Xmx3200m
-    steps: # commands that comprise the `build` job
-      - checkout # check out source code to working directory
+    steps:
+      - checkout
       - run:
-          name: Install some System dependencies
+          name: Install some system dependencies
           command: sudo apt-get update -qq && sudo apt-get install -y ssh rsync
-      - restore_cache: # restores saved cache if checksum hasn't changed since the last run
+      - restore_cache:
           key: dashboard-{{ checksum "board/project.clj" }}
       - run: cd board && lein deps
-      - save_cache: # generate and store cache in the .m2 directory using a key template
+      - save_cache:
           paths:
             - ~/.m2
           key: dashboard-{{ checksum "board/project.clj" }}
       - run: cd board && lein uberjar
-      - store_artifacts: # upload test results for display in Test Summary
+      - store_artifacts:
           path: board/target/dashboard-standalone.jar
           destination: uberjar
       - setup_remote_docker:
@@ -28,7 +28,7 @@ jobs:
           name: Deploy staging
           command: |
             docker login -u $DOCKER_USER -p $DOCKER_PASS
-            cd board && docker build --pull -t jerben/dashboard:latest .
+            docker build --pull -t jerben/dashboard:latest board
             docker push jerben/dashboard:latest
             echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
             ssh root@51.15.110.49 "mkdir -p /usr/share/docker/dashboard/ && rm -f /usr/share/docker/dashboard/docker-compose.test.yml"
