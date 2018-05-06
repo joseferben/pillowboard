@@ -1,12 +1,11 @@
 (ns dashboard.db (:require [dashboard.pipeline.event :refer [event-type]]
                            [clj-http.client :as client]
-                           [environ.core :refer [env]]
                            [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]
-                           [cheshire.core :refer [generate-string parse-string]]
-                           [buddy.hashers :as hashers]))
+                           [cheshire.core :refer [generate-string parse-string]]))
 
-(def base-url "http://localhost:5984")
-(def db (or (env :database-url) (str base-url "/db")))
+(def base-url (get (System/getenv) "DATABASE_URL" "http://localhost:5984"))
+(def db-name (get (System/getenv) "DATABASE_NAME" "staging"))
+(def db (str base-url "/" db-name))
 
 (def doc-views {:dashboard {:all {:view "dashboards-view"}}
                 :sessions {:all {:view "sessions-view"}}})
@@ -91,7 +90,7 @@
   (debugf "Check whether we need to create a db.")
   (try
     (let [db-res (p-get db)]
-      (when (not= (:db_name db-res) "db")
+      (when (not= (:db_name db-res) db-name)
         (p-put! db {})))
     (catch Exception e
       (do

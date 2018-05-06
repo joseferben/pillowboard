@@ -1,8 +1,7 @@
 (ns dashboard.core
   (:require [reagent.core :as r]
             [taoensso.timbre :as timbre :refer-macros (tracef debugf infof warnf errorf)]
-            [dashboard.ws :refer [handle-event]]
-            [dashboard.actions :refer [init-db! init-ws!]]
+            [dashboard.actions :refer [init-db! init-poller!]]
             [dashboard.views :as views]
             [devtools.core :as devtools]))
 
@@ -15,8 +14,8 @@
 (defn init!
   []
   (infof "Initializing dashboard SPA.")
+  (init-poller!)
   (init-db!)
-  (init-ws! handle-event)
   (r/render [views/page]
             (.getElementById js/document "app")))
 

@@ -1,13 +1,88 @@
-image: clojure:lein-2.7.1
+---
+
+stages:
+  - compile
+  - test
+  - build
+  - deploy
+
+services:
+  - docker:dind
 
 cache:
-  paths:
-    - .m2/
+  key: "$CI_PIPELINE_ID"
+  paths: [.m2/]
 
-before_script:
-  - apt-get update -y
-  - lein deps
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_REGISTRY: "jerben"
+  CONTAINER_IMAGE: ${DOCKER_REGISTRY}/dashboard
+
+compile:
+  stage: compile
+  image: clojure:lein-2.7.0
+  artifacts:
+    expire_in: 5 days
+    paths: [target/]
+  script:
+    - cd board
+    - lein with-profile +ci deps
+    - lein with-profile +ci uberjar
 
 test:
+  stage: test
+  image: clojure:lein-2.7.0
   script:
-    - lein test
+    - cd board
+    - lein with-profile +ci deps
+    - lein with-profile +ci test :all
+    - lein with-profile +ci eastwood
+    - lein with-profile +ci cloverage | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g"
+
+staging-build:
+  stage: build
+  only: [master]
+  tags: [docker]
+  script:
+    - docker login -u $DOCKER_USER -p $DOCKER_PASS
+    - docker-compose -f docker-compose.test.yml build --pull --no-cache
+    - docker push ${CONTAINER_IMAGE}:latest
+
+production-build:
+  stage: build
+  only: [tags]
+  tags: [docker]
+  script:
+    - docker build --pull -t ${CONTAINER_IMAGE}:${CI_COMMIT_TAG} .
+    - docker push ${CONTAINER_IMAGE}:${CI_COMMIT_TAG}
+
+staging-deploy:
+  stage: deploy
+  only:
+    - master
+  script:
+    - docker login -u $DOCKER_USER -p $DOCKER_PASS
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - apt-get update -y && apt-get install rsync -y
+    - ssh root@51.15.110.49 "mkdir -p /usr/share/docker/dashboard/ && rm -f /usr/share/docker/dashboard/docker-compose.test.yml"
+    - ssh root@51.15.110.49 "rm -f /usr/share/docker/dashboard/.env"
+    - ssh root@51.15.110.49 "echo DATABASE_URL=$DATABASE_URL > /usr/share/docker/dashboard/.env"
+    - ssh root@51.15.110.49 "echo DATABASE_NAME=staging >> /usr/share/docker/dashboard/.env"
+    - rsync -avz docker-compose.test.yml root@51.15.110.49:/usr/share/docker/dashboard/
+    - ssh root@51.15.110.49 "cd /usr/share/docker/dashboard/ && docker-compose -f docker-compose.test.yml pull && docker-compose -f docker-compose.test.yml down && docker-compose -f docker-compose.test.yml up -d"
+
+production-deploy:
+  stage: deploy
+  only: [tags]
+  script:
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - apt-get update -y && apt-get install rsync -y
+    - ssh docker@econdocker.uzh.ch "mkdir -p /usr/share/docker/ueli-api/ && rm -f /usr/share/docker/ueli-api/docker-compose.prod.yml"
+    - rsync -avz docker-compose.prod.yml docker@econdocker.uzh.ch:/usr/share/docker/ueli-api/
+    - ssh docker@econdocker.uzh.ch "cd /usr/share/docker/ueli-api/ && docker-compose -f docker-compose.prod.yml pull && docker-compose -f docker-compose.prod.yml down && docker-compose -f docker-compose.prod.yml up -d"

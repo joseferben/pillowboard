@@ -9,22 +9,22 @@
 
 (defmulti chart-type :chart-type)
 
-(defmethod chart-type :linechart [data]
+(defmethod chart-type "linechart" [data]
   [:div.card (merge {:key (data :key)} (use-style styles/card-style))
    [:div.card-content (use-style styles/card-content-style)
     [:div.chart (use-style styles/component-style)
      [charts/line-chart-comp data]]]])
 
-(defmethod chart-type :areachart [data]
+(defmethod chart-type "areachart" [data]
   [:div.card (merge {:key (data :key)} (use-style styles/card-style))
    [:div.card-content (use-style styles/card-content-style)
     [:div.chart (use-style styles/component-style)
      [charts/area-chart-comp data]]]])
 
-(defmethod chart-type :scatterchart [data]
+(defmethod chart-type "scatterchart" [data]
   [:div.chart (merge {:key (data :key)}
                      (use-style (merge styles/component-style)))
-  [charts/scatter-chart-comp data]])
+   [charts/scatter-chart-comp data]])
 
 (defn- render-charts
   [charts]

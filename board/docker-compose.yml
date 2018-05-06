@@ -1,7 +1,6 @@
 version: '3'
 services:
   docstore:
-    image: couchdb
-    container_name: couchdb
+    image: couchdb:2.1.1
     ports:
       - 5984:5984

@@ -1,5 +1,6 @@
 (ns dashboard.pipeline.event
   (:require [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]
+            [dashboard.utils :refer [str->int]]
             [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen]))
 
@@ -98,7 +99,7 @@
   (let [label (extract-name post)
         value (get post label)
         time (or (post :time) (System/currentTimeMillis))]
-    {:name (name label) :time time :value value}))
+    {:name (name label) :time time :value (if (string? value) (Double/parseDouble value) value)}))
 
 (defn- append-meta-data
   "Extracts and adds meta data to the event map, only if the meta data exists."

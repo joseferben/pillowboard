@@ -25,7 +25,7 @@
   (data :metrics))
 
 (defn- wrapper [type color key]
-  [:> (types type) {:type "linear" "dataKey" key "stroke" color "fill" color :connectNulls true}])
+  [:> (types (keyword type)) {:type "linear" "dataKey" key "stroke" color "fill" color :connectNulls true}])
 
 (defn- millis-to-date [millis]
   (.format (js/moment. millis) "HH:mm:ss DD. MMM"))
