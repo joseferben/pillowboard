@@ -15,7 +15,7 @@ jobs:
           paths:
             - ~/.m2
           key: dashboard-{{ checksum "board/project.clj" }}
-      - run: cd board && lein do cloverage, eastwood, uberjar
+      - run: cd board && lein uberjar
       - store_artifacts: # upload test results for display in Test Summary
           path: board/target/dashboard-standalone.jar
           destination: uberjar
