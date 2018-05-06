@@ -30,6 +30,9 @@ jobs:
       - run: ssh root@51.15.110.49 "rm -f /usr/share/docker/dashboard/.env"
       - run: ssh root@51.15.110.49 "echo DATABASE_URL=$DATABASE_URL > /usr/share/docker/dashboard/.env"
       - run: ssh root@51.15.110.49 "echo DATABASE_NAME=staging >> /usr/share/docker/dashboard/.env"
+      - run:
+          name: Install some System dependencies
+          command: sudo apt-get update -qq && sudo apt-get install -y ssh rsync
       - run: apt update -y && install rsync
       - run: rsync -avz docker-compose.test.yml root@51.15.110.49:/usr/share/docker/dashboard/
       - run: ssh root@51.15.110.49 "docker login -u $DOCKER_USER -p $DOCKER_PASS"
