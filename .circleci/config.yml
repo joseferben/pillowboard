@@ -25,7 +25,7 @@ jobs:
       - setup_remote_docker:
           docker_layer_caching: true
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - run: docker-compose -f docker-compose.test.yml build --pull --no-cache
+      - run: cd board && docker build --pull -t jerben/dashboard:latest .
       - run: docker push jerben/dashboard:latest
       #- run: sudo apt install rsync -y
       - run: echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
