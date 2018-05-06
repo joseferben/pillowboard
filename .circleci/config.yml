@@ -3,6 +3,7 @@ jobs:
   build:
     docker:
       - image: circleci/clojure:lein-2.7.1
+    machine: true
     environment:
       LEIN_ROOT: nbd
       JVM_OPTS: -Xmx3200m
@@ -21,14 +22,6 @@ jobs:
           destination: uberjar
       - setup_remote_docker:
           docker_layer_caching: true
-      - run:
-          name: Install Docker client
-          command: |
-            set -x
-            VER="17.03.0-ce"
-            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
-            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
-            mv -f /tmp/docker/* /usr/bin
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run: docker-compose -f docker-compose.test.yml build --pull --no-cache
       - run: docker push jerben/dashboard:latest
