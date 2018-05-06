@@ -2,7 +2,7 @@ version: '3.3'
 services:
   dashboard:
     container_name: dashboard
-    image: jerben/dashboard:0.4.1
+    image: jerben/dashboard:0.4.2
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - DATABASE_NAME=${DATABASE_NAME}
