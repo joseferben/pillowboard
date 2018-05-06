@@ -22,11 +22,11 @@ jobs:
       - store_artifacts:
           path: board/target/dashboard-standalone.jar
           destination: uberjar
-     - run:
-         name: Move artifacts to workspace
-         command: |
-           mkdir -p /tmp/workspace/compiled
-           mv board/target/dashboard-standalone.jar /tmp/workspace/compiled
+      - run:
+          name: Move artifacts to workspace
+          command: |
+            mkdir -p /tmp/workspace/compiled
+            mv board/target/dashboard-standalone.jar /tmp/workspace/compiled
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
