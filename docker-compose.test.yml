@@ -8,5 +8,5 @@ services:
       - HTTP_PORT=3000
       - ENV=staging
     ports:
-      - 3000:3000
+      - "3000:3000"
     command: ["java", "-jar", "dashboard-standalone.jar"]

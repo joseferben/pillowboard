@@ -91,7 +91,7 @@ jobs:
             ssh root@51.15.110.49 "echo DATABASE_NAME=production >> /usr/share/docker/dashboard/.env"
             rsync -avz docker-compose.prod.yml root@51.15.110.49:/usr/share/docker/dashboard/
             ssh root@51.15.110.49 "docker login -u $DOCKER_USER -p \"$DOCKER_PASS\""
-            ssh root@51.15.110.49 "cd /usr/share/docker/dashboard/ && docker-compose -f docker-compose.prod.yml pull && docker-compose -f docker-compose.prod.yml -p staging down && docker-compose -f docker-compose.prod.yml -p staging up -d"
+            ssh root@51.15.110.49 "cd /usr/share/docker/dashboard/ && docker-compose -f docker-compose.prod.yml pull && docker-compose -f docker-compose.prod.yml -p live down && docker-compose -f docker-compose.prod.yml -p live up -d"
 
 workflows:
   version: 2
