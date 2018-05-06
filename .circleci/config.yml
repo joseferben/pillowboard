@@ -50,6 +50,7 @@ jobs:
   deploy-stage:
     machine: true
     steps:
+      - checkout
       - run:
           name: Deploy the docker images to staging
           command: |
