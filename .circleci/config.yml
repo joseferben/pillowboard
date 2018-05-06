@@ -3,7 +3,6 @@ jobs:
   build:
     docker:
       - image: circleci/clojure:lein-2.7.1
-    machine: true
     environment:
       LEIN_ROOT: nbd
       JVM_OPTS: -Xmx3200m
