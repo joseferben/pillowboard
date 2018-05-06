@@ -3,8 +3,6 @@ services:
   dashboard:
     container_name: dashboard
     image: jerben/dashboard:0.4.1
-    build:
-      context: ./board
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - DATABASE_NAME=${DATABASE_NAME}
