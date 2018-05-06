@@ -32,7 +32,7 @@
     (debugf "Initializing poller with board-id: %s" id)
     (js/setInterval #(go (>! timer :tick)) 5000)
     (go-loop []
-      (let [{response :body} (<! (http/get (str "http://localhost:3000/data/" (extract-id))))]
+      (let [{response :body} (<! (http/get (str "/data/" (extract-id))))]
           (debugf "Setting state: %s" response)
           (set-board-state! response))
       (<! timer)

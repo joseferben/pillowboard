@@ -4,7 +4,8 @@
                            [cheshire.core :refer [generate-string parse-string]]))
 
 (def base-url (get (System/getenv) "DATABASE_URL" "http://localhost:5984"))
-(def db (str base-url "/" (get (System/getenv) "DATABASE_NAME" "staging")))
+(def db-name (get (System/getenv) "DATABASE_NAME" "staging"))
+(def db (str base-url "/" db-name))
 
 (def doc-views {:dashboard {:all {:view "dashboards-view"}}
                 :sessions {:all {:view "sessions-view"}}})
@@ -89,7 +90,7 @@
   (debugf "Check whether we need to create a db.")
   (try
     (let [db-res (p-get db)]
-      (when (not= (:db_name db-res) "db")
+      (when (not= (:db_name db-res) db-name)
         (p-put! db {})))
     (catch Exception e
       (do
