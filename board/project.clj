@@ -28,6 +28,7 @@
                  [cljs-http "0.1.45"]]
 
   :plugins [[lein-figwheel "0.5.14"]
+            [lein-cloverage "1.0.10"]
             [lein-ring "0.9.7"]
             [lein-kibit "0.1.6"]
             [lein-bikeshed "0.5.0"]
@@ -40,6 +41,9 @@
   :uberjar-name "dashboard-standalone.jar"
   :main dashboard.handler
   :source-paths ["src/clj" "src/cljc"]
+  :test-selectors {:default (complement :slow)
+                   :slow    :slow
+                   :all (constantly true)}
   :cljsbuild {:builds
               [{:id "dev"
                 :source-paths ["src/cljs" "src/cljc"]
@@ -69,4 +73,5 @@
                    :clean-targets ^{:protect false} ["resources/public/js/compiled"
                                                      :target-path]}
              :uberjar {:hooks [leiningen.cljsbuild]
-                       :aot :all}})
+                       :aot :all}
+             :ci {:local-repo ".m2"}})

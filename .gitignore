@@ -76,3 +76,4 @@ flycheck_*.el
 /web/yarn-error.log
 
 /web/.byebug_history
+.env
