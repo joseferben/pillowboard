@@ -26,8 +26,6 @@ jobs:
   release-stage:
     machine: true
     steps:
-      - setup_remote_docker:
-          docker_layer_caching: true
       - run:
           name: Release if tests pass and branch is master
           command: |
@@ -38,8 +36,6 @@ jobs:
   deploy-stage:
     machine: true
     steps:
-      - setup_remote_docker:
-          docker_layer_caching: true
       - run:
           name: Deploy the docker images to staging
           command: |
