@@ -115,14 +115,14 @@ workflows:
             - build
           filters:
             branches:
-              only: master
+              ignore: /.*/
             tags:
-              only: ^(\d+\.)?(\d+\.)?(\*|\d+)$
+              only: /^(\d+\.)?(\d+\.)?(\*|\d+)$/
       - deploy-prod:
           requires:
             - release-prod
           filters:
             branches:
-              only: master
+              ignore: /.*/
             tags:
-              only: ^(\d+\.)?(\d+\.)?(\*|\d+)$
+              only: /^(\d+\.)?(\d+\.)?(\*|\d+)$/
