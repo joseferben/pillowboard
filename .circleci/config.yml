@@ -35,4 +35,4 @@ jobs:
       - run: ssh root@51.15.110.49 "echo DATABASE_NAME=staging >> /usr/share/docker/dashboard/.env"
       - run: rsync -avz docker-compose.test.yml root@51.15.110.49:/usr/share/docker/dashboard/
       - run: ssh root@51.15.110.49 "docker login -u $DOCKER_USER -p \"$DOCKER_PASS\""
-      - run: ssh root@51.15.110.49 "docker-compose -f /usr/share/docker/dashboard/docker-compose.test.yml pull && docker-compose -f /usr/share/docker/dashboard/docker-compose.test.yml down && docker-compose -f /usr/share/docker/dashboard/docker-compose.test.yml up -d"
+      - run: ssh root@51.15.110.49 "cd /usr/share/docker/dashboard/ && docker-compose -f docker-compose.test.yml pull && docker-compose -f docker-compose.test.yml down && docker-compose -f docker-compose.test.yml up -d"
