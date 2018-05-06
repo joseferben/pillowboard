@@ -9,7 +9,7 @@ jobs:
       JVM_OPTS: -Xmx3200m
     steps: # commands that comprise the `build` job
       - checkout # check out source code to working directory
-      - cd board
+      - run: cd board
       - restore_cache: # restores saved cache if checksum hasn't changed since the last run
           key: dashboard-{{ checksum "project.clj" }}
       - run: lein deps
