@@ -8,15 +8,14 @@ jobs:
       JVM_OPTS: -Xmx3200m
     steps: # commands that comprise the `build` job
       - checkout # check out source code to working directory
-      - run: cd board
       - restore_cache: # restores saved cache if checksum hasn't changed since the last run
           key: dashboard-{{ checksum "board/project.clj" }}
-      - run: lein deps
+      - run: cd board && lein deps
       - save_cache: # generate and store cache in the .m2 directory using a key template
           paths:
             - ~/.m2
           key: dashboard-{{ checksum "board/project.clj" }}
-      - run: lein do cloverage, eastwood, uberjar
+      - run: cd board && lein do cloverage, eastwood, uberjar
       - store_artifacts: # upload test results for display in Test Summary
           path: target/dashboard-standalone.jar
           destination: uberjar
