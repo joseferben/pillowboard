@@ -2,7 +2,7 @@ version: '3.3'
 services:
   dashboard:
     container_name: dashboard
-    image: jerben/dashboard:0.0.1
+    image: jerben/dashboard:0.4.0
     build:
       context: ./board
     environment:
