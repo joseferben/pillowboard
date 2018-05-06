@@ -99,7 +99,7 @@
   (let [label (extract-name post)
         value (get post label)
         time (or (post :time) (System/currentTimeMillis))]
-    {:name (name label) :time time :value (Double. value)}))
+    {:name (name label) :time time :value (if (string? value) (Double/parseDouble value) value)}))
 
 (defn- append-meta-data
   "Extracts and adds meta data to the event map, only if the meta data exists."
