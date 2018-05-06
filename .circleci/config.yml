@@ -6,7 +6,6 @@ jobs:
     environment:
       LEIN_ROOT: nbd
       JVM_OPTS: -Xmx3200m
-    working_directory: /tmp
     steps:
       - checkout
       - run:
@@ -24,7 +23,7 @@ jobs:
           path: board/target/dashboard-standalone.jar
           destination: uberjar
       - persist_to_workspace:
-          root: workspace
+          root: /tmp/workspace
           paths:
             - board/target
 
