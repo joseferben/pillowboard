@@ -23,10 +23,11 @@ jobs:
           path: board/target/dashboard-standalone.jar
           destination: uberjar
       - run:
-          name: Move artifacts to workspace
+          name: Move artifacts and Dockerfile to workspace
           command: |
             mkdir -p /tmp/workspace/compiled
             mv board/target/dashboard-standalone.jar /tmp/workspace/compiled
+            mv board/Dockerfile /tmp/workspace/compiled
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
@@ -42,6 +43,7 @@ jobs:
           name: Release if tests pass and branch is master
           command: |
             mv /tmp/workspace/compiled/dashboard-standalone.jar .
+            mv /tmp/workspace/compiled/Dockerfile .
             docker login -u $DOCKER_USER -p $DOCKER_PASS
             docker build --pull -t jerben/dashboard:latest .
             docker push jerben/dashboard:latest
