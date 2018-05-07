@@ -2,7 +2,6 @@
   (:require
    [dashboard.styles.core :as styles]
    [dashboard.charts.core :as charts]
-   [dashboard.actions :refer [init-poller!]]
    [taoensso.timbre :as timbre :refer-macros (tracef debugf infof warnf errorf)]
    [stylefy.core :as stylefy :refer [use-style]]))
 
@@ -34,6 +33,5 @@
 (defn main
   [{charts :charts}]
   (debugf "Rendering state: %s" charts)
-  (init-poller!)
   [:div.grid (use-style (merge styles/grid-wrapper styles/component-style))
    (render-charts charts)])
