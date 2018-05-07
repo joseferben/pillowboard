@@ -4,9 +4,9 @@
                            [cheshire.core :refer [generate-string parse-string]]))
 
 (defn base-url []
-  (let [url (get (System/getenv) "DATABASE_URL" "http://docstore:5984")]
+  (let [url (get (System/getenv) "DATABASE_URL" "http://localhost:5984")]
     (if (clojure.string/blank? url)
-      "http://docstore:5984"
+      "http://localhost:5984"
       url)))
 
 (def db-name (get (System/getenv) "ENV" "staging"))
