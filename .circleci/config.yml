@@ -18,7 +18,7 @@ jobs:
           paths:
             - ~/.m2
           key: dashboard-{{ checksum "board/project.clj" }}
-      - run: cd board && lein uberjar
+      - run: cd board && lein do test :all, eastwood, uberjar
       - store_artifacts:
           path: board/target/dashboard-standalone.jar
           destination: uberjar
@@ -40,7 +40,7 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
       - run:
-          name: Release if tests pass and branch is master
+          name: Release staging image if tests pass and branch is master
           command: |
             mv /tmp/workspace/board .
             docker login -u $DOCKER_USER -p $DOCKER_PASS
@@ -70,7 +70,7 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
       - run:
-          name: Release if tests pass and branch is master
+          name: Release production image if tests pass and branch is master
           command: |
             mv /tmp/workspace/board .
             docker login -u $DOCKER_USER -p $DOCKER_PASS
@@ -82,7 +82,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Deploy the docker images to staging
+          name: Deploy the docker images to live
           command: |
             echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
             ssh root@51.15.110.49 "mkdir -p /usr/share/docker/dashboard/ && rm -f /usr/share/docker/dashboard/docker-compose.prod.yml"
