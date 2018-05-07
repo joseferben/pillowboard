@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   dashboard:
-    image: jerben/dashboard:0.4.10
+    image: jerben/dashboard:0.4.11
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - HTTP_PORT=3000
