@@ -2,11 +2,13 @@
   (:require
    [dashboard.grid :as grid]
    [dashboard.db :refer [db]]
+   [dashboard.actions :refer [init-poller!]]
    [cljs-http.client :as http]))
 
 (defn instructions
   "Displays basic instructions on how to use the board."
   []
+  (init-poller!)
   (let [data-endpoint (str (-> js/window .-location .-origin)
                            "/api/data"
                            (-> js/window .-location .-pathname))]
@@ -49,4 +51,4 @@
      (cond
       (= "/" (-> js/window .-location .-pathname)) [starter]
       (or (nil? board-state) (empty? (board-state :charts))) [instructions]
-      :esle [:div.container [grid/main board-state]])]))
+      :else [:div.container [grid/main board-state]])]))
