@@ -3,9 +3,14 @@
                            [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]
                            [cheshire.core :refer [generate-string parse-string]]))
 
-(def base-url (get (System/getenv) "DATABASE_URL" "http://localhost:5984"))
+(defn base-url []
+  (let [url (get (System/getenv) "DATABASE_URL" "http://docstore:5984")]
+    (if (clojure.string/blank? url)
+      "http://docstore:5984"
+      url)))
+
 (def db-name (get (System/getenv) "ENV" "staging"))
-(def db (str base-url "/" db-name))
+(def db (str (base-url) "/" db-name))
 
 (def doc-views {:dashboard {:all {:view "dashboards-view"}}
                 :sessions {:all {:view "sessions-view"}}})
