@@ -31,11 +31,22 @@
           [:p]
           [:code data-endpoint "?foo=3&mode=sum"]]]]]]]))
 
+(defn starter
+  []
+  [:section.hero.is-fullheight
+    [:div.hero-body
+     [:div.container
+      [:div.column.is-8.is-offset-2
+       [:div.box
+        [:div.instructions
+          [:h4.title.is-4 "Your generated dashboard:"]
+          [:a {:href (str "/" (random-uuid))} "Open"]]]]]]])
+
 (defn page
   []
   (let [board-state (@db :board)]
-    [:div.top-container]
-    (if (or (nil? board-state) (empty? (board-state :charts)))
-      [instructions]
-      [:div.container
-       [grid/main board-state]])))
+    [:div.top-container
+     (cond
+      (= "/" (-> js/window .-location .-pathname)) [starter]
+      (or (nil? board-state) (empty? (board-state :charts))) [instructions]
+      :esle [:div.container [grid/main board-state]])]))
