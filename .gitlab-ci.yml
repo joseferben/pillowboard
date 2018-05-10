@@ -1,5 +1,10 @@
 ---
 
+# to use
+# ssh -NL localhost:2374:/var/run/docker.sock root@pillowboard.io
+# sudo docker -H localhost:2374 info
+# instead of ssh
+
 stages:
   - compile
   - test
@@ -14,7 +19,6 @@ cache:
   paths: [.m2/]
 
 variables:
-  DOCKER_DRIVER: overlay2
   DOCKER_REGISTRY: "jerben"
   CONTAINER_IMAGE: ${DOCKER_REGISTRY}/dashboard
 
