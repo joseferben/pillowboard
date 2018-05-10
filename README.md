@@ -117,3 +117,28 @@ Use [this](https://github.com/venantius/ultra) lein plugin to pretty print tests
 ```
 http POST :3000/api/dashboards 'Authorization:Token eBniAEtO/KEAGSP60/RD1Wwtb21V4RnNGWb6wZhHGms=' name=myboard
 ```
+
+## Deploy to docker swarm
+ docker service create \
+    --name dashboard \
+    --label traefik.port=3000 \
+    --label traefik.enable=true \
+    --network traefik-net \
+    --label traefik.backend.loadbalancer.sticky=true \
+    --label traefik.frontend.rule=Host:www.pillowboard.io \
+    --env DATABASE_URL=$DATABASE_URL \
+    jerben/dashboard:latest
+
+ docker service create \
+    --name traefik \
+    --constraint=node.role==manager \
+    --publish 80:80 --publish 8080:8080 \
+    --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
+    --network traefik-net \
+    traefik \
+    --docker \
+    --docker.swarmMode \
+    --docker.domain=traefik \
+    --docker.watch \
+    --api
+
