@@ -124,7 +124,7 @@ http POST :3000/api/dashboards 'Authorization:Token eBniAEtO/KEAGSP60/RD1Wwtb21V
     --label traefik.port=3000 \
     --label traefik.enable=true \
     --network traefik-net \
-    --label traefik.backend.loadbalancer.sticky=true \
+    --label traefik.default.protocol=https \
     --label traefik.frontend.rule=Host:pillowboard.io,www.pillowboard.io \
     --env DATABASE_URL=$DATABASE_URL \
     jerben/dashboard:latest
@@ -132,13 +132,24 @@ http POST :3000/api/dashboards 'Authorization:Token eBniAEtO/KEAGSP60/RD1Wwtb21V
  docker service create \
     --name traefik \
     --constraint=node.role==manager \
-    --publish 80:80 --publish 8080:8080 \
+    --publish 80:80 --publish 8080:8080 --publish 443:443 \
     --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
     --network traefik-net \
     traefik \
+    --logLevel=DEBUG \
+    --entrypoints="Name:http Address::80 Redirect.EntryPoint:https" \
+    --entrypoints="Name:https Address::443 TLS" \
+    --defaultentrypoints=http,https \
+    --acme \
+    --acme.storage=acme.json \
+    --acme.entryPoint=https \
+    --acme.httpChallenge.entryPoint=http \
+    --acme.onHostRule=true \
+    --acme.onDemand=false \
+    --acme.email=josef@pillowboard.io \
     --docker \
     --docker.swarmMode \
-    --docker.domain=traefik \
+    --docker.domain=pillowboard.io \
     --docker.watch \
     --api
 
