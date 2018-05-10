@@ -125,7 +125,7 @@ http POST :3000/api/dashboards 'Authorization:Token eBniAEtO/KEAGSP60/RD1Wwtb21V
     --label traefik.enable=true \
     --network traefik-net \
     --label traefik.backend.loadbalancer.sticky=true \
-    --label traefik.frontend.rule=Host:www.pillowboard.io \
+    --label traefik.frontend.rule=Host:pillowboard.io,www.pillowboard.io \
     --env DATABASE_URL=$DATABASE_URL \
     jerben/dashboard:latest
 
