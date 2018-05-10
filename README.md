@@ -124,7 +124,7 @@ http POST :3000/api/dashboards 'Authorization:Token eBniAEtO/KEAGSP60/RD1Wwtb21V
     --label traefik.port=3000 \
     --label traefik.enable=true \
     --network traefik-net \
-    --label traefik.default.protocol=https \
+    --label traefik.default.protocol=http \
     --label traefik.frontend.rule=Host:pillowboard.io,www.pillowboard.io \
     --env DATABASE_URL=$DATABASE_URL \
     jerben/dashboard:latest
