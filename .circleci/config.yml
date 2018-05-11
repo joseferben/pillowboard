@@ -50,7 +50,6 @@ jobs:
   deploy-stage:
     machine: true
     steps:
-      - checkout
       - run:
           name: Deploy the docker images to staging
           command: |
@@ -75,18 +74,12 @@ jobs:
   deploy-prod:
     machine: true
     steps:
-      - checkout
       - run:
           name: Deploy the docker images to live
           command: |
             echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-            ssh root@51.15.110.49 "mkdir -p /usr/share/docker/dashboard/ && rm -f /usr/share/docker/dashboard/docker-compose.prod.yml"
-            ssh root@51.15.110.49 "rm -f /usr/share/docker/dashboard/.env"
-            ssh root@51.15.110.49 "echo DATABASE_URL=$DATABASE_URL > /usr/share/docker/dashboard/.env"
-            ssh root@51.15.110.49 "echo DATABASE_NAME=production >> /usr/share/docker/dashboard/.env"
-            rsync -avz docker-compose.prod.yml root@51.15.110.49:/usr/share/docker/dashboard/
-            ssh root@51.15.110.49 "docker login -u $DOCKER_USER -p \"$DOCKER_PASS\""
-            ssh root@51.15.110.49 "cd /usr/share/docker/dashboard/ && docker-compose -f docker-compose.prod.yml pull && docker-compose -f docker-compose.prod.yml -p live down && docker-compose -f docker-compose.prod.yml -p live up -d"
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            ssh root@pillowboard.io "docker service update --force --with-registry-auth --image jerben/dashboard:$CIRCLE_TAG dashboard"
 
 workflows:
   version: 2
