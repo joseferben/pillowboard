@@ -5,3 +5,4 @@ COPY target/dashboard-standalone.jar dashboard-standalone.jar
 ENV PORT 3000
 
 EXPOSE 3000
+CMD java -jar dashboard-standalone.jar
