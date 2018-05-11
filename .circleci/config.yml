@@ -54,7 +54,7 @@ jobs:
           name: Deploy the docker images to staging
           command: |
             echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-            ssh root@pillowboard.io "docker login -u $DOCKER_USER -p $DOCKER_PASS"
+            ssh root@pillowboard.io "docker login -u $DOCKER_USER -p '$DOCKER_PASS'"
             ssh root@pillowboard.io "docker service update --force --with-registry-auth --image jerben/dashboard:latest dashboard-staging"
 
   release-prod:
@@ -78,7 +78,7 @@ jobs:
           name: Deploy the docker images to live
           command: |
             echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-            ssh root@pillowboard.io "docker login -u $DOCKER_USER -p $DOCKER_PASS"
+            ssh root@pillowboard.io "docker login -u $DOCKER_USER -p '$DOCKER_PASS'"
             ssh root@pillowboard.io "docker service update --force --with-registry-auth --image jerben/dashboard:$CIRCLE_TAG dashboard"
 
 workflows:
