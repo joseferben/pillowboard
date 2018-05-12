@@ -2,7 +2,8 @@
 
 (def centric-content {:margin-left "auto"
                       :margin-right "auto"
-                      :width "500px"})
+                      :margin-top "2em"
+                      :max-width "700px"})
 
 (def component-style {:background-color "transparent"})
 

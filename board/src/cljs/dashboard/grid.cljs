@@ -1,6 +1,6 @@
 (ns dashboard.grid
   (:require
-   [dashboard.styles.core :as styles]
+   [dashboard.styles :as styles]
    [dashboard.charts.core :as charts]
    [taoensso.timbre :as timbre :refer-macros (tracef debugf infof warnf errorf)]
    [stylefy.core :as stylefy :refer [use-style]]))
