@@ -1,4 +1,4 @@
-(defproject dashboard "0.5.4"
+(defproject dashboard "0.5.5"
   :description "Zero config dashboard that makes sense of your data."
   :url "http://board.erben.io"
   :license {:name "Eclipse Public License"
@@ -51,15 +51,16 @@
                            :open-urls ["http://localhost:3449/index.html"]}
                 :compiler {:main dashboard.core
                            :asset-path "/js/compiled/out"
+                           :output-dir "resources/public/js/compiled/out"
                            :output-to "resources/public/js/compiled/app.js"
                            :source-map-timestamp true
                            :optimizations :none
+                           :pretty-print true
                            :preloads [devtools.preload]}}
                :min
                {:source-paths ["src/cljs" "src/cljc"]
                 :jar true
                 :compiler {:main dashboard.core
-                           :asset-path "/js/compiled/out"
                            :output-to "resources/public/js/compiled/app.js"
                            :closure-defines {goog.DEBUG false}
                            :optimizations :advanced
