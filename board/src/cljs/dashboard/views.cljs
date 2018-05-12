@@ -11,7 +11,7 @@
   []
   [:div (use-style (merge {:text-align "center"} s/centric-content))
    [:a {:href "https://pillowboard.io"}
-    [:img {:src "/images/pillow.png"}]]])
+    [:img {:src "/images/pillow.svg" :width "180em"}]]])
 
 (defn instructions
   "Displays basic instructions on how to use the board."
