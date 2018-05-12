@@ -51,8 +51,8 @@
           [:> line-chart (merge chart-dimensions {:data (transform data)})
            ;; TODO read x-axis from settings
            [:> x-axis {"dataKey" :time :type :number :domain ["dataMin" "dataMax"]
-                       :tickFormatter millis-to-date :tick {"fill" "#dee5ed"}}]
-           [:> y-axis {:tick {"fill" "#dee5ed"}}]
+                       :tickFormatter millis-to-date}]
+           [:> y-axis]
            [:> cartesian-grid {"strokeDasharray" "3 3"}]
            [:> tooltip]
            [:> legend]]
@@ -81,8 +81,8 @@
           [:> area-chart (merge chart-dimensions
                           {:data (transform data)})
            [:> x-axis {"dataKey" :time :type :number :domain ["dataMin" "dataMax"]
-                       :tickFormatter millis-to-date :tick {"fill" "#dee5ed"}}]
-           [:> y-axis {:tick {"fill" "#dee5ed"}}]
+                       :tickFormatter millis-to-date}]
+           [:> y-axis ]
            [:> cartesian-grid {"strokeDasharray" "3 3"}]
            [:> tooltip]
            [:> legend]]

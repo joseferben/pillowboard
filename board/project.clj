@@ -48,7 +48,7 @@
               {:dev
                {:source-paths ["src/cljs" "src/cljc"]
                 :figwheel {:on-jsload "dashboard.core/main"
-                           :open-urls ["http://localhost:3449/index.html"]}
+                           :open-urls ["http://localhost:3000"]}
                 :compiler {:main dashboard.core
                            :asset-path "/js/compiled/out"
                            :output-dir "resources/public/js/compiled/out"

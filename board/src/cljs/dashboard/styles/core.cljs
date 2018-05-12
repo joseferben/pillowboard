@@ -7,8 +7,7 @@
                    :flex-direction "row"
                    :flex-wrap "wrap"})
 
-(def card-style {:background-color "#273646"
-                 :border "none"
+(def card-style {:border "none"
                  :margin "0.3em"})
 
 (def margin-top {:margin-top "12px"})
