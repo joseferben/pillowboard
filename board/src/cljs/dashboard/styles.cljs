@@ -1,8 +1,8 @@
-(ns dashboard.styles.core)
+(ns dashboard.styles)
 
-(def content-container {:margin-left "auto"
-                        :margin-right "auto"
-                        :width "500px"})
+(def centric-content {:margin-left "auto"
+                      :margin-right "auto"
+                      :width "500px"})
 
 (def component-style {:background-color "transparent"})
 

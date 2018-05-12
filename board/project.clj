@@ -22,7 +22,7 @@
                  [reagent "0.8.0"]
                  [cljs-ajax "0.7.3"]
                  [binaryage/devtools "0.9.4"]
-                 [stylefy "1.0.1"]
+                 [stylefy "1.5.0"]
                  [cljsjs/recharts "0.22.4-2" :exclusions [cljsjs/react-with-addons]]
                  [cljsjs/moment "2.17.1-1"]
                  [cljs-http "0.1.45"]]
