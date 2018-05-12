@@ -15,8 +15,6 @@
             [ring.util.response :refer [content-type resource-response]]
             [taoensso.timbre :as timbre :refer [debugf infof]]))
 
-(timbre/set-level! :debug)
-
 (def OK 200)
 (def BAD_REQUEST 400)
 
@@ -63,5 +61,6 @@
 (defn -main [& args]
   (let [port (Integer/parseInt (get (System/getenv) "HTTP_PORT" "3000"))]
     (db/init!)
+    (timbre/merge-config! {:level :debug})
     (run-jetty app {:port port})
     (infof "Web server is running at port %s." port)))

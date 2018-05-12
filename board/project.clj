@@ -50,18 +50,20 @@
                 :figwheel {:on-jsload "dashboard.core/main"
                            :open-urls ["http://localhost:3449/index.html"]}
                 :compiler {:main dashboard.core
+                           :asset-path "/js/compiled/out"
                            :output-to "resources/public/js/compiled/app.js"
                            :source-map-timestamp true
+                           :optimizations :none
                            :preloads [devtools.preload]}}
                :min
-                {:source-paths ["src/cljs" "src/cljc"]
-                 :jar true
-                 :compiler {:main dashboard.core
-                            :asset-path "/js/compiled/out"
-                            :output-dir "resources/public/js/compiled/out"
-                            :output-to "resources/public/js/compiled/app.js"
-                            :optimizations :advanced
-                            :pretty-print false}}}}
+               {:source-paths ["src/cljs" "src/cljc"]
+                :jar true
+                :compiler {:main dashboard.core
+                           :asset-path "/js/compiled/out"
+                           :output-to "resources/public/js/compiled/app.js"
+                           :closure-defines {goog.DEBUG false}
+                           :optimizations :advanced
+                           :pretty-print false}}}}
   :profiles {:dev {:dependencies [[binaryage/devtools "0.9.4"]
                                   [org.clojure/tools.nrepl "0.2.12"]
                                   [figwheel-sidecar "0.5.14"]

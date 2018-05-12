@@ -4,8 +4,6 @@
             [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen]))
 
-(timbre/set-level! :trace)
-
 (def event-labels '("commit" "merge-request" "user-registration"
                        "incident" "error" "alert" "tickets-done"
                        "time-spent" "foo" "bar"))

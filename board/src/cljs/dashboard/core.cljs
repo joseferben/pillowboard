@@ -5,13 +5,15 @@
             [dashboard.views :as views]))
 
 (enable-console-print!)
-(timbre/set-level! :info)
 
-(infof "ClojureScript appears to have loaded correctly.")
+(def debug?
+  ^boolean goog.DEBUG)
 
 (defn init!
   []
-  (infof "Initializing dashboard SPA.")
+  (timbre/merge-config! {:level (if debug? :debug :error)})
+  (debugf "ClojureScript appears to have loaded correctly.")
+  (debugf "Initializing dashboard SPA.")
   (init-db!)
   (r/render [views/page]
             (.getElementById js/document "app")))

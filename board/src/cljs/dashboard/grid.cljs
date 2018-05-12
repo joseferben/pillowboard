@@ -5,8 +5,6 @@
    [taoensso.timbre :as timbre :refer-macros (tracef debugf infof warnf errorf)]
    [stylefy.core :as stylefy :refer [use-style]]))
 
-(timbre/set-level! :debug)
-
 (defmulti chart-type :chart-type)
 
 (defmethod chart-type "linechart" [data]
