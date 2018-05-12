@@ -23,7 +23,7 @@
                  [cljs-ajax "0.7.3"]
                  [binaryage/devtools "0.9.4"]
                  [stylefy "1.0.1"]
-                 [cljsjs/recharts "0.22.4-2"]
+                 [cljsjs/recharts "0.22.4-2" :exclusions [cljsjs/react-with-addons]]
                  [cljsjs/moment "2.17.1-1"]
                  [cljs-http "0.1.45"]]
 
@@ -45,23 +45,23 @@
                    :slow    :slow
                    :all (constantly true)}
   :cljsbuild {:builds
-              [{:id "dev"
-                :source-paths ["src/cljs" "src/cljc"]
+              {:dev
+               {:source-paths ["src/cljs" "src/cljc"]
                 :figwheel {:on-jsload "dashboard.core/main"
                            :open-urls ["http://localhost:3449/index.html"]}
                 :compiler {:main dashboard.core
-                           :asset-path "/js/compiled/out"
                            :output-to "resources/public/js/compiled/app.js"
-                           :output-dir "resources/public/js/compiled/out"
                            :source-map-timestamp true
                            :preloads [devtools.preload]}}
-               {:id "min"
-                :source-paths ["src/cljs" "src/cljc"]
-                :compiler {:output-to "resources/public/js/compiled/app.js"
-                           :main dashboard.core
-                           :asset-path "/js/compiled/out"
-                           :optimizations :advanced
-                           :pretty-print false}}]}
+               :min
+                {:source-paths ["src/cljs" "src/cljc"]
+                 :jar true
+                 :compiler {:main dashboard.core
+                            :asset-path "/js/compiled/out"
+                            :output-dir "resources/public/js/compiled/out"
+                            :output-to "resources/public/js/compiled/app.js"
+                            :optimizations :advanced
+                            :pretty-print false}}}}
   :profiles {:dev {:dependencies [[binaryage/devtools "0.9.4"]
                                   [org.clojure/tools.nrepl "0.2.12"]
                                   [figwheel-sidecar "0.5.14"]
@@ -72,6 +72,6 @@
                    :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
                    :clean-targets ^{:protect false} ["resources/public/js/compiled"
                                                      :target-path]}
-             :uberjar {:hooks [leiningen.cljsbuild]
-                       :aot :all}
+             :uberjar {:aot :all
+                       :prep-tasks ["compile" ["cljsbuild" "once" "min"]]}
              :ci {:local-repo ".m2"}})

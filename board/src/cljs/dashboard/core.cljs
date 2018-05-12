@@ -2,10 +2,8 @@
   (:require [reagent.core :as r]
             [taoensso.timbre :as timbre :refer-macros (tracef debugf infof warnf errorf)]
             [dashboard.actions :refer [init-db!]]
-            [dashboard.views :as views]
-            [devtools.core :as devtools]))
+            [dashboard.views :as views]))
 
-(devtools/install!)
 (enable-console-print!)
 (timbre/set-level! :info)
 
