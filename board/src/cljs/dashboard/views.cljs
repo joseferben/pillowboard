@@ -4,8 +4,14 @@
    [dashboard.grid :as grid]
    [dashboard.db :refer [db]]
    [dashboard.actions :refer [init-poller!]]
-   [stylefy.core :as stylefy]
+   [stylefy.core :refer [use-style]]
    [cljs-http.client :as http]))
+
+(defn header
+  []
+  [:div (use-style (merge {:text-align "center"} s/centric-content))
+   [:a {:href "https://pillowboard.io"}
+    [:img {:src "/images/pillow.png"}]]])
 
 (defn instructions
   "Displays basic instructions on how to use the board."
@@ -14,7 +20,10 @@
   (let [data-endpoint (str (-> js/window .-location .-origin)
                            "/api/data"
                            (-> js/window .-location .-pathname))]
-    [:div.content-container (stylefy/use-style s/centric-content)
+
+   [:div (use-style s/centric-content)
+    [header]
+    [:div
      [:h5 "How to"]
      [:div.usage "Get started by pushing metrics to the data endpoint of this dashboard. Just set the data as query parameter and issue a GET request:"]
      [:figure
@@ -25,21 +34,20 @@
      [:div.usage "The key defines the unique name of the metric. The values must be numbers, the value of the time key must be millis since epoch."]
      [:div.usage "To automatically sum the values, you can specify a mode:"]
      [:figure
-       [:code data-endpoint "?foo=3&mode=sum"]]]))
+       [:code data-endpoint "?foo=3&mode=sum"]]]]))
 
 (defn starter
   []
-  [:div.content-container (stylefy/use-style s/centric-content)
-   [:span
-    [:a {:href "https://pillowboard.io"} [:h5 "pillowboard.io"]]
+  [:div (use-style s/centric-content)
+   [header]
+   [:div.welcome (use-style {:margin-top "7em"})
+     [:b "Pillowboard.io"]
+     [:span " visualizes your data without any prior configuration. Start pushing your data, no registration required."]
     [:p]
-    [:b "Pillowboard"]]
-   [:span " visualizes your data without any prior configuration. Start pushing your data right now, no registration and no configuration required!"]
-   [:p]
-   [:span "Visit your personal dashboard to get started: "]
-   [:br]
-   (let [personal-url (str (-> js/window .-location .-origin) "/" (random-uuid))]
-      [:a {:href personal-url} personal-url])])
+    [:span "Visit your personal dashboard to get started: "]
+    [:br]
+    (let [personal-url (str (-> js/window .-location .-origin) "/" (random-uuid))]
+      [:a {:href personal-url} personal-url])]])
 
 (defn page
   []
