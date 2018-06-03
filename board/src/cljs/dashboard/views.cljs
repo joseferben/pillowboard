@@ -9,9 +9,9 @@
 
 (defn header
   []
-  [:div (use-style (merge {:text-align "center"} s/centric-content))
+  [:div (use-style (merge {:text-align "right" :margin-bottom "5em"} s/centric-content))
    [:a {:href "https://pillowboard.io"}
-    [:img {:src "/images/pillow.svg" :width "180em"}]]])
+    [:img {:src "/images/pillow.svg" :width "80em"}]]])
 
 (defn instructions
   "Displays basic instructions on how to use the board."
@@ -40,14 +40,23 @@
   []
   [:div (use-style s/centric-content)
    [header]
-   [:div.welcome (use-style {:margin-top "7em"})
+   [:div.welcome
      [:b "Pillowboard.io"]
      [:span " visualizes your data without any prior configuration. Start pushing your data, no registration required."]
     [:p]
     [:span "Visit your personal dashboard to get started: "]
     [:br]
-    (let [personal-url (str (-> js/window .-location .-origin) "/" (random-uuid))]
-      [:a {:href personal-url} personal-url])]])
+    [:code
+     [:p]
+     (let [personal-url (str (-> js/window .-location .-origin) "/" (random-uuid))]
+      [:a {:href personal-url} personal-url])]]])
+
+(defn howto
+  []
+  [:div (use-style s/centric-content)
+   [header]
+   [:div.instructions (use-style {:margin-top "7em"})
+     [:b "Pillowboard.io"]]])
 
 (defn page
   []
@@ -55,5 +64,6 @@
     [:div
      (cond
       (= "/" (-> js/window .-location .-pathname)) [starter]
+      (= "/howto" (-> js/window .-location .-pathname)) [howto]
       (or (nil? board-state) (empty? (board-state :charts))) [instructions]
       :else [:div.container [grid/main board-state]])]))

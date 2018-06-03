@@ -1,8 +1,7 @@
 (defproject dashboard "0.5.6"
   :description "Zero config dashboard that makes sense of your data."
-  :url "http://board.erben.io"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :url "http://pillowboard.io"
+  :license {:name "Proprietary"}
   :min-lein-version "2.7.0"
   :global-vars {*warn-on-reflection* false
                 *assert* true}
