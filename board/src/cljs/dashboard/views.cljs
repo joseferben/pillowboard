@@ -36,21 +36,6 @@
      [:figure
        [:code data-endpoint "?foo=3&mode=sum"]]]]))
 
-(defn starter
-  []
-  [:div (use-style s/centric-content)
-   [header]
-   [:div.welcome
-     [:b "Pillowboard.io"]
-     [:span " visualizes your data without any prior configuration. Start pushing your data, no registration required."]
-    [:p]
-    [:span "Visit your personal dashboard to get started: "]
-    [:br]
-    [:code
-     [:p]
-     (let [personal-url (str (-> js/window .-location .-origin) "/" (random-uuid))]
-      [:a {:href personal-url} personal-url])]]])
-
 (defn howto
   []
   [:div (use-style s/centric-content)
@@ -63,7 +48,5 @@
   (let [board-state (@db :board)]
     [:div
      (cond
-      (= "/" (-> js/window .-location .-pathname)) [starter]
-      (= "/howto" (-> js/window .-location .-pathname)) [howto]
       (or (nil? board-state) (empty? (board-state :charts))) [instructions]
       :else [:div.container [grid/main board-state]])]))

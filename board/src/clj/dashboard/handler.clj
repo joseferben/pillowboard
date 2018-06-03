@@ -4,6 +4,7 @@
             [compojure.route :as route]
             [dashboard.core :as core :refer [fetch-state! store-post!]]
             [dashboard.db :as db]
+            [dashboard.sites :as sites]
             [ring.adapter.jetty :refer [run-jetty]]
             [ring.middleware.defaults
              :refer
@@ -38,8 +39,8 @@
   (content-type (resource-response "index.html" {:root "public"}) "text/html"))
 
 (defroutes site-routes
-  (GET "/" [] (index-html))
-  (GET "/:id" [] (index-html))
+  (GET "/" [] (sites/index))
+  (GET "/:id" [] (sites/dashboard))
   (route/resources "/")
   (route/not-found "Page not found - 404"))
 
