@@ -1,6 +1,6 @@
 (defproject dashboard "0.5.6"
   :description "Zero config dashboard that makes sense of your data."
-  :url "http://pillowboard.io"
+  :url "https://pillowboard.io"
   :license {:name "Proprietary"}
   :min-lein-version "2.7.0"
   :global-vars {*warn-on-reflection* false
