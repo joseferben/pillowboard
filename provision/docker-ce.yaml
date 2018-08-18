@@ -177,16 +177,12 @@
   become: yes
   become_method: sudo
   tasks:
-  - name: List networks
-    shell: docker network ls
-    register: docker_networks
-  - name: Create network when not there
-    shell: docker network create --driver overlay --subnet {{ item.subnet }} --gateway {{ item.gateway }} {{ item.name }}
-    with_items:
-        -  {
-            	name: 'caylent-default',
-            	subnet: '17.0.0.0/16',
-            	gateway: '17.0.0.1'
-            }
+  - name: Create Traefik Network
+    become: yes
+    tags: [traefik]
+    shell: bash -lc 'docker network create --driver=overlay traefik'
 
-    when: docker_networks.stdout.find( item.name ) == -1
+  - name: Create Webgateway Network
+    become: yes
+    tags: [traefik]
+    shell: bash -lc 'docker network create --driver=overlay webgateway'
