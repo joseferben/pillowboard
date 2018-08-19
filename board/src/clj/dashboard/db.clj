@@ -1,7 +1,8 @@
-(ns dashboard.db (:require [dashboard.pipeline.event :refer [event-type]]
-                           [clj-http.client :as client]
-                           [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]
-                           [cheshire.core :refer [generate-string parse-string]]))
+(ns dashboard.db
+  (:require [dashboard.pipeline.event :refer [event-type]]
+            [clj-http.client :as client]
+            [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]
+            [cheshire.core :refer [generate-string parse-string]]))
 
 (defn base-url []
   (let [url (get (System/getenv) "DATABASE_URL" "http://localhost:5984")]
@@ -58,7 +59,7 @@
 
 (defn- keywordize-events
   "Given a list of events returns a list of events with keywordized map values where
-  it makes sense (types, enumarions)."
+  it makes sense (types, enumerations)."
   [events]
   (map (fn [evt] (update-in evt [:meta :mode] keyword)) events))
 

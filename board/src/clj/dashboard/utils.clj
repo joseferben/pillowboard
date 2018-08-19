@@ -7,6 +7,7 @@
   an int."
   [str]
   (cond
+    (nil? str) 0
     (number? str) str
     (and (re-matches (re-pattern "\\d+") str) (string? str)) (read-string str)
-    :else str))
+    :else 0))
