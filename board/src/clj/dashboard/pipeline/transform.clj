@@ -1,7 +1,7 @@
 (ns dashboard.pipeline.transform)
 
 (defn sort-metrics [metrics]
-  (sort (fn [a b] (compare (get a "time") (get b "time"))) metrics))
+  (sort (fn [a b] (compare (:time a) (:time b))) metrics))
 
 (defn- sort-charts [charts]
   (map #(update % :metrics sort-metrics) charts))

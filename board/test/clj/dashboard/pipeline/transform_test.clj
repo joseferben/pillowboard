@@ -16,7 +16,7 @@
 (deftest sort-metrics
   (let [input [{:foo 42} {:bar 24}]]
      (is (= input (sut/sort-metrics input))))
-  (is (= [{"time" 24} {"time" 42}]
-         (sut/sort-metrics [{"time" 42} {"time" 24}])))
-  (is (= [{"time" "abc"} {"time" "bcd"}]
-         (sut/sort-metrics [{"time" "bcd"} {"time" "abc"}]))))
+  (is (= [{:time 24} {:time 42}]
+         (sut/sort-metrics [{:time 42} {:time 24}])))
+  (is (= [{:time :abc} {:time :bcd}]
+         (sut/sort-metrics [{:time :bcd} {:time :abc}]))))

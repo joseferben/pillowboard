@@ -5,14 +5,14 @@
             [clojure.spec.gen.alpha :as gen]))
 
 (def event-labels '("commit" "merge-request" "user-registration"
-                       "incident" "error" "alert" "tickets-done"
-                       "time-spent" "foo" "bar"))
+                    "incident" "error" "alert" "tickets-done"
+                    "time-spent" "foo" "bar"))
 
 (def supported-meta-data [:mode])
 
 (s/def ::time-value (s/and int? pos?))
-(s/def ::metric-value (s/and number?))
-(s/def ::metric-name (s/and string?))
+(s/def ::metric-value number?)
+(s/def ::metric-name keyword?)
 
 (s/def ::name ::metric-name)
 (s/def ::time ::time-value)
@@ -39,7 +39,7 @@
       :data
       first
       keys
-      (filter #(not= % "time"))
+      (filter #(not= % :time))
       first))
 
 (defn- get-idx [state label]
@@ -62,10 +62,10 @@
         idx (get-idx state name)]
     (if (= idx -1)
         (conj state {:category :timeseries
-                     :data #{{"time" time name value}}
+                     :data #{{:time time name value}}
                      :meta (:meta event {})})
         (-> state
-            (update-in [idx :data] conj {"time" time name value})
+            (update-in [idx :data] conj {:time time name value})
             (update-in [idx :meta] (fn [old] (merge (:meta event) old)))))))
 
 (defmethod fold-event :gauge
@@ -90,14 +90,14 @@
   (debugf "Received raw post of type gauge: %s" post)
   (let [label (extract-name post)
         value (str (get post label))]
-    {:name (name label) :value value}))
+    {:name label :value value}))
 
 (defmethod post->data :default [post]
   (debugf "Received raw post of type timeseries: %s" post)
   (let [label (extract-name post)
         value (get post label)
         time (or (post :time) (System/currentTimeMillis))]
-    {:name (name label) :time time :value (if (string? value) (Double/parseDouble value) value)}))
+    {:name label :time time :value (if (string? value) (Double/parseDouble value) value)}))
 
 (defn- append-meta-data
   "Extracts and adds meta data to the event map, only if the meta data exists."

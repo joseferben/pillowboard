@@ -9,5 +9,5 @@
   (cond
     (nil? str) 0
     (number? str) str
-    (and (re-matches (re-pattern "\\d+") str) (string? str)) (read-string str)
+    (and (string? str) (re-matches (re-pattern "\\d+") str) (string? str)) (read-string str)
     :else 0))

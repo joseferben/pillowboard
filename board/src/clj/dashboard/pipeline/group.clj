@@ -9,7 +9,7 @@
   (->> metric
       first
       keys
-      (filter #(not= % "time"))
+      (filter #(not= % :time))
       first))
 
 (defn- has-space-left? [_ grp]
@@ -59,7 +59,7 @@
      :else (recur metric original (rest to-check) (inc idx)))))
 
 (defn- aggregate [metrics label]
-  (let [metrics (sort-by #(get % "time") metrics)]
+  (let [metrics (sort-by #(:time %) metrics)]
     (reduce (fn [acc b] (conj acc (assoc b label (+ (get b label 0)
                                                     (get (last acc) label 0))))) [] metrics)))
 
@@ -89,4 +89,4 @@
   ([strategy grouped]
    (->> grouped
         (map execute-aggregate)
-        (map #(update % :metrics (partial full-join "time" strategy))))))
+        (map #(update % :metrics (partial full-join :time strategy))))))
