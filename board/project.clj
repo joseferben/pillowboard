@@ -13,6 +13,10 @@
                  [ring/ring "1.6.3"]
                  [ring/ring-defaults "0.3.1"]
                  [ring/ring-json "0.4.0"]
+                 [com.layerware/hugsql "0.4.9"]
+                 [org.postgresql/postgresql "42.2.2"]
+                 [postgre-types "0.0.4"]
+                 [org.clojure/java.jdbc "0.3.6"]
                  [clj-http "3.7.0"]
                  [com.taoensso/timbre "4.10.0"]
                  [io.aviso/pretty "0.1.34"]
@@ -25,7 +29,6 @@
                  [cljsjs/recharts "0.22.4-2" :exclusions [cljsjs/react-with-addons]]
                  [cljsjs/moment "2.17.1-1"]
                  [cljs-http "0.1.45"]]
-
   :plugins [[lein-figwheel "0.5.14"]
             [lein-cloverage "1.0.10"]
             [lein-ring "0.9.7"]
@@ -35,7 +38,6 @@
             [jonase/eastwood "0.2.5"]
             [com.jakemccrary/lein-test-refresh "0.22.0"]
             [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
-
   :ring {:handler dashboard.handler/app}
   :uberjar-name "dashboard-standalone.jar"
   :main dashboard.handler

@@ -1,121 +1,53 @@
 (ns dashboard.db
   (:require [dashboard.pipeline.event :refer [event-type]]
             [clj-http.client :as client]
-            [taoensso.timbre :as timbre :refer (tracef debugf infof warnf errorf)]
-            [cheshire.core :refer [generate-string parse-string]]))
+            [taoensso.timbre :as timbre :refer [tracef debugf infof warnf errorf]]
+            [cheshire.core :refer [generate-string parse-string]]
+            [hugsql.core :as hugsql]
+            [postgre-types.json :refer [add-json-type add-jsonb-type]]))
 
-(defn base-url []
-  (let [url (get (System/getenv) "DATABASE_URL" "http://localhost:5984")]
-    (if (clojure.string/blank? url)
-      "http://localhost:5984"
-      url)))
+(add-json-type generate-string parse-string)
+(add-jsonb-type generate-string parse-string)
 
-(def db-name (get (System/getenv) "ENV" "staging"))
-(def db (str (base-url) "/" db-name))
+(def pg-db
+  {:dbtype "postgresql"
+   :dbname "db"
+   :host "localhost"
+   :user "admin"
+   :password "admin"
+   :ssl false})
 
-(def doc-views {:dashboard {:all {:view "dashboards-view"}}
-                :sessions {:all {:view "sessions-view"}}})
+;; Initialize db interface to execute SQL commands
+(hugsql/def-db-fns "sql/events.sql")
 
 (defn uuid [] (str (java.util.UUID/randomUUID)))
-
-(defn- p-get
-  "Returns the body of a response to a GET request to `url` as clojure map."
-  [url]
-  (-> url
-      client/get
-      :body
-      parse-string
-      clojure.walk/keywordize-keys))
-
-(defn- p-put!
-  "PUTs a stringified `body` to a `url`."
-  [url body]
-  (client/put url {:body (generate-string body)}))
-
-(defn- map->query [query]
-  (->> query
-       (map #(str (name (first %)) "=" "\"" (second %) "\""))
-       (clojure.string/join "&")
-       (str "?")))
-
-(defn- get-doc [doc-id]
-  (p-get (str db "/" doc-id)))
-
-(defn- get-view [{view :view} & [query]]
-  (p-get (str db "/_design/doc/_view/" view (map->query query))))
-
-(defn- put-doc!
-  "PUTs a document with `doc-id` with `init`ial values."
-  [doc-id & [init]]
-  (p-put! (str db "/" doc-id) (or init {})))
-
-(defn- update-doc!
-  "Updates a document with id `doc-id` by applying a function
-  `f` with arguments `args` to the old version of that document."
-  [doc-id f & args]
-  (let [old (get-doc doc-id)]
-    (p-put! (str db "/" doc-id)
-            (merge (apply f old args) {:_rev (old :_rev)}))))
-
-(defn- keywordize-events
-  "Given a list of events returns a list of events with keywordized map values where
-  it makes sense (types, enumerations)."
-  [events]
-  (map (fn [evt] (update-in evt [:meta :mode] keyword)) events))
 
 (defn events-all
   "Retrieves a list of all stored events for the dashboard with `id`.
   The list may contain events of different types."
   [id]
-  (try
-    (-> id
-        get-doc
-        (get :events [])
-        keywordize-events)
-    (catch Exception e
-        '())))
+  (select-events-of-dashboard pg-db {:id id}))
 
 (defn dashboard-insert!
-  "Inserts a dashboard with an `id`."
-  [id]
-  (put-doc! id {:type "dashboard" :events []}))
+  ([id]
+   (insert-dashboard! pg-db {:id (str id)}))
+  ([]
+   (insert-dashboard! pg-db {:id (java.util.UUID/randomUUID)})))
 
 (defn event-insert!
   "Inserts `event` at the board with id `board-id`. Creates board if it doesn't exist."
   [event board-id]
-  (try
-    (update-doc! board-id update :events conj event)
-    (catch Exception e
-      (do
-        (dashboard-insert! board-id)
-        (update-doc! board-id update :events conj event)))))
+  (insert-event! pg-db {:id (java.util.UUID/randomUUID)
+                        :data event}))
 
-(defn- create-db!
-  "Creates the db idempotently."
+(defn create-tables!
+  "Creates tables idempotently"
   []
-  (debugf "Check whether we need to create a db.")
-  (try
-    (let [db-res (p-get db)]
-      (when (not= (:db_name db-res) db-name)
-        (p-put! db {})))
-    (catch Exception e
-      (do
-        (debugf "Failed to find valid db. Creating new one: %s" db)
-        (p-put! db {})))))
-
-(defn- create-views!
-  "Creates view idempotently."
-  [views]
-  (debugf "Adding views.")
-  (try
-    (put-doc! "_design/doc" views)
-    (catch Exception e
-      (debugf "Failed to add views, seems like they are already there."))))
+  (debugf "Initializing tables")
+  (create-dashboard-event!)
+  (create-events!))
 
 (defn init!
-  "Initializes the database by installing views. This function must be idempotent!."
+  "Initializes the database by creating tables. This function must be idempotent!."
   []
-  (debugf "Initializing database.")
-  (let [views (parse-string (slurp (clojure.java.io/resource "migrations/initialize-views.js")))]
-    (create-db!)
-    (create-views! views)))
+  (create-tables!))
