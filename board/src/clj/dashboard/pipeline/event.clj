@@ -27,9 +27,7 @@
    Supports higher arity calls."
   [event & _]
   (cond
-    (s/valid? ::timeseries-event event) :timeseries
-    (s/valid? ::gauge-event event) :gauge
-    (s/valid? ::tuple-event event) :tuple
+    (contains? event :time) :timeseries
     :else :invalid))
 
 (defn- extract-metric-name

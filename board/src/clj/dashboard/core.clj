@@ -13,12 +13,12 @@
 (defn fetch-state!
   "Returns the state of the dashboard with id `board-id`."
   [board-id]
-  (pipeline (events-all (str->int board-id))))
+  (pipeline (events-all board-id)))
 
 (defn- store-event!
   [event board-id]
   (debugf "Event to store: %s" event)
-  (event-insert! event (str->int board-id))
+  (event-insert! event board-id)
   (debugf "Stored event: %s" event)
   (fetch-state! board-id))
 

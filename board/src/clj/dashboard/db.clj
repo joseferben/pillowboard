@@ -26,26 +26,35 @@
   "Retrieves a list of all stored events for the dashboard with `id`.
   The list may contain events of different types."
   [id]
-  (select-events-of-dashboard pg-db {:id id}))
+  (map (comp clojure.walk/keywordize-keys :data) (select-events-of-dashboard pg-db {:id (str id)})))
 
 (defn dashboard-insert!
   ([id]
-   (insert-dashboard! pg-db {:id (str id)}))
+   (insert-dashboard! pg-db {:id id}))
   ([]
-   (insert-dashboard! pg-db {:id (java.util.UUID/randomUUID)})))
+   (dashboard-insert! (java.util.UUID/randomUUID))))
 
 (defn event-insert!
   "Inserts `event` at the board with id `board-id`. Creates board if it doesn't exist."
   [event board-id]
-  (insert-event! pg-db {:id (java.util.UUID/randomUUID)
-                        :data event}))
+  (when (zero? (:count (first (number-of-dashboard-with-id pg-db {:id board-id}))))
+    (dashboard-insert! (java.util.UUID/fromString (str board-id))))
+  (let [event-id (java.util.UUID/randomUUID)]
+    (if (insert-event! pg-db
+            {:id event-id
+             :data event})
+        (insert-dashboard-event! pg-db
+            {:event-id event-id
+             :dashboard-id (java.util.UUID/fromString (str board-id))})
+        (debugf "Failed to insert event for dashboard" board-id))))
 
 (defn create-tables!
   "Creates tables idempotently"
   []
   (debugf "Initializing tables")
-  (create-dashboard-event!)
-  (create-events!))
+  (create-dashboards! pg-db)
+  (create-events! pg-db)
+  (create-dashboard-event! pg-db))
 
 (defn init!
   "Initializes the database by creating tables. This function must be idempotent!."
