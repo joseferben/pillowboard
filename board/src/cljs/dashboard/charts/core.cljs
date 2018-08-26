@@ -41,49 +41,49 @@
 (defn- metrics
   [data]
   (->> data
-      metrics-keys
-      (map (fn [key] (wrapper (data :chart-type) (get-in data [:meta key :color]) key)))))
+       metrics-keys
+       (map (fn [key] (wrapper (data :chart-type) (get-in data [:meta key :color]) key)))))
 
 (defn line-chart-comp [data]
   [:div
    (vec
-         (concat
-          [:> line-chart (merge chart-dimensions {:data (transform data)})
-           ;; TODO read x-axis from settings
-           [:> x-axis {"dataKey" :time :type :number :domain ["dataMin" "dataMax"]
-                       :tickFormatter millis-to-date}]
-           [:> y-axis]
-           [:> cartesian-grid {"strokeDasharray" "3 3"}]
-           [:> tooltip]
-           [:> legend]]
-          (metrics data)))])
+    (concat
+     [:> line-chart (merge chart-dimensions {:data (transform data)})
+      ;; TODO read x-axis from settings
+      [:> x-axis {"dataKey" :time :type :number :domain ["dataMin" "dataMax"]
+                  :tickFormatter millis-to-date}]
+      [:> y-axis]
+      [:> cartesian-grid {"strokeDasharray" "3 3"}]
+      [:> tooltip]
+      [:> legend]]
+     (metrics data)))])
 
 (defn scatter-chart-comp
   [data]
   [:div
    (vec
-         (concat
-          [:> scatter-chart chart-dimensions
-           [:> x-axis {"dataKey" "incidents"}]
-           [:> y-axis {"dataKey" "traffic"}]
-           [:> cartesian-grid {"strokeDasharray" "3 3"}]
-           [:> scatter {:data (transform data)
-                        :name "incidents/traffic"}]
-           [:> tooltip]
-           [:> legend]]
-          (metrics data)))])
+    (concat
+     [:> scatter-chart chart-dimensions
+      [:> x-axis {"dataKey" "incidents"}]
+      [:> y-axis {"dataKey" "traffic"}]
+      [:> cartesian-grid {"strokeDasharray" "3 3"}]
+      [:> scatter {:data (transform data)
+                   :name "incidents/traffic"}]
+      [:> tooltip]
+      [:> legend]]
+     (metrics data)))])
 
 (defn area-chart-comp
   [data]
   [:div
    (vec
-         (concat
-          [:> area-chart (merge chart-dimensions
-                          {:data (transform data)})
-           [:> x-axis {"dataKey" :time :type :number :domain ["dataMin" "dataMax"]
-                       :tickFormatter millis-to-date}]
-           [:> y-axis ]
-           [:> cartesian-grid {"strokeDasharray" "3 3"}]
-           [:> tooltip]
-           [:> legend]]
-          (metrics data)))])
+    (concat
+     [:> area-chart (merge chart-dimensions
+                           {:data (transform data)})
+      [:> x-axis {"dataKey" :time :type :number :domain ["dataMin" "dataMax"]
+                  :tickFormatter millis-to-date}]
+      [:> y-axis ]
+      [:> cartesian-grid {"strokeDasharray" "3 3"}]
+      [:> tooltip]
+      [:> legend]]
+     (metrics data)))])
