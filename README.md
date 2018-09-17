@@ -1,34 +1,14 @@
-# dashboard
+# Pillowboard
 
 Tests: ![](https://circleci.com/gh/jerben/dashboard.svg?style=svg)
 
-This is a **zero** configuration data-driven dashboard. Stop wasting your time setting up other dashboards, start throwing your data at this one!
+[pillowboard.io](https://pillowboard.io)
+
+This is a **zero** configuration data-driven dashboard. Stop wasting time setting up dashboards, just throwing your data at this one!
 The dashboard tries to make sense of your data and present it in a sensible way.
 
 ![Screenshot](doc/screenshot.png?raw=true "Screenshot")
 
-## Features
-
-* real-time data
-* event sourcing
-* authenticated/authorized dashboard admin panel
-* supports generic time series data
-* supports two sub-types: ratio timeseries and absolute timeseries
-
-## Roadmap
-
-* more supported data types: gauge, n-tuples
-* meta data support as configuration replacement
-
-## Getting started
-
-The fastest way to get started is by using `docker-compose`:
-
-```
-docker-compose up
-```
-Now open `http://localhost`, register, login, create your dashboard and start pushing data.
-## Development
 
 To run the backend with auto-reload enabled run:
 
@@ -79,41 +59,8 @@ Run database migrations by using:
 
 ## License
 
-Copyright © 2017 Josef Erben
+Copyright © 2018 Josef Erben
 
 ## Pretty printing tests
 
 Use [this](https://github.com/venantius/ultra) lein plugin to pretty print tests.
-
-
-## data types
-
-### time series
-```clojure
-{:type timeseries
- :name "foobar"
- :time 112313
- :value 42}
-```
-
-### gauge
-```clojure
-{:type gauge
- :name "foobar"
- :value 42}
-```
-
-### tuple
-```clojure
-{:type tuple
- :name1 "foo"
- :value1 42
- :name2 "bar"
- :value2 "24"}
-```
-
-## Example authenticated request
-
-```
-http POST :3000/api/dashboards 'Authorization:Token eBniAEtO/KEAGSP60/RD1Wwtb21V4RnNGWb6wZhHGms=' name=myboard
-```
