@@ -1,6 +1,6 @@
 # Pillowboard
 
-Tests: ![](https://circleci.com/gh/jerben/dashboard.svg?style=svg)
+[![CircleCI](https://circleci.com/gh/jerben/pillowboard.svg?style=svg)](https://circleci.com/gh/jerben/pillowboard)
 
 [pillowboard.io](https://pillowboard.io)
 
