@@ -1,0 +1,25 @@
+version: "3.6"
+
+services:
+  backend-service:
+    build:
+      context: ./backend-service
+      dockerfile: Dockerfile-dev
+    environment:
+      DB_HOST: database
+      DB_DATABASE: pillowboard-development
+      ENV: development
+    depends_on:
+      - database
+  database:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: pillowboard-development
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
