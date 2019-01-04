@@ -15,7 +15,6 @@ WORKDIR /opt/pillowboard
 
 COPY package*.json ./
 COPY --from=build node_modules/ ./node_modules
-COPY --from=build docs/ ./docs
 
 EXPOSE 3000
 

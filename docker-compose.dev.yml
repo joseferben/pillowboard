@@ -9,6 +9,10 @@ services:
       DB_HOST: database
       DB_DATABASE: pillowboard-development
       ENV: development
+    ports:
+      - 3000:3000
+    volumes:
+      - ./backend-service/src:/opt/pillowboard/src
     depends_on:
       - database
   database:
