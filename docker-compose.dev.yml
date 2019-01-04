@@ -22,8 +22,10 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
       POSTGRES_DB: pillowboard-development
+    ports:
+      - 5432:5432
   adminer:
-    image: adminer
+    image: adminer:latest
     restart: always
     ports:
       - 8080:8080
