@@ -14,6 +14,7 @@ exports.up = function(knex, Promise) {
     knex.schema.createTable("events", function(t) {
       t.increments("id");
       t.uuid("uuid").notNullable();
+      t.string("type").notNullable();
       t.json("payload");
       t.string("status").notNullable();
       t.timestamps(true, true);
@@ -24,6 +25,7 @@ exports.up = function(knex, Promise) {
       t.increments("id");
       t.uuid("uuid").notNullable();
       t.uuid("owner").notNullable();
+      t.string("name");
       t.string("status").notNullable();
       t.timestamps(true, true);
       t.unique(["uuid", "id"]);
@@ -33,15 +35,17 @@ exports.up = function(knex, Promise) {
       t.increments("id");
       t.uuid("uuid").notNullable();
       t.uuid("dashboard").notNullable();
+      t.string("name");
       t.string("status").notNullable();
       t.timestamps(true, true);
       t.unique(["uuid", "id"]);
     }),
 
-    knex.schema.createTable("points", function(t) {
+    knex.schema.createTable("points_time", function(t) {
       t.increments("id");
       t.uuid("uuid").notNullable();
       t.uuid("chart").notNullable();
+      t.timestamp("time", true).notNullable();
       t.string("name").notNullable();
       t.float("value");
       t.timestamps(true, true);
@@ -56,6 +60,6 @@ exports.down = function(knex, Promise) {
     knex.schema.dropTable("events"),
     knex.schema.dropTable("dashboards"),
     knex.schema.dropTable("charts"),
-    knex.schema.dropTable("points")
+    knex.schema.dropTable("points_time")
   ]);
 };
