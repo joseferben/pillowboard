@@ -13,8 +13,10 @@
   "license": "SEE LICENSE IN LICENSE.md",
   "dependencies": {
     "bcrypt": "^3.0.3",
+    "cors": "^2.8.5",
     "express": "^4.16.4",
     "knex": "^0.16.3",
+    "morgan": "^1.9.1",
     "objection": "^1.5.0-rc.3",
     "passport": "^0.4.0",
     "pg": "^7.7.1",

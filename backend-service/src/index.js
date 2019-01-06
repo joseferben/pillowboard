@@ -1,4 +1,6 @@
 const express = require("express");
+const logger = require("morgan");
+const cors = require("cors");
 const Knex = require("knex");
 const { Model } = require("objection");
 
@@ -15,9 +17,6 @@ const { EventService } = require("./services/event-service");
 const { EventRepository } = require("./repositories/event-repository");
 
 const { ServiceDispatcher } = require("./dispatcher");
-
-const app = express();
-const port = 3000;
 
 const knex = Knex({
   client: "pg",
@@ -51,11 +50,29 @@ dispatcher.set(
 );
 dispatcher.set(EventService, new EventService(new EventRepository()));
 
-app.get("/", (req, res) => {
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.use(logger("dev"));
+app.use(express.urlencoded({ extended: true }));
+
+const public = express.Router();
+const internal = express.Router();
+
+public.use(cors());
+
+if (process.env.NODE_ENV === "development") {
+  internal.use(cors());
+}
+
+app.use("/api/public", public);
+app.use("/api", internal);
+
+public.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.get("/accounts", (req, res) => {
+internal.get("/accounts", (req, res) => {
   dispatcher
     .getService(AccountService)
     .then((accounts) => {
