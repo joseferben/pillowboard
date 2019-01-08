@@ -90,7 +90,7 @@ passport.use(
       dispatcher
         .getService(AccountService)
         .then((accounts) => {
-          return accounts.get(req.context, jwtPayload.accountId);
+          return accounts.getByUuid(req.context, jwtPayload.accountId);
         })
         .then((account) => {
           done(null, account);
@@ -108,6 +108,8 @@ app.use(function initiliazeRequestContext(req, res, next) {
   next();
 });
 app.use(express.urlencoded({ extended: true }));
+
+app.use(passport.initialize());
 
 const public = express.Router();
 const internal = express.Router();
@@ -169,6 +171,9 @@ auth.get(
 
 internal.get(
   "/accounts",
+  passport.authenticate("jwt", {
+    session: false
+  }),
   wrap((req, res, next) => {
     return dispatcher
       .getService(AccountService)
@@ -187,6 +192,9 @@ internal.get(
 
 internal.get(
   "/my/dashboards",
+  passport.authenticate("jwt", {
+    session: false
+  }),
   wrap((req, res, next) => {
     return dispatcher
       .getServices([AccountService, DashboardService])

@@ -14,6 +14,14 @@ class AccountService {
   getByUuid(context, uuid) {
     return this.repo.getByEmail(context, uuid);
   }
+
+  authenticate(context, username, password) {
+    return Promise.reject(new Error("Not implemented"));
+  }
+
+  getToken(context, user) {
+    return Promise.reject(new Error("Not implemented"));
+  }
 }
 
 module.exports = { AccountService: AccountService };
