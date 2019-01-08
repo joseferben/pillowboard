@@ -12,5 +12,15 @@ class Account {
     this.updatedAt = data.updated_at;
   }
 }
+class ClientError extends Error {}
+class ServerError extends Error {}
 
-module.exports = { Account, Event, Dashboard, Chart, TimePoint };
+module.exports = {
+  Account,
+  Event,
+  Dashboard,
+  Chart,
+  TimePoint,
+  ClientError,
+  ServerError
+};
