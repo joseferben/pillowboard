@@ -52,7 +52,7 @@ exports.seed = function(knex, Promise) {
       .then(() => {
         return knex("dashboards").insert([
           {
-            uuid: accounts[0],
+            uuid: uuidv1(),
             owner: accounts[0],
             name: "test-board",
             status: "active"

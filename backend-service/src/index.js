@@ -1,8 +1,9 @@
 const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
+const compression = require("compression");
+const passport = require("passport");
 const Knex = require("knex");
-const { Model } = require("objection");
 
 const { Account, Event, Dashboard, Chart, TimePoint } = require("./models");
 const { AccountService } = require("./services/account-service");
@@ -28,14 +29,6 @@ const knex = Knex({
     database: "pillowboard-development"
   }
 });
-
-const models = {
-  Account: Account.bindKnex(knex),
-  Event: Event.bindKnex(knex),
-  Dashboard: Dashboard.bindKnex(knex),
-  Chart: Chart.bindKnex(knex),
-  TimePoint: TimePoint.bindKnex(knex)
-};
 
 const dispatcher = new ServiceDispatcher();
 dispatcher.set(AccountService, new AccountService(new AccountRepository()));
@@ -63,6 +56,8 @@ public.use(cors());
 
 if (process.env.NODE_ENV === "development") {
   internal.use(cors());
+} else if (process.env.NODE_ENV === "production") {
+  app.use(compression());
 }
 
 app.use("/api/public", public);
@@ -73,10 +68,10 @@ public.get("/", (req, res) => {
 });
 
 internal.get("/accounts", (req, res) => {
+  const context = { conn: Promise.resolve(knex) };
   dispatcher
     .getService(AccountService)
     .then((accounts) => {
-      const context = { models };
       return accounts.getAll(context);
     })
     .then((accounts) => {
@@ -87,7 +82,24 @@ internal.get("/accounts", (req, res) => {
       res.json(data);
     })
     .catch((reason) => {
-      console.log("Request failed");
+      console.log("Request failed", reason.message);
+      res.status(500).json({ message: reason.message });
+    });
+});
+
+internal.get("/my/dashboards", (req, res) => {
+  const context = { conn: Promise.resolve(knex) };
+  dispatcher
+    .getServices([AccountService, DashboardService])
+    .then(([accounts, dashboards]) => {
+      return Promise.all([accounts.get(context, req.user.id), dashboards]);
+    })
+    .then(([account, dashboards]) => {
+      const data = dashboards.getByAccount(context, account);
+      res.json(data);
+    })
+    .catch((reason) => {
+      console.log("Request failed:", reason.message);
       res.status(500).json({ message: reason.message });
     });
 });

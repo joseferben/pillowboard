@@ -60,6 +60,7 @@ exports.down = function(knex, Promise) {
     knex.schema.dropTable("events"),
     knex.schema.dropTable("dashboards"),
     knex.schema.dropTable("charts"),
-    knex.schema.dropTable("points_time")
+    knex.schema.dropTable("points_time"),
+    knex.schema.dropTable("role_assignments")
   ]);
 };
