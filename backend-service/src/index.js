@@ -5,7 +5,7 @@ const compression = require("compression");
 const passport = require("passport");
 const Knex = require("knex");
 
-const { Account, Event, Dashboard, Chart, TimePoint } = require("./models");
+const { Account, Event, Dashboard, Chart, TimePoint } = require("./types");
 const { AccountService } = require("./services/account-service");
 const { AccountRepository } = require("./repositories/account-repository");
 const { DashboardService } = require("./services/dashboard-service");
