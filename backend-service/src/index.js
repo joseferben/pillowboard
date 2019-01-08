@@ -4,6 +4,8 @@ const cors = require("cors");
 const compression = require("compression");
 const passport = require("passport");
 const Knex = require("knex");
+const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
+const { BasicStrategy } = require("passport-http");
 
 const {
   Account,
@@ -54,11 +56,62 @@ dispatcher.set(EventService, new EventService(new EventRepository()));
 const app = express();
 const port = process.env.PORT || 3000;
 
+passport.use(
+  "basic",
+  new BasicStrategy(
+    { passReqToCallback: true },
+    (req, username, password, done) => {
+      dispatcher
+        .getService(AccountService)
+        .then((accounts) => {
+          return accounts.authenticate(req.context, username, password);
+        })
+        .then((account) => {
+          done(null, account);
+        })
+        .catch((err) => {
+          done(err, false);
+        });
+    }
+  )
+);
+
+passport.use(
+  "jwt",
+  new JwtStrategy(
+    {
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: "secret",
+      issuer: "accounts.pillowboard.io",
+      audience: "pillowboard.io",
+      passReqToCallback: true
+    },
+    (req, jwtPayload, done) => {
+      dispatcher
+        .getService(AccountService)
+        .then((accounts) => {
+          return accounts.get(req.context, jwtPayload.accountId);
+        })
+        .then((account) => {
+          done(null, account);
+        })
+        .catch((err) => {
+          done(err, false);
+        });
+    }
+  )
+);
+
 app.use(logger("dev"));
+app.use(function initiliazeRequestContext(req, res, next) {
+  req.context = dispatcher.newRequestContext(req, knex);
+  next();
+});
 app.use(express.urlencoded({ extended: true }));
 
 const public = express.Router();
 const internal = express.Router();
+const auth = express.Router();
 
 public.use(cors());
 
@@ -70,6 +123,7 @@ if (process.env.NODE_ENV === "development") {
 
 app.use("/api/public", public);
 app.use("/api", internal);
+app.use("/authenticate", auth);
 
 app.use(function errorHandler(err, req, res, next) {
   if (res.headersSent) {
@@ -77,16 +131,16 @@ app.use(function errorHandler(err, req, res, next) {
   }
   console.log("Request failed", err.message);
   if (err instanceof ClientError) {
-    res.status(400).json({ message: err.message });
+    return res.status(400).json({ message: err.message });
   } else if (err instanceof ServerError) {
     res
       .status(500)
       .json({ message: "Something went wrong, our admins have been notified" });
+  } else {
+    res.status(500).json({
+      message: "Something went wrong, our admins have been notified"
+    });
   }
-});
-
-public.get("/", (req, res) => {
-  res.send("Hello World!");
 });
 
 const wrap = (fn) => (...args) => {
@@ -97,14 +151,29 @@ const wrap = (fn) => (...args) => {
   return promise.catch(args[2]);
 };
 
+auth.get(
+  "/token",
+  passport.authenticate("basic", {
+    session: false
+  }),
+  wrap((req, res, next) => {
+    return dispatcher
+      .getService(AccountService)
+      .then((accounts) => accounts.getToken(req.context, req.user))
+      .then((token) => {
+        res.json({ accessToken: token });
+        next();
+      });
+  })
+);
+
 internal.get(
   "/accounts",
   wrap((req, res, next) => {
-    const context = { conn: Promise.resolve(knex) };
     return dispatcher
       .getService(AccountService)
       .then((accounts) => {
-        return accounts.getAll(context);
+        return accounts.getAll(req.context);
       })
       .then((accounts) => {
         const data = accounts.map((account) => {
@@ -119,14 +188,16 @@ internal.get(
 internal.get(
   "/my/dashboards",
   wrap((req, res, next) => {
-    const context = { conn: Promise.resolve(knex) };
     return dispatcher
       .getServices([AccountService, DashboardService])
       .then(([accounts, dashboards]) => {
-        return Promise.all([accounts.get(context, req.user.id), dashboards]);
+        return Promise.all([
+          accounts.get(req.context, req.user.id),
+          dashboards
+        ]);
       })
       .then(([account, dashboards]) => {
-        const data = dashboards.getByAccount(context, account);
+        const data = dashboards.getByAccount(req.context, account);
         res.json(data);
       });
   })

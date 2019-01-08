@@ -10,6 +10,10 @@ class ServiceDispatcher {
   getService(name) {
     return Promise.resolve(this.services.get(name));
   }
+
+  newRequestContext(req, knex) {
+    return { conn: Promise.resolve(knex) };
+  }
 }
 
 module.exports = { ServiceDispatcher: ServiceDispatcher };
