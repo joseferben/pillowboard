@@ -17,6 +17,10 @@ const {
   ServerError
 } = require("./types");
 const { SecretsService } = require("./services/secrets-service");
+const { AuthorizationService } = require("./services/authorization-service");
+const {
+  AuthorizationRepository
+} = require("./repositories/authorization-repository");
 const { AccountService } = require("./services/account-service");
 const { AccountRepository } = require("./repositories/account-repository");
 const { DashboardService } = require("./services/dashboard-service");
@@ -43,6 +47,10 @@ const knex = Knex({
 
 const dispatcher = new ServiceDispatcher();
 dispatcher.set(AccountService, new AccountService(new AccountRepository()));
+dispatcher.set(
+  AuthorizationService,
+  new AuthorizationService(new AuthorizationRepository())
+);
 dispatcher.set(SecretsService, new SecretsService());
 dispatcher.set(
   DashboardService,
@@ -103,6 +111,41 @@ passport.use(
   })
 );
 
+const authorize = (operation, dispatcher, objExtractor) => {
+  return (req, res, next) => {
+    dispatcher
+      .getService(AuthorizationService)
+      .then((a11n) => {
+        return a11n.authorize(
+          req.context,
+          operation,
+          req.user,
+          objExtractor(req)
+        );
+      })
+      .then((authorized) => {
+        if (authorized) {
+          next();
+        } else {
+          console.error("Insufficient access rights");
+          res.status(403).json({ message: "Insufficient access rights" });
+        }
+      })
+      .catch((reason) => {
+        console.error("Authorization failed:", reason);
+        res.status(500).json("Request failed");
+      });
+  };
+};
+
+const wrap = (fn) => (...args) => {
+  const promise = fn(...args);
+  if (promise === undefined) {
+    throw new Error("Return a promise in all handlers!");
+  }
+  return promise.catch(args[2]);
+};
+
 app.use(logger("dev"));
 app.use(function initiliazeRequestContext(req, res, next) {
   req.context = dispatcher.newRequestContext(req, knex);
@@ -146,14 +189,6 @@ app.use(function errorHandler(err, req, res, next) {
   }
 });
 
-const wrap = (fn) => (...args) => {
-  const promise = fn(...args);
-  if (promise === undefined) {
-    throw new Error("Return a promise in all handlers!");
-  }
-  return promise.catch(args[2]);
-};
-
 apiAuth.get(
   "/token",
   passport.authenticate("basic", {
@@ -175,6 +210,7 @@ apiInternal.get(
   passport.authenticate("bearer", {
     session: false
   }),
+  authorize("accounts/get_all", dispatcher, () => "domains/system"),
   wrap((req, res, next) => {
     return dispatcher
       .getService(AccountService)
@@ -196,11 +232,12 @@ apiInternal.get(
   passport.authenticate("bearer", {
     session: false
   }),
+  authorize("accounts/get", dispatcher, (req) => req.user),
   wrap((req, res, next) => {
     return dispatcher
       .getService(AccountService)
       .then((accounts) => {
-        return accounts.get(req.context, req.user.uuid);
+        return accounts.get(req.context, req.user.id);
       })
       .then((account) => {
         const data = account;
@@ -211,10 +248,11 @@ apiInternal.get(
 );
 
 apiInternal.get(
-  "/accounts/my/dashboards",
+  "/dashboards/my",
   passport.authenticate("bearer", {
     session: false
   }),
+  authorize("dashboards/get", dispatcher, (req) => req.user),
   wrap((req, res, next) => {
     return dispatcher
       .getService(DashboardService)

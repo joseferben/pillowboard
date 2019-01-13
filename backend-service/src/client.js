@@ -83,11 +83,17 @@ class Client {
     );
   }
 
-  getMyDashboards(token) {
+  getDashboard(token, id) {
     return this.fetch(
-      this.api + "accounts/my/dashboards",
+      this.api + "dashboards/" + id,
       defaultOpts({ token })
     ).then(responseHandler);
+  }
+
+  getMyDashboards(token) {
+    return this.fetch(this.api + "dashboards/my", defaultOpts({ token })).then(
+      responseHandler
+    );
   }
 }
 

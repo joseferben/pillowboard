@@ -1,19 +1,7 @@
 const uuidv1 = require("uuid/v1");
 const bcrypt = require("bcrypt");
 
-const saltRounds = 10;
-const myPlaintextPassword = "s0//P4$$w0rD";
-const someOtherPlaintextPassword = "not_bacon";
-
-const hash = (password) =>
-  new Promise((res, rej) => {
-    bcrypt.hash(password, 3, function(reason, hash) {
-      if (reason) rej(new Error("Failed to hash password: ", reason.message));
-      res(hash);
-    });
-  });
-
-const accounts = [uuidv1(), uuidv1()];
+const accounts = [uuidv1(), uuidv1(), uuidv1()];
 const dashboards = [uuidv1()];
 const charts = [uuidv1()];
 const pointsGroups = [uuidv1()];
@@ -29,21 +17,28 @@ exports.seed = function(knex, Promise) {
       .del()
       .then(() => {
         const password = "password";
-        return hash(password).then((hash) =>
+        return bcrypt.hash(password, 3).then((hash) =>
           knex("accounts").insert([
             {
               uuid: accounts[0],
               family_name: "White",
               given_name: "Walter",
-              password: hash,
+              password_hash: hash,
               email: "walter.white@example.com"
             },
             {
               uuid: accounts[1],
               family_name: "Pinkman",
               given_name: "Jesse",
-              password: hash,
+              password_hash: hash,
               email: "jesse.pinkman@example.com"
+            },
+            {
+              uuid: accounts[2],
+              family_name: "Salamanca",
+              given_name: "Tuco",
+              password_hash: hash,
+              email: "tuco.salamanca@example.com"
             }
           ])
         );
@@ -54,27 +49,27 @@ exports.seed = function(knex, Promise) {
         return knex("role_assignments").insert([
           {
             uuid: uuidv1(),
-            subject: "accounts/" + accounts[0],
             role: "owner",
-            object: "dashboards/" + dashboards[0]
+            assignee: "accounts/" + accounts[0],
+            context: "dashboards/" + dashboards[0]
           },
           {
             uuid: uuidv1(),
-            subject: "accounts/" + accounts[0],
             role: "owner",
-            object: "charts/" + charts[0]
+            assignee: "accounts/" + accounts[0],
+            context: "charts/" + charts[0]
           },
           {
             uuid: uuidv1(),
-            subject: "accounts/" + accounts[0],
             role: "owner",
-            object: "pointsGroups/" + pointsGroups[0]
+            assignee: "accounts/" + accounts[0],
+            context: "pointsGroups/" + pointsGroups[0]
           },
           {
             uuid: uuidv1(),
-            subject: "accounts/" + accounts[1],
-            role: "owner",
-            object: "domains/system"
+            role: "admin",
+            assignee: "accounts/" + accounts[1],
+            context: "domains/system"
           }
         ]);
       }),
@@ -84,7 +79,7 @@ exports.seed = function(knex, Promise) {
         return knex("dashboards").insert([
           {
             uuid: dashboards[0],
-            account: accounts[0],
+            owner: accounts[0],
             name: "test-board",
             status: "active"
           }

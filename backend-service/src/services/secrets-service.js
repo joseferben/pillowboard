@@ -8,7 +8,7 @@ class SecretsService {
     return Promise.resolve(
       jwt.sign(
         {
-          accountId: account.uuid
+          accountId: account.id
         },
         JWT_SECRET,
         { expiresIn: "24h" }
@@ -21,6 +21,11 @@ class SecretsService {
   }
 
   isPasswordValid(context, hash, password) {
+    if (hash === undefined || password === undefined) {
+      throw new Error(
+        "Invalid hash or password received, can not verify equality"
+      );
+    }
     return bcrypt.compare(password, hash);
   }
 }

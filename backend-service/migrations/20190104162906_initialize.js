@@ -5,7 +5,7 @@ exports.up = function(knex, Promise) {
       t.uuid("uuid").notNullable();
       t.string("family_name").notNullable();
       t.string("given_name").notNullable();
-      t.string("password").notNullable();
+      t.string("password_hash").notNullable();
       t.string("email").notNullable();
       t.timestamps(true, true);
       t.unique(["email", "uuid", "id"]);
@@ -14,9 +14,9 @@ exports.up = function(knex, Promise) {
     knex.schema.createTable("role_assignments", function(t) {
       t.increments("id");
       t.uuid("uuid").notNullable();
-      t.string("subject").notNullable();
       t.string("role").notNullable();
-      t.string("object").notNullable();
+      t.string("assignee").notNullable();
+      t.string("context").notNullable();
       t.unique(["uuid", "id"]);
     }),
 
@@ -33,7 +33,7 @@ exports.up = function(knex, Promise) {
     knex.schema.createTable("dashboards", function(t) {
       t.increments("id");
       t.uuid("uuid").notNullable();
-      t.uuid("account").notNullable();
+      t.uuid("owner").notNullable();
       t.string("name");
       t.string("status").notNullable();
       t.timestamps(true, true);

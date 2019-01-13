@@ -98,10 +98,29 @@ describe("db connection", () => {
     });
     it("get all accounts returns all accounts for admin", async () => {
       const { token } = await client.authenticate(
-        "walter.white@example.com",
+        "jesse.pinkman@example.com",
         "password"
       );
       expect(await client.getAccounts(token)).to.be.an("array");
+    });
+    it("get dashboard returns dashboard for non-admin owner and error for non-admin user", async () => {
+      const { token: tokenWalt } = await client.authenticate(
+        "walter.white@example.com",
+        "password"
+      );
+
+      const dashboard = await client
+        .getMyDashboards(tokenWalt)
+        .then((dashboards) => dashboards[0]);
+
+      expect(dashboard).to.have.property("id");
+
+      const { token: tokenTuco } = await client.authenticate(
+        "tuco.salamanca@example.com",
+        "password"
+      );
+
+      await expect(client.getDashboard(tokenTuco, dashboard.id)).to.be.rejected;
     });
   });
 });

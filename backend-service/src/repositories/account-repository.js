@@ -8,19 +8,23 @@ class AccountRepository {
   }
 
   getByEmail(context, email) {
-    return context.conn.then((trx) =>
-      trx("accounts")
-        .where("email", email)
-        .first()
-    );
+    return context.conn
+      .then((trx) =>
+        trx("accounts")
+          .where("email", email)
+          .first()
+      )
+      .then((data) => new Account(data));
   }
 
   get(context, id) {
-    return context.conn.then((trx) =>
-      trx("accounts")
-        .where("uuid", id)
-        .first()
-    );
+    return context.conn
+      .then((trx) =>
+        trx("accounts")
+          .where("uuid", id)
+          .first()
+      )
+      .then((data) => new Account(data));
   }
 }
 

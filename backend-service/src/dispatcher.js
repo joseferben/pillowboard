@@ -1,3 +1,5 @@
+const { Account, ServerError } = require("./types");
+
 class RequestContext {
   constructor(data) {
     this.conn = data.conn;
@@ -6,6 +8,16 @@ class RequestContext {
 
   getService(name) {
     return this.dispatcher.getService(name);
+  }
+
+  scopedId(obj) {
+    if (obj instanceof Account) {
+      return "accounts/" + obj.id;
+    } else {
+      throw new ServerError(
+        "Can not get scoped id for object of type " + obj.constructor.name
+      );
+    }
   }
 }
 

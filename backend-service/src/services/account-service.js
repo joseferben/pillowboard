@@ -28,7 +28,7 @@ class AccountService {
       .then(([account, secrets]) => {
         return Promise.all([
           account,
-          secrets.isPasswordValid(context, account.password, password)
+          secrets.isPasswordValid(context, account.passwordHash, password)
         ]);
       })
       .then(([account, isValid]) => {
