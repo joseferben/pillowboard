@@ -59,7 +59,7 @@ describe("db connection", () => {
       });
 
       const dashboardsAfter = await client.getMyDashboards(token);
-      expect(dashboardsAfter.length - 1).to.be.equal(dashboardsBefore);
+      expect(dashboardsAfter.length - 1).to.be.equal(dashboardsBefore.length);
     });
   });
 
@@ -87,6 +87,4 @@ describe("db connection", () => {
       expect(account).to.have.property("email", "walter.white@example.com");
     });
   });
-
-  describe("authorization", () => {});
 });

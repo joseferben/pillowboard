@@ -45,7 +45,7 @@ class Client {
   constructor(authBaseUrl, apiBaseUrl, client) {
     this.auth = authBaseUrl;
     this.api = apiBaseUrl;
-    this.apiPulic = apiBaseUrl + "public";
+    this.apiPulic = apiBaseUrl + "public/";
     this.fetch = client ? client : fetch;
   }
 
@@ -66,7 +66,7 @@ class Client {
 
   pushData(token, data, opts) {
     return this.fetch(
-      this.apiPulic + data,
+      this.apiPulic + "data",
       defaultOpts({ token, body: data, method: "POST" })
     ).then(responseHandler);
   }

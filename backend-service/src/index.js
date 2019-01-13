@@ -227,4 +227,21 @@ apiInternal.get(
   })
 );
 
+apiPublic.post(
+  "/data",
+  passport.authenticate("bearer", {
+    session: false
+  }),
+  wrap((req, res, next) => {
+    return dispatcher
+      .getService(DashboardService)
+      .then((dashboards) => {
+        return dashboards.getByAccount(req.context, req.user);
+      })
+      .then((dashboards) => {
+        res.json(dashboards);
+      });
+  })
+);
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
