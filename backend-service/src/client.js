@@ -1,3 +1,5 @@
+const { encode } = require("base-64");
+
 const fetch = require("node-fetch");
 
 const responseHandler = (res) => {
@@ -22,11 +24,27 @@ class Client {
   constructor(authBaseUrl, apiBaseUrl, client) {
     this.auth = authBaseUrl;
     this.api = apiBaseUrl;
+    this.apiPulic = apiBaseUrl + "public";
     this.fetch = client ? client : fetch;
   }
 
-  authenticate(username, password) {
-    this.fetch(this.auth + "token").then(responseHandler);
+  authenticate(login, password) {
+    const opts = {
+      headers: {
+        Accept: "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+        Authorization: "Basic " + encode(login + ":" + password),
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Pragma: "no-cache",
+        Expires: 0
+      }
+    };
+    return this.fetch(this.auth + "token", opts).then(responseHandler);
+  }
+
+  postData(data, opts) {
+    return this.fetch(this.apiPulic + data).then(responseHandler);
   }
 }
 

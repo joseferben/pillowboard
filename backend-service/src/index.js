@@ -16,6 +16,7 @@ const {
   ClientError,
   ServerError
 } = require("./types");
+const { SecretsService } = require("./services/secrets-service");
 const { AccountService } = require("./services/account-service");
 const { AccountRepository } = require("./repositories/account-repository");
 const { DashboardService } = require("./services/dashboard-service");
@@ -42,6 +43,7 @@ const knex = Knex({
 
 const dispatcher = new ServiceDispatcher();
 dispatcher.set(AccountService, new AccountService(new AccountRepository()));
+dispatcher.set(SecretsService, new SecretsService());
 dispatcher.set(
   DashboardService,
   new DashboardService(new DashboardRepository())
@@ -60,11 +62,11 @@ passport.use(
   "basic",
   new BasicStrategy(
     { passReqToCallback: true },
-    (req, username, password, done) => {
+    (req, login, password, done) => {
       dispatcher
         .getService(AccountService)
         .then((accounts) => {
-          return accounts.authenticate(req.context, username, password);
+          return accounts.authenticate(req.context, login, password);
         })
         .then((account) => {
           done(null, account);
@@ -111,21 +113,21 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(passport.initialize());
 
-const public = express.Router();
-const internal = express.Router();
-const auth = express.Router();
+const apiPublic = express.Router();
+const apiInternal = express.Router();
+const apiAuth = express.Router();
 
-public.use(cors());
+apiPublic.use(cors());
 
 if (process.env.NODE_ENV === "development") {
-  internal.use(cors());
+  apiInternal.use(cors());
 } else if (process.env.NODE_ENV === "production") {
   app.use(compression());
 }
 
-app.use("/api/public", public);
-app.use("/api", internal);
-app.use("/authenticate", auth);
+app.use("/api/public", apiPublic);
+app.use("/api", apiInternal);
+app.use("/authentication", apiAuth);
 
 app.use(function errorHandler(err, req, res, next) {
   if (res.headersSent) {
@@ -153,7 +155,7 @@ const wrap = (fn) => (...args) => {
   return promise.catch(args[2]);
 };
 
-auth.get(
+apiAuth.get(
   "/token",
   passport.authenticate("basic", {
     session: false
@@ -163,13 +165,13 @@ auth.get(
       .getService(AccountService)
       .then((accounts) => accounts.getToken(req.context, req.user))
       .then((token) => {
-        res.json({ accessToken: token });
+        res.json({ token: token });
         next();
       });
   })
 );
 
-internal.get(
+apiInternal.get(
   "/accounts",
   passport.authenticate("jwt", {
     session: false
@@ -190,7 +192,7 @@ internal.get(
   })
 );
 
-internal.get(
+apiInternal.get(
   "/my/dashboards",
   passport.authenticate("jwt", {
     session: false

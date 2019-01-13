@@ -1,3 +1,7 @@
+const { ClientError } = require("../types");
+
+const { SecretsService } = require("./secrets-service");
+
 class AccountService {
   constructor(repo) {
     this.repo = repo;
@@ -11,16 +15,33 @@ class AccountService {
     return this.repo.getByEmail(context, email);
   }
 
-  getByUuid(context, uuid) {
-    return this.repo.getByEmail(context, uuid);
+  get(context, id) {
+    return this.repo.get(context, id);
   }
 
-  authenticate(context, username, password) {
-    return Promise.reject(new Error("Not implemented"));
+  authenticate(context, login, password) {
+    return context
+      .getService(SecretsService)
+      .then((secrets) =>
+        Promise.all([this.getByEmail(context, login), secrets])
+      )
+      .then(([account, secrets]) => {
+        if (secrets.isPasswordValid(context, account, password)) {
+          return account;
+        } else {
+          throw new Error("Invalid password provided");
+        }
+      })
+      .catch((reason) => {
+        console.error(reason);
+        throw new ClientError("Invalid login credentials provided");
+      });
   }
 
-  getToken(context, user) {
-    return Promise.reject(new Error("Not implemented"));
+  getToken(context, account) {
+    return context.getService(SecretsService).then((secrets) => {
+      return secrets.getForAccount(context, account);
+    });
   }
 }
 

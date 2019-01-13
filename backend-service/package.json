@@ -12,6 +12,7 @@
   "author": "Josef Erben josef@pillowboard.io",
   "license": "SEE LICENSE IN LICENSE.md",
   "dependencies": {
+    "base-64": "^0.1.0",
     "bcrypt": "^3.0.3",
     "chai-as-promised": "^7.1.1",
     "compression": "^1.7.3",

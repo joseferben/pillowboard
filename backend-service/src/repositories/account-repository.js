@@ -8,7 +8,7 @@ class AccountRepository {
   }
 
   getByEmail(context, email) {
-    return Promise.reject(new Error("Not implemented"));
+    return context.conn.then((knex) => knex("accounts").where("email", email));
   }
 
   getByUuid(context, uuid) {
