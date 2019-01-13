@@ -87,4 +87,21 @@ describe("db connection", () => {
       expect(account).to.have.property("email", "walter.white@example.com");
     });
   });
+
+  describe("authorization", () => {
+    it("get all accounts returns error for non-admin user", async () => {
+      const { token } = await client.authenticate(
+        "walter.white@example.com",
+        "password"
+      );
+      await expect(client.getAccounts(token)).to.be.rejected;
+    });
+    it("get all accounts returns all accounts for admin", async () => {
+      const { token } = await client.authenticate(
+        "walter.white@example.com",
+        "password"
+      );
+      expect(await client.getAccounts(token)).to.be.an("array");
+    });
+  });
 });

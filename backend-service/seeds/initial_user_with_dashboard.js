@@ -48,13 +48,43 @@ exports.seed = function(knex, Promise) {
           ])
         );
       }),
+    knex("role_assignments")
+      .del()
+      .then(() => {
+        return knex("role_assignments").insert([
+          {
+            uuid: uuidv1(),
+            subject: "accounts/" + accounts[0],
+            role: "owner",
+            object: "dashboards/" + dashboards[0]
+          },
+          {
+            uuid: uuidv1(),
+            subject: "accounts/" + accounts[0],
+            role: "owner",
+            object: "charts/" + charts[0]
+          },
+          {
+            uuid: uuidv1(),
+            subject: "accounts/" + accounts[0],
+            role: "owner",
+            object: "pointsGroups/" + pointsGroups[0]
+          },
+          {
+            uuid: uuidv1(),
+            subject: "accounts/" + accounts[1],
+            role: "owner",
+            object: "domains/system"
+          }
+        ]);
+      }),
     knex("dashboards")
       .del()
       .then(() => {
         return knex("dashboards").insert([
           {
-            uuid: uuidv1(),
-            owner: accounts[0],
+            uuid: dashboards[0],
+            account: accounts[0],
             name: "test-board",
             status: "active"
           }

@@ -77,6 +77,12 @@ class Client {
     );
   }
 
+  getAccounts(token) {
+    return this.fetch(this.api + "accounts", defaultOpts({ token })).then(
+      responseHandler
+    );
+  }
+
   getMyDashboards(token) {
     return this.fetch(
       this.api + "accounts/my/dashboards",

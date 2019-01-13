@@ -229,9 +229,6 @@ apiInternal.get(
 
 apiPublic.post(
   "/data",
-  passport.authenticate("bearer", {
-    session: false
-  }),
   wrap((req, res, next) => {
     return dispatcher
       .getService(DashboardService)
