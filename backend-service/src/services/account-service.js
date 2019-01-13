@@ -26,7 +26,13 @@ class AccountService {
         Promise.all([this.getByEmail(context, login), secrets])
       )
       .then(([account, secrets]) => {
-        if (secrets.isPasswordValid(context, account, password)) {
+        return Promise.all([
+          account,
+          secrets.isPasswordValid(context, account.password, password)
+        ]);
+      })
+      .then(([account, isValid]) => {
+        if (isValid) {
           return account;
         } else {
           throw new Error("Invalid password provided");
@@ -35,6 +41,17 @@ class AccountService {
       .catch((reason) => {
         console.error(reason);
         throw new ClientError("Invalid login credentials provided");
+      });
+  }
+
+  getAuthenticatedAccount(context, token) {
+    return context
+      .getService(SecretsService)
+      .then((secrets) => {
+        return secrets.verifyAndDecode(context, token);
+      })
+      .then((payload) => {
+        return this.get(context, payload.accountId);
       });
   }
 

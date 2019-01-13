@@ -1,6 +1,8 @@
 class DashboardRepository {
   getByAccount(context, account) {
-    return context.models.Dashboard.query().where({ owner: account.uuid });
+    return context.conn.then((knex) =>
+      knex("dashboards").where({ owner: account.uuid })
+    );
   }
 }
 

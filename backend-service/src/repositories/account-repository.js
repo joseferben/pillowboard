@@ -8,11 +8,19 @@ class AccountRepository {
   }
 
   getByEmail(context, email) {
-    return context.conn.then((knex) => knex("accounts").where("email", email));
+    return context.conn.then((knex) =>
+      knex("accounts")
+        .where("email", email)
+        .first()
+    );
   }
 
-  getByUuid(context, uuid) {
-    return Promise.reject(new Error("Not implemented"));
+  get(context, id) {
+    return context.conn.then((knex) =>
+      knex("accounts")
+        .where("uuid", id)
+        .first()
+    );
   }
 }
 

@@ -4,7 +4,7 @@ const cors = require("cors");
 const compression = require("compression");
 const passport = require("passport");
 const Knex = require("knex");
-const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
+const BearerStrategy = require("passport-http-bearer").Strategy;
 const { BasicStrategy } = require("passport-http");
 
 const {
@@ -79,29 +79,28 @@ passport.use(
 );
 
 passport.use(
-  "jwt",
-  new JwtStrategy(
-    {
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: "secret",
-      issuer: "accounts.pillowboard.io",
-      audience: "pillowboard.io",
-      passReqToCallback: true
-    },
-    (req, jwtPayload, done) => {
-      dispatcher
-        .getService(AccountService)
-        .then((accounts) => {
-          return accounts.getByUuid(req.context, jwtPayload.accountId);
-        })
-        .then((account) => {
-          done(null, account);
-        })
-        .catch((err) => {
-          done(err, false);
-        });
-    }
-  )
+  "bearer",
+  new BearerStrategy({ passReqToCallback: true }, (req, token, done) => {
+    dispatcher
+      .getService(AccountService)
+      .then((accounts) => {
+        return accounts.getAuthenticatedAccount(req.context, token);
+      })
+      .then((account) => {
+        done(null, account);
+      })
+      .catch((reason) => {
+        if (reason instanceof ClientError) {
+          done(null, false, { message: reason.message });
+        } else if (reason instanceof ServerError) {
+          done(null, false, {
+            message: "Something went wrong, our admins have been notified"
+          });
+        } else {
+          done(reason);
+        }
+      });
+  })
 );
 
 app.use(logger("dev"));
@@ -130,10 +129,10 @@ app.use("/api", apiInternal);
 app.use("/authentication", apiAuth);
 
 app.use(function errorHandler(err, req, res, next) {
+  console.error(err);
   if (res.headersSent) {
     return next(err);
   }
-  console.log("Request failed", err.message);
   if (err instanceof ClientError) {
     return res.status(400).json({ message: err.message });
   } else if (err instanceof ServerError) {
@@ -173,7 +172,7 @@ apiAuth.get(
 
 apiInternal.get(
   "/accounts",
-  passport.authenticate("jwt", {
+  passport.authenticate("bearer", {
     session: false
   }),
   wrap((req, res, next) => {
@@ -193,22 +192,37 @@ apiInternal.get(
 );
 
 apiInternal.get(
-  "/my/dashboards",
-  passport.authenticate("jwt", {
+  "/accounts/my",
+  passport.authenticate("bearer", {
     session: false
   }),
   wrap((req, res, next) => {
     return dispatcher
-      .getServices([AccountService, DashboardService])
-      .then(([accounts, dashboards]) => {
-        return Promise.all([
-          accounts.get(req.context, req.user.id),
-          dashboards
-        ]);
+      .getService(AccountService)
+      .then((accounts) => {
+        return accounts.get(req.context, req.user.uuid);
       })
-      .then(([account, dashboards]) => {
-        const data = dashboards.getByAccount(req.context, account);
+      .then((account) => {
+        const data = account;
+        data.password = "****";
         res.json(data);
+      });
+  })
+);
+
+apiInternal.get(
+  "/accounts/my/dashboards",
+  passport.authenticate("bearer", {
+    session: false
+  }),
+  wrap((req, res, next) => {
+    return dispatcher
+      .getService(DashboardService)
+      .then((dashboards) => {
+        return dashboards.getByAccount(req.context, req.user);
+      })
+      .then((dashboards) => {
+        res.json(dashboards);
       });
   })
 );

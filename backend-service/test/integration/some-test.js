@@ -36,18 +36,35 @@ describe("db connection", () => {
     knex.seed.run().then(() => done());
   });
 
-  // describe("create dashbaord", () => {
-  //   it("post data as anonymous user creates dashboard and point series", async () => {
-  //     const res = await client.postData({
-  //       time: Date.now(),
-  //       name: "foo",
-  //       value: 42
-  //     });
-  //   });
-  // });
+  describe("dashboards", () => {
+    it("user can fetch their dashboards", async () => {
+      const { token } = await client.authenticate(
+        "walter.white@example.com",
+        "password"
+      );
+      expect(await client.getMyDashboards(token)).to.be.an("array");
+    });
 
-  describe("authenticate", () => {
-    it("returns token with correct credentials", async () => {
+    it("push data creates one new dashboard", async () => {
+      const { token } = await client.authenticate(
+        "walter.white@example.com",
+        "password"
+      );
+      const dashboardsBefore = await client.getMyDashboards(token);
+
+      const res = await client.pushData(token, {
+        time: Date.now(),
+        name: "foo",
+        value: 42
+      });
+
+      const dashboardsAfter = await client.getMyDashboards(token);
+      expect(dashboardsAfter.length - 1).to.be.equal(dashboardsBefore);
+    });
+  });
+
+  describe("authentication", () => {
+    it("login with credentials returns token", async () => {
       const { token } = await client.authenticate(
         "walter.white@example.com",
         "password"
@@ -55,9 +72,21 @@ describe("db connection", () => {
       expect(token).to.be.a("string");
     });
 
-    it("throws with incorrect credentials", async () => {
+    it("login with invalid credentials returns error", async () => {
       expect(client.authenticate("walter.white@example.com", "foo")).to.be
         .rejected;
     });
+
+    it("get my account with token returns account of current user", async () => {
+      const { token } = await client.authenticate(
+        "walter.white@example.com",
+        "password"
+      );
+      const account = await client.getMyAccount(token);
+
+      expect(account).to.have.property("email", "walter.white@example.com");
+    });
   });
+
+  describe("authorization", () => {});
 });

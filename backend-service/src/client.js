@@ -20,6 +20,27 @@ const responseHandler = (res) => {
   }
 };
 
+const defaultOpts = ({ token, body, method }) => {
+  const opts = {
+    headers: {
+      Accept: "application/json",
+      "X-Requested-With": "XMLHttpRequest",
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/json",
+      "Cache-Control": "no-cache, no-store, must-revalidate",
+      Pragma: "no-cache",
+      Expires: 0
+    }
+  };
+  if (body) {
+    opts.body = JSON.stringify(body);
+  }
+  if (method) {
+    opts.method = method;
+  }
+  return opts;
+};
+
 class Client {
   constructor(authBaseUrl, apiBaseUrl, client) {
     this.auth = authBaseUrl;
@@ -43,8 +64,24 @@ class Client {
     return this.fetch(this.auth + "token", opts).then(responseHandler);
   }
 
-  postData(data, opts) {
-    return this.fetch(this.apiPulic + data).then(responseHandler);
+  pushData(token, data, opts) {
+    return this.fetch(
+      this.apiPulic + data,
+      defaultOpts({ token, body: data, method: "POST" })
+    ).then(responseHandler);
+  }
+
+  getMyAccount(token) {
+    return this.fetch(this.api + "accounts/my", defaultOpts({ token })).then(
+      responseHandler
+    );
+  }
+
+  getMyDashboards(token) {
+    return this.fetch(
+      this.api + "accounts/my/dashboards",
+      defaultOpts({ token })
+    ).then(responseHandler);
   }
 }
 
