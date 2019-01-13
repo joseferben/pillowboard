@@ -36,14 +36,24 @@ describe("db connection", () => {
     knex.seed.run().then(() => done());
   });
 
-  describe("authenticate", () => {
-    it("returns token with correct credentials", async () => {
-      const { token } = await client.authenticate("admin", "admin");
-      expect(token).to.be.a("string");
-    });
-
-    it("returns token with incorrect credentials", async () => {
-      expect(client.authenticate("admin", "foo")).to.be.rejected;
+  describe("create dashbaord", () => {
+    it("post data as anonymous user creates dashboard and point series", async () => {
+      const res = await client.post({
+        time: Date.now(),
+        name: "foo",
+        value: 42
+      });
     });
   });
+
+  // describe("authenticate", () => {
+  //   it("returns token with correct credentials", async () => {
+  //     const { token } = await client.authenticate("admin", "admin");
+  //     expect(token).to.be.a("string");
+  //   });
+
+  //   it("returns token with incorrect credentials", async () => {
+  //     expect(client.authenticate("admin", "foo")).to.be.rejected;
+  //   });
+  // });
 });

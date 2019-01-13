@@ -16,6 +16,7 @@ const hash = (password) =>
 const accounts = [uuidv1(), uuidv1()];
 const dashboards = [uuidv1()];
 const charts = [uuidv1()];
+const pointsGroups = [uuidv1()];
 const points = [
   Date.now() - 5 * 1000,
   Date.now() - 3 * 1000,
@@ -66,32 +67,43 @@ exports.seed = function(knex, Promise) {
           {
             uuid: charts[0],
             dashboard: dashboards[0],
+            points_group: pointsGroups[0],
             name: "test-chart",
             status: "active"
           }
         ]);
       }),
-    knex("points_time")
+    knex("points_groups")
       .del()
       .then(() => {
-        return knex("points_time").insert([
+        return knex("points_groups").insert([
+          {
+            uuid: pointsGroups[0],
+            name: "test-group"
+          }
+        ]);
+      }),
+    knex("time_points")
+      .del()
+      .then(() => {
+        return knex("time_points").insert([
           {
             uuid: uuidv1(),
-            chart: charts[0],
+            points_group: pointsGroups[0],
             time: new Date(points[0]),
             name: "foo",
             value: 0.2
           },
           {
             uuid: uuidv1(),
-            chart: charts[0],
+            points_group: pointsGroups[0],
             time: new Date(points[1]),
             name: "foo",
             value: 0.3
           },
           {
             uuid: uuidv1(),
-            chart: charts[0],
+            points_group: pointsGroups[0],
             time: new Date(points[2]),
             name: "foo",
             value: 0.5

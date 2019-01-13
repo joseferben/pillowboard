@@ -35,16 +35,25 @@ exports.up = function(knex, Promise) {
       t.increments("id");
       t.uuid("uuid").notNullable();
       t.uuid("dashboard").notNullable();
+      t.uuid("points_group").notNullable();
       t.string("name");
       t.string("status").notNullable();
       t.timestamps(true, true);
       t.unique(["uuid", "id"]);
     }),
 
-    knex.schema.createTable("points_time", function(t) {
+    knex.schema.createTable("points_groups", function(t) {
       t.increments("id");
       t.uuid("uuid").notNullable();
-      t.uuid("chart").notNullable();
+      t.string("name");
+      t.timestamps(true, true);
+      t.unique(["uuid", "id"]);
+    }),
+
+    knex.schema.createTable("time_points", function(t) {
+      t.increments("id");
+      t.uuid("uuid").notNullable();
+      t.uuid("points_group").notNullable();
       t.timestamp("time", true).notNullable();
       t.string("name").notNullable();
       t.float("value");
@@ -60,7 +69,8 @@ exports.down = function(knex, Promise) {
     knex.schema.dropTable("events"),
     knex.schema.dropTable("dashboards"),
     knex.schema.dropTable("charts"),
-    knex.schema.dropTable("points_time"),
+    knex.schema.dropTable("points_groups"),
+    knex.schema.dropTable("time_points"),
     knex.schema.dropTable("role_assignments")
   ]);
 };
