@@ -13,7 +13,16 @@ class Dashboard {
     this.status = data.status ? data.status : DashboardStatus.ACTIVE;
   }
 }
-class Command {}
+class Command {
+  constructor(data) {
+    if (!data.actor) throw new ClientError("Command has no actor defined");
+    if (!data.type) throw new ClientError("Command has no type defined");
+    if (!data.payload) throw new ClientError("Command has no payload defined");
+    this.actor = data.actor;
+    this.type = data.type;
+    this.payload = data.payload;
+  }
+}
 class Account {
   constructor(data) {
     this.id = data.uuid;

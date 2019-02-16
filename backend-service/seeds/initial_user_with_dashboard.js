@@ -141,6 +141,7 @@ exports.seed = function(knex, Promise) {
         return knex("commands").insert([
           {
             uuid: uuidv1(),
+            actor: accounts[0],
             status: "processed",
             type: "CreateAccount",
             payload: JSON.stringify({
@@ -152,6 +153,7 @@ exports.seed = function(knex, Promise) {
           },
           {
             uuid: uuidv1(),
+            actor: accounts[0],
             status: "processed",
             type: "CreateAccount",
             payload: JSON.stringify({
@@ -163,6 +165,7 @@ exports.seed = function(knex, Promise) {
           },
           {
             uuid: uuidv1(),
+            actor: accounts[0],
             status: "processed",
             type: "CreateAccount",
             payload: JSON.stringify({
@@ -174,8 +177,9 @@ exports.seed = function(knex, Promise) {
           },
           {
             uuid: uuidv1(),
+            actor: accounts[0],
             status: "processed",
-            type: "CreateBoard",
+            type: "CreateDashboard",
             payload: JSON.stringify({
               owner: accounts[0],
               name: "test-board"
@@ -183,6 +187,7 @@ exports.seed = function(knex, Promise) {
           },
           {
             uuid: uuidv1(),
+            actor: accounts[0],
             status: "processed",
             type: "CreateChart",
             payload: JSON.stringify({
@@ -192,6 +197,7 @@ exports.seed = function(knex, Promise) {
           },
           {
             uuid: uuidv1(),
+            actor: accounts[0],
             status: "processed",
             type: "PushTimePoint",
             payload: JSON.stringify({
@@ -203,6 +209,7 @@ exports.seed = function(knex, Promise) {
           },
           {
             uuid: uuidv1(),
+            actor: accounts[0],
             status: "processed",
             type: "PushTimePoint",
             payload: JSON.stringify({
@@ -214,6 +221,7 @@ exports.seed = function(knex, Promise) {
           },
           {
             uuid: uuidv1(),
+            actor: accounts[0],
             status: "processed",
             type: "PushTimePoint",
             payload: JSON.stringify({

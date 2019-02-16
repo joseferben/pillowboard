@@ -277,7 +277,12 @@ apiInternal.post(
     return dispatcher
       .getService(CommandService)
       .then((commands) => {
-        return commands.handle(req.context, req.user, req.body);
+        const command = new Command({
+          actor: req.user.id,
+          type: req.body.type,
+          payload: req.body.payload
+        });
+        return commands.handle(req.context, command);
       })
       .then((result) => {
         res.json(result);

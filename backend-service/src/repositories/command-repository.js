@@ -3,11 +3,12 @@ const CommandStatus = {
   PROCESSED: "processed"
 };
 class CommandRepository {
-  create(context, user, command) {
+  create(context, command) {
     return context.conn.then((trx) =>
       trx
         .insert({
           uuid: uuidv1(),
+          actor: command.actor,
           type: command.type,
           payload: command.payload,
           status: CommandStatus.PROCESSED

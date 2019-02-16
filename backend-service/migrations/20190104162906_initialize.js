@@ -23,6 +23,7 @@ exports.up = function(knex, Promise) {
     knex.schema.createTable("commands", function(t) {
       t.increments("id");
       t.uuid("uuid").notNullable();
+      t.uuid("actor").notNullable();
       t.string("type").notNullable();
       t.json("payload");
       t.string("status").notNullable();
