@@ -57,7 +57,11 @@ describe("db connection", () => {
       const dashboardsAfter = await client.getMyDashboards(token);
 
       expect(dashboardsAfter.length - 1).to.be.equal(dashboardsBefore.length);
-      expect(dashboardsAfter).to.deep.include({ name: "my-new-board" });
+
+      const createdDashboard = dashboardsAfter.find(
+        (dashboard) => dashboard.id !== dashboardsBefore[0].id
+      );
+      expect(createdDashboard).to.have.property("name", "my-new-board");
     });
   });
 

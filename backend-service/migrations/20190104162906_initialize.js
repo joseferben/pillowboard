@@ -20,7 +20,7 @@ exports.up = function(knex, Promise) {
       t.unique(["uuid", "id"]);
     }),
 
-    knex.schema.createTable("events", function(t) {
+    knex.schema.createTable("commands", function(t) {
       t.increments("id");
       t.uuid("uuid").notNullable();
       t.string("type").notNullable();
@@ -76,7 +76,7 @@ exports.down = function(knex, Promise) {
   return Promise.all([
     knex.schema.dropTable("role_assignments"),
     knex.schema.dropTable("accounts"),
-    knex.schema.dropTable("events"),
+    knex.schema.dropTable("commands"),
     knex.schema.dropTable("dashboards"),
     knex.schema.dropTable("charts"),
     knex.schema.dropTable("points_groups"),

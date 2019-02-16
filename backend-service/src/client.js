@@ -97,13 +97,13 @@ class Client {
   }
 
   createDashboard(token, opts) {
-    const body = JSON.stringify({
+    const body = {
       type: "CreateDashboard",
       payload: { name: opts.name }
-    });
+    };
     return this.fetch(
-      this.api + "events",
-      defaultOpts({ token, method: "POST" })
+      this.api + "commands",
+      defaultOpts({ token, method: "POST", body })
     ).then(responseHandler);
   }
 }

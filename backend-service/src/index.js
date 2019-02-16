@@ -1,4 +1,5 @@
 const express = require("express");
+const bodyParser = require("body-parser");
 const logger = require("morgan");
 const cors = require("cors");
 const compression = require("compression");
@@ -9,7 +10,7 @@ const { BasicStrategy } = require("passport-http");
 
 const {
   Account,
-  Event,
+  Command,
   Dashboard,
   Chart,
   TimePoint,
@@ -29,8 +30,8 @@ const { ChartService } = require("./services/chart-service");
 const { ChartRepository } = require("./repositories/chart-repository");
 const { TimePointService } = require("./services/time-point-service");
 const { TimePointRepository } = require("./repositories/time-point-repository");
-const { EventService } = require("./services/event-service");
-const { EventRepository } = require("./repositories/event-repository");
+const { CommandService } = require("./services/command-service");
+const { CommandRepository } = require("./repositories/command-repository");
 
 const { ServiceDispatcher } = require("./dispatcher");
 
@@ -61,7 +62,7 @@ dispatcher.set(
   TimePointService,
   new TimePointService(new TimePointRepository())
 );
-dispatcher.set(EventService, new EventService(new EventRepository()));
+dispatcher.set(CommandService, new CommandService(new CommandRepository()));
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -146,6 +147,7 @@ const wrap = (fn) => (...args) => {
   return promise.catch(args[2]);
 };
 
+app.use(bodyParser.json());
 app.use(logger("dev"));
 app.use(function initiliazeRequestContext(req, res, next) {
   req.context = dispatcher.newRequestContext(req, knex);
@@ -261,6 +263,24 @@ apiInternal.get(
       })
       .then((dashboards) => {
         res.json(dashboards);
+      });
+  })
+);
+
+apiInternal.post(
+  "/commands",
+  passport.authenticate("bearer", {
+    session: false
+  }),
+  authorize("commands/post", dispatcher, (req) => req.user),
+  wrap((req, res, next) => {
+    return dispatcher
+      .getService(CommandService)
+      .then((commands) => {
+        return commands.handle(req.context, req.user, req.body);
+      })
+      .then((result) => {
+        res.json(result);
       });
   })
 );

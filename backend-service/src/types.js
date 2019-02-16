@@ -1,14 +1,19 @@
+const uuidv1 = require("uuid/v1");
+
 class TimePoint {}
 class Chart {}
+const DashboardStatus = {
+  ACTIVE: "active"
+};
 class Dashboard {
   constructor(data) {
-    this.id = data.uuid;
-    this.account = data.account;
+    this.id = data.uuid ? data.uuid : uuidv1();
+    this.owner = data.owner;
     this.name = data.name;
-    this.status = data.status;
+    this.status = data.status ? data.status : DashboardStatus.ACTIVE;
   }
 }
-class Event {}
+class Command {}
 class Account {
   constructor(data) {
     this.id = data.uuid;
@@ -25,7 +30,7 @@ class ServerError extends Error {}
 
 module.exports = {
   Account,
-  Event,
+  Command,
   Dashboard,
   Chart,
   TimePoint,

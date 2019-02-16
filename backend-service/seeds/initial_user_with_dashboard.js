@@ -135,10 +135,10 @@ exports.seed = function(knex, Promise) {
           }
         ]);
       }),
-    knex("events")
+    knex("commands")
       .del()
       .then(() => {
-        return knex("events").insert([
+        return knex("commands").insert([
           {
             uuid: uuidv1(),
             status: "processed",
