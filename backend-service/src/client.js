@@ -95,6 +95,17 @@ class Client {
       responseHandler
     );
   }
+
+  createDashboard(token, opts) {
+    const body = JSON.stringify({
+      type: "CreateDashboard",
+      payload: { name: opts.name }
+    });
+    return this.fetch(
+      this.api + "events",
+      defaultOpts({ token, method: "POST" })
+    ).then(responseHandler);
+  }
 }
 
 module.exports = { Client: Client };

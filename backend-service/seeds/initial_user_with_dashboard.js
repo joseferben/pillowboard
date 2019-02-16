@@ -142,7 +142,7 @@ exports.seed = function(knex, Promise) {
           {
             uuid: uuidv1(),
             status: "processed",
-            type: "createAccount",
+            type: "CreateAccount",
             payload: JSON.stringify({
               familyName: "White",
               givenName: "Walter",
@@ -153,7 +153,7 @@ exports.seed = function(knex, Promise) {
           {
             uuid: uuidv1(),
             status: "processed",
-            type: "createAccount",
+            type: "CreateAccount",
             payload: JSON.stringify({
               familyName: "Pinkman",
               givenName: "Jesse",
@@ -164,7 +164,18 @@ exports.seed = function(knex, Promise) {
           {
             uuid: uuidv1(),
             status: "processed",
-            type: "createBoard",
+            type: "CreateAccount",
+            payload: JSON.stringify({
+              familyName: "Salamanca",
+              givenName: "Tuco",
+              password: "***",
+              email: "tuco.salamanca@example.com"
+            })
+          },
+          {
+            uuid: uuidv1(),
+            status: "processed",
+            type: "CreateBoard",
             payload: JSON.stringify({
               owner: accounts[0],
               name: "test-board"
@@ -173,7 +184,7 @@ exports.seed = function(knex, Promise) {
           {
             uuid: uuidv1(),
             status: "processed",
-            type: "createChart",
+            type: "CreateChart",
             payload: JSON.stringify({
               dashboard: dashboards[0],
               name: "test-chart"
@@ -182,7 +193,7 @@ exports.seed = function(knex, Promise) {
           {
             uuid: uuidv1(),
             status: "processed",
-            type: "timePoint",
+            type: "PushTimePoint",
             payload: JSON.stringify({
               chart: charts[0],
               time: new Date(points[0]),
@@ -193,7 +204,7 @@ exports.seed = function(knex, Promise) {
           {
             uuid: uuidv1(),
             status: "processed",
-            type: "timePoint",
+            type: "PushTimePoint",
             payload: JSON.stringify({
               chart: charts[0],
               time: new Date(points[1]),
@@ -204,7 +215,7 @@ exports.seed = function(knex, Promise) {
           {
             uuid: uuidv1(),
             status: "processed",
-            type: "timePoint",
+            type: "PushTimePoint",
             payload: JSON.stringify({
               chart: charts[0],
               time: new Date(points[2]),

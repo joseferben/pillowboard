@@ -45,21 +45,19 @@ describe("db connection", () => {
       expect(await client.getMyDashboards(token)).to.be.an("array");
     });
 
-    it("push data creates one new dashboard", async () => {
+    it("create dashboard yields new dashboard", async () => {
       const { token } = await client.authenticate(
         "walter.white@example.com",
         "password"
       );
       const dashboardsBefore = await client.getMyDashboards(token);
 
-      const res = await client.pushData(token, {
-        time: Date.now(),
-        name: "foo",
-        value: 42
-      });
+      await client.createDashboard(token, { name: "my-new-board" });
 
       const dashboardsAfter = await client.getMyDashboards(token);
+
       expect(dashboardsAfter.length - 1).to.be.equal(dashboardsBefore.length);
+      expect(dashboardsAfter).to.deep.include({ name: "my-new-board" });
     });
   });
 
